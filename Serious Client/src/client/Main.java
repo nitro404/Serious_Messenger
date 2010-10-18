@@ -1,5 +1,6 @@
 package client;
 
+import shared.*;
 import signal.*;
 
 public class Main {
