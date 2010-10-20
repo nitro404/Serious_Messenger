@@ -1,6 +1,6 @@
 package signal;
 
-import shared.ByteStream;
+import shared.*;
 
 public class LoginRequest extends Signal {
 	
@@ -27,8 +27,8 @@ public class LoginRequest extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
-		checksum += ByteStream.getChecksum(m_password, SignalConstants.MAX_PASSWORD_LENGTH);
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
+		checksum += ByteStream.getChecksum(m_password, Globals.MAX_PASSWORD_LENGTH);
 		return checksum;
 	}
 	
@@ -38,8 +38,8 @@ public class LoginRequest extends Signal {
 		
 		LoginRequest s2 = new LoginRequest();
 		
-		s2.m_userName = byteStream.nextString(SignalConstants.MAX_USERNAME_LENGTH);
-		s2.m_password = byteStream.nextString(SignalConstants.MAX_PASSWORD_LENGTH);
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
+		s2.m_password = byteStream.nextString(Globals.MAX_PASSWORD_LENGTH);
 		long checksum = byteStream.nextLong();
 		
 		if(checksum != s2.checksum()) { return null; }
@@ -50,8 +50,8 @@ public class LoginRequest extends Signal {
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
 		super.writeTo(byteStream);
-		byteStream.addStringFixedLength(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
-		byteStream.addStringFixedLength(m_password, SignalConstants.MAX_PASSWORD_LENGTH);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
+		byteStream.addStringFixedLength(m_password, Globals.MAX_PASSWORD_LENGTH);
 		byteStream.addLong(checksum());
 	}
 	

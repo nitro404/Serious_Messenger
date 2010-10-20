@@ -1,6 +1,6 @@
 package signal;
 
-import shared.ByteStream;
+import shared.*;
 
 public class BroadcastLogin extends Signal {
 	
@@ -39,9 +39,9 @@ public class BroadcastLogin extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
-		checksum += ByteStream.getChecksum(m_nickName, SignalConstants.MAX_NICKNAME_LENGTH);
-		checksum += ByteStream.getChecksum(m_personalMessage, SignalConstants.MAX_PERSONAL_MESSAGE_LENGTH);
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
+		checksum += ByteStream.getChecksum(m_nickName, Globals.MAX_NICKNAME_LENGTH);
+		checksum += ByteStream.getChecksum(m_personalMessage, Globals.MAX_PERSONAL_MESSAGE_LENGTH);
 		checksum += ByteStream.getChecksum(m_status);
 		return checksum;
 	}
@@ -52,9 +52,9 @@ public class BroadcastLogin extends Signal {
 		
 		BroadcastLogin s2 = new BroadcastLogin();
 		
-		s2.m_userName = byteStream.nextString(SignalConstants.MAX_USERNAME_LENGTH);
-		s2.m_nickName = byteStream.nextString(SignalConstants.MAX_NICKNAME_LENGTH);
-		s2.m_personalMessage = byteStream.nextString(SignalConstants.MAX_PERSONAL_MESSAGE_LENGTH);
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
+		s2.m_nickName = byteStream.nextString(Globals.MAX_NICKNAME_LENGTH);
+		s2.m_personalMessage = byteStream.nextString(Globals.MAX_PERSONAL_MESSAGE_LENGTH);
 		s2.m_status = byteStream.nextByte();
 		long checksum = byteStream.nextLong();
 		
@@ -66,9 +66,9 @@ public class BroadcastLogin extends Signal {
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
 		super.writeTo(byteStream);
-		byteStream.addStringFixedLength(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
-		byteStream.addStringFixedLength(m_nickName, SignalConstants.MAX_NICKNAME_LENGTH);
-		byteStream.addStringFixedLength(m_personalMessage, SignalConstants.MAX_PERSONAL_MESSAGE_LENGTH);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
+		byteStream.addStringFixedLength(m_nickName, Globals.MAX_NICKNAME_LENGTH);
+		byteStream.addStringFixedLength(m_personalMessage, Globals.MAX_PERSONAL_MESSAGE_LENGTH);
 		byteStream.addByte(m_status);
 		byteStream.addLong(checksum());
 	}

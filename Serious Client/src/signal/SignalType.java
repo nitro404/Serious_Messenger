@@ -23,4 +23,8 @@ public class SignalType {
 	final public static int ChangePersonalMessage = 17;
 	final public static int ChangeStatus = 18;
 	
+	public static boolean isValid(int signalType) {
+		return signalType >= -1 && signalType <= 18;
+	}
+	
 }

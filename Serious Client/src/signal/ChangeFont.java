@@ -1,6 +1,6 @@
 package signal;
 
-import shared.ByteStream;
+import shared.*;
 
 public class ChangeFont extends Signal {
 	
@@ -72,7 +72,7 @@ public class ChangeFont extends Signal {
 
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_fontFace, SignalConstants.MAX_FONTFACE_LENGTH);
+		checksum += ByteStream.getChecksum(m_fontFace, Globals.MAX_FONTFACE_LENGTH);
 		checksum += ByteStream.getChecksum(m_size);
 		checksum += ByteStream.getChecksum(m_bold);
 		checksum += ByteStream.getChecksum(m_italic);
@@ -90,7 +90,7 @@ public class ChangeFont extends Signal {
 		
 		ChangeFont s2 = new ChangeFont();
 		
-		s2.m_fontFace = byteStream.nextString(SignalConstants.MAX_FONTFACE_LENGTH);
+		s2.m_fontFace = byteStream.nextString(Globals.MAX_FONTFACE_LENGTH);
 		s2.m_size = byteStream.nextInteger();
 		s2.m_bold = byteStream.nextBoolean();
 		s2.m_italic = byteStream.nextBoolean();
@@ -111,7 +111,7 @@ public class ChangeFont extends Signal {
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
 		super.writeTo(byteStream);
-		byteStream.addStringFixedLength(m_fontFace, SignalConstants.MAX_FONTFACE_LENGTH);
+		byteStream.addStringFixedLength(m_fontFace, Globals.MAX_FONTFACE_LENGTH);
 		byteStream.addInteger(m_size);
 		byteStream.addBoolean(m_bold);
 		byteStream.addBoolean(m_italic);

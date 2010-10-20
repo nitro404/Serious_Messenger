@@ -1,6 +1,6 @@
 package signal;
 
-import shared.ByteStream;
+import shared.*;
 
 public class UserTyping extends Signal {
 	

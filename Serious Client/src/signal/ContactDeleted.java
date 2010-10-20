@@ -1,6 +1,6 @@
 package signal;
 
-import shared.ByteStream;
+import shared.*;
 
 public class ContactDeleted extends Signal {
 	
@@ -27,7 +27,7 @@ public class ContactDeleted extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
 		checksum += ByteStream.getChecksum(m_deleted);
 		return checksum;
 	}
@@ -38,7 +38,7 @@ public class ContactDeleted extends Signal {
 		
 		ContactDeleted s2 = new ContactDeleted();
 		
-		s2.m_userName = byteStream.nextString(SignalConstants.MAX_USERNAME_LENGTH);
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_deleted = byteStream.nextBoolean();
 		long checksum = byteStream.nextLong();
 		
@@ -50,7 +50,7 @@ public class ContactDeleted extends Signal {
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
 		super.writeTo(byteStream);
-		byteStream.addStringFixedLength(m_userName, SignalConstants.MAX_USERNAME_LENGTH);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addBoolean(m_deleted);
 		byteStream.addLong(checksum());
 	}
