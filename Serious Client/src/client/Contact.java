@@ -6,12 +6,12 @@ import shared.*;
 
 public class Contact {
 	
-	private String m_userName;
-	private String m_nickName;
-	private String m_personalMessage;
-	private int m_status;
-	private Font m_font;
-	private Color m_textColour;
+	protected String m_userName;
+	protected String m_nickName;
+	protected String m_personalMessage;
+	protected int m_status;
+	protected Font m_font;
+	protected Color m_textColour;
 	
 	public Contact(String userName, String nickName, String personalMessage, int status, Font font, Color textColour) {
 		m_userName = (userName == null) ? "" : userName;

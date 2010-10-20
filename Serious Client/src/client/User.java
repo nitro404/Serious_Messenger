@@ -7,15 +7,15 @@ import shared.*;
 
 public class User {
 	
-	private String m_userName;
-	private String m_password;
-	private String m_nickName;
-	private String m_personalMessage;
-	private int m_status;
-	private Font m_font;
-	private Color m_textColour;
+	protected String m_userName;
+	protected String m_password;
+	protected String m_nickName;
+	protected String m_personalMessage;
+	protected int m_status;
+	protected Font m_font;
+	protected Color m_textColour;
 	
-	private Vector<Contact> m_contacts;
+	protected Vector<Contact> m_contacts;
 	
 	public User(String userName, String password, String nickName, String personalMessage, int status, Font font, Color textColour) {
 		m_userName = (userName == null) ? "" : userName;
