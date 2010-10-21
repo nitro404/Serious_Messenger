@@ -1,7 +1,6 @@
 package client;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import shared.*;
 
 public class Contact {

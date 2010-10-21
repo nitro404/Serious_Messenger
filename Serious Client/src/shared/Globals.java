@@ -1,7 +1,6 @@
 package shared;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 
 public class Globals {
 
