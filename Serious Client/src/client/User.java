@@ -4,54 +4,21 @@ import java.util.Vector;
 import java.awt.*;
 import shared.*;
 
-public class User {
+public class User extends Contact {
 	
-	protected String m_userName;
 	protected String m_password;
-	protected String m_nickName;
-	protected String m_personalMessage;
-	protected int m_status;
-	protected Font m_font;
-	protected Color m_textColour;
 	
 	protected Vector<Contact> m_contacts;
 	
 	public User(String userName, String password, String nickName, String personalMessage, int status, Font font, Color textColour) {
-		m_userName = (userName == null) ? "" : userName;
+		super(userName, nickName, personalMessage, status, font, textColour);
 		m_password = (password == null) ? "" : password;
-		m_nickName = (nickName == null) ? "" : nickName;
-		m_personalMessage = (personalMessage == null) ? "" : personalMessage;
-		m_status = StatusType.isValid(status) ? status : StatusType.Offline;
-		m_font = (font == null) ? Globals.DEFAULT_FONT : font;
-		m_textColour = (textColour == null) ? Globals.DEFAULT_TEXT_COLOUR : textColour;
 		m_contacts = new Vector<Contact>();
 	}
 	
-	public String getUserName() { return m_userName; }
-	
 	public String getPassword() { return m_password; }
 	
-	public String getNickName() { return m_nickName; }
-	
-	public String getPersonalMessage() { return m_personalMessage; }
-	
-	public int getStatus() { return m_status; }
-	
-	public Font getFont() { return m_font; }
-	
-	public Color getTextColour() { return m_textColour; }
-	
 	public void setPassword(String password) { if(password != null) { m_password = password; } } 
-	
-	public void setNickName(String nickName) { if(nickName != null) { m_nickName = nickName; } }
-	
-	public void setPersonalMessage(String personalMessage) { if(personalMessage != null) { m_personalMessage = personalMessage; } }
-	
-	public void setStatus(int status) { if(StatusType.isValid(status)) { m_status = status; } }
-	
-	public void setFont(Font font) { if(font != null) { m_font = font; } }
-	
-	public void setTextColour(Color textColour) { if(textColour != null) { m_textColour = textColour; } }
 	
 	public int getContactIndex(String userName) {
 		if(userName == null || userName.length() == 0) { return -1; }
