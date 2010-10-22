@@ -7,7 +7,7 @@ import shared.Globals;
 
 public class Message {
 	
-	private int m_id;
+	private long m_id;
 	private String m_userName;
 	private String m_nickName;
 	private String m_text;
@@ -15,9 +15,9 @@ public class Message {
 	private Color m_textColour;
 	private Calendar m_timeStamp;
 	
-	private static int m_idCounter = 0;
+	private static long m_idCounter = 0;
 	
-	public Message(Contact contact, int id, String text) {
+	public Message(Contact contact, long id, String text) {
 		this(id, contact.getUserName(), contact.getNickName(), text, contact.getFont(), contact.getTextColour());
 	}
 	
@@ -25,7 +25,7 @@ public class Message {
 		this(m_idCounter++, user.getUserName(), user.getNickName(), text, user.getFont(), user.getTextColour());
 	}
 	
-	private Message(int id, String userName, String nickName, String text, Font font, Color textColour) {
+	private Message(long id, String userName, String nickName, String text, Font font, Color textColour) {
 		m_id = id;
 		m_userName = (userName == null) ? "" : userName;
 		m_nickName = (nickName == null) ? "" : nickName;
@@ -35,7 +35,7 @@ public class Message {
 		m_timeStamp = Calendar.getInstance();
 	}
 	
-	public int getID() { return m_id; }
+	public long getID() { return m_id; }
 	
 	public String getUserName() { return m_userName; }
 	

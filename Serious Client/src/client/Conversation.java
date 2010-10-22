@@ -86,13 +86,13 @@ public class Conversation {
 	}
 	
 	// TODO: Finish me
-	public boolean receiveMessage(String userName, int id, String message) {
+	public boolean receiveMessage(String userName, long id, String message) {
 		if(userName == null || message == null) { return false; }
 		return receiveMessage(getParticipant(userName), id, message);
 	}
 	
 	// TODO: Finish me
-	public boolean receiveMessage(Contact c, int id, String message) {
+	public boolean receiveMessage(Contact c, long id, String message) {
 		if(c == null || message == null) { return false; }
 		
 		Message m = new Message(c, id, message);
