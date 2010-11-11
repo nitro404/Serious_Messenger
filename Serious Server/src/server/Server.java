@@ -26,9 +26,6 @@ public class Server extends JFrame {
     private JMenuItem serverSettingsSQLPortMenuItem;
     
     private JMenu serverDatabaseMenu;
-    private JMenuItem serverDatabaseCreateMenuItem;
-    private JMenuItem serverDatabaseDeleteMenuItem;
-    private JMenuItem serverDatabaseResetMenuItem;
     private JMenuItem serverDatabaseExecuteQueryMenuItem;
     private JMenuItem serverDatabaseExecuteUpdateMenuItem;
     
@@ -109,9 +106,6 @@ public class Server extends JFrame {
         serverSettingsSQLPortMenuItem = new JMenuItem();
         
         serverDatabaseMenu = new JMenu();
-        serverDatabaseCreateMenuItem = new JMenuItem();
-        serverDatabaseDeleteMenuItem = new JMenuItem();
-        serverDatabaseResetMenuItem = new JMenuItem();
         serverDatabaseExecuteQueryMenuItem = new JMenuItem();
         serverDatabaseExecuteUpdateMenuItem = new JMenuItem();
         
@@ -394,30 +388,6 @@ public class Server extends JFrame {
 
         serverDatabaseMenu.setText("Database");
 
-        serverDatabaseCreateMenuItem.setText("Create");
-        serverDatabaseCreateMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverDatabaseCreateMenuItemActionPerformed(evt);
-            }
-        });
-        serverDatabaseMenu.add(serverDatabaseCreateMenuItem);
-
-        serverDatabaseDeleteMenuItem.setText("Delete");
-        serverDatabaseDeleteMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverDatabaseDeleteMenuItemActionPerformed(evt);
-            }
-        });
-        serverDatabaseMenu.add(serverDatabaseDeleteMenuItem);
-
-        serverDatabaseResetMenuItem.setText("Reset");
-        serverDatabaseResetMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverDatabaseResetMenuItemActionPerformed(evt);
-            }
-        });
-        serverDatabaseMenu.add(serverDatabaseResetMenuItem);
-
         serverDatabaseExecuteQueryMenuItem.setText("Execute Query");
         serverDatabaseExecuteQueryMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -521,18 +491,6 @@ public class Server extends JFrame {
     private void serverSettingsSQLPortMenuItemActionPerformed(ActionEvent evt) {
         // TODO add your handling code here:
     	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    }
-
-    private void serverDatabaseCreateMenuItemActionPerformed(ActionEvent evt) {
-    	m_dbms.createDatabase();
-    }
-
-    private void serverDatabaseDeleteMenuItemActionPerformed(ActionEvent evt) {
-    	m_dbms.dropDatabase();
-    }
-
-    private void serverDatabaseResetMenuItemActionPerformed(ActionEvent evt) {
-    	m_dbms.resetDatabase();
     }
     
     private void serverDatabaseExecuteQueryMenuItemActionPerformed(ActionEvent evt) {
