@@ -1,5 +1,7 @@
 package shared;
 
+import java.io.*;
+
 public class ByteStream {
 	
 	private byte[] m_data;
@@ -306,6 +308,16 @@ public class ByteStream {
 			temp[i] = m_data[i];
 		}
 		m_data = temp;
+	}
+	
+	public boolean writeTo(DataOutputStream out) {
+		if(out == null) { return false; }
+		try {
+			out.write(m_data);
+			return true;
+		}
+		catch(IOException e) { }
+		return false;
 	}
 	
 }

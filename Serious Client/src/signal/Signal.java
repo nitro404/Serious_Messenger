@@ -1,5 +1,6 @@
 package signal;
 
+import java.io.*;
 import shared.*;
 
 public class Signal {
@@ -35,6 +36,13 @@ public class Signal {
 		if(byteStream == null) { return; }
 		byteStream.addInteger(m_signalType);
 		byteStream.addLong(ByteStream.getChecksum(m_signalType));
+	}
+	
+	public void writeTo(DataOutputStream out) {
+		if(out == null) { return; }
+		ByteStream bs = new ByteStream();
+		writeTo(bs);
+		bs.writeTo(out);
 	}
 	
 }
