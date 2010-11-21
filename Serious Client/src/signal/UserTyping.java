@@ -26,9 +26,6 @@ public class UserTyping extends Signal {
 	}
 	
 	public static UserTyping readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.UserTyping) { return null; }		
-		
 		UserTyping s2 = new UserTyping();
 		
 		s2.m_typing = byteStream.nextBoolean();

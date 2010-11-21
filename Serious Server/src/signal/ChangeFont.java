@@ -85,9 +85,6 @@ public class ChangeFont extends Signal {
 	}
 	
 	public static ChangeFont readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ChangeFont) { return null; }		
-		
 		ChangeFont s2 = new ChangeFont();
 		
 		s2.m_fontFace = byteStream.nextString(Globals.MAX_FONTFACE_LENGTH);

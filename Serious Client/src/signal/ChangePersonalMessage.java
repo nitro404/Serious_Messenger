@@ -26,9 +26,6 @@ public class ChangePersonalMessage extends Signal {
 	}
 	
 	public static ChangePersonalMessage readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ChangePersonalMessage) { return null; }		
-		
 		ChangePersonalMessage s2 = new ChangePersonalMessage();
 		
 		s2.m_personalMessage = byteStream.nextString(Globals.MAX_PERSONAL_MESSAGE_LENGTH);

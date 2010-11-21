@@ -33,9 +33,6 @@ public class LoginRequest extends Signal {
 	}
 	
 	public static LoginRequest readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.LoginRequest) { return null; }		
-		
 		LoginRequest s2 = new LoginRequest();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

@@ -33,9 +33,6 @@ public class ContactBlocked extends Signal {
 	}
 	
 	public static ContactBlocked readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ContactBlocked) { return null; }		
-		
 		ContactBlocked s2 = new ContactBlocked();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

@@ -26,9 +26,6 @@ public class PasswordChanged extends Signal {
 	}
 	
 	public static PasswordChanged readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.PasswordChanged) { return null; }		
-		
 		PasswordChanged s2 = new PasswordChanged();
 		
 		s2.m_passwordChanged = byteStream.nextBoolean();

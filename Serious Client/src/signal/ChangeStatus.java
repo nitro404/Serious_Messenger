@@ -26,9 +26,6 @@ public class ChangeStatus extends Signal {
 	}
 	
 	public static ChangeStatus readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ChangeStatus) { return null; }		
-		
 		ChangeStatus s2 = new ChangeStatus();
 		
 		s2.m_status = byteStream.nextByte();

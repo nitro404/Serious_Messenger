@@ -47,9 +47,6 @@ public class BroadcastLogin extends Signal {
 	}
 	
 	public static BroadcastLogin readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.BroadcastLogin) { return null; }		
-		
 		BroadcastLogin s2 = new BroadcastLogin();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

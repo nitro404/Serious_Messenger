@@ -26,9 +26,6 @@ public class LoginAuthenticated extends Signal {
 	}
 	
 	public static LoginAuthenticated readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.LoginAuthenticated) { return null; }		
-		
 		LoginAuthenticated s2 = new LoginAuthenticated();
 		
 		s2.m_authenticated = byteStream.nextBoolean();

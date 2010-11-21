@@ -26,9 +26,6 @@ public class ChangeNickname extends Signal {
 	}
 	
 	public static ChangeNickname readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ChangeNickname) { return null; }		
-		
 		ChangeNickname s2 = new ChangeNickname();
 		
 		s2.m_nickName = byteStream.nextString(Globals.MAX_NICKNAME_LENGTH);

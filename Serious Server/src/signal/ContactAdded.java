@@ -33,9 +33,6 @@ public class ContactAdded extends Signal {
 	}
 	
 	public static ContactAdded readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ContactAdded) { return null; }		
-		
 		ContactAdded s2 = new ContactAdded();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

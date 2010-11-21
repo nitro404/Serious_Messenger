@@ -26,9 +26,6 @@ public class Logout extends Signal {
 	}
 	
 	public static Logout readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.Logout) { return null; }		
-		
 		Logout s2 = new Logout();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

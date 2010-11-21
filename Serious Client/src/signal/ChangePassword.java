@@ -40,9 +40,6 @@ public class ChangePassword extends Signal {
 	}
 	
 	public static ChangePassword readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ChangePassword) { return null; }		
-		
 		ChangePassword s2 = new ChangePassword();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

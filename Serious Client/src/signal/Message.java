@@ -39,9 +39,6 @@ public class Message extends Signal {
 	}
 	
 	public static Message readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.Message) { return null; }		
-		
 		Message s2 = new Message();
 		
 		s2.m_messageID = byteStream.nextLong();

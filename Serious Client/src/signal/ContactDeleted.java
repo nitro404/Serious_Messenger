@@ -33,9 +33,6 @@ public class ContactDeleted extends Signal {
 	}
 	
 	public static ContactDeleted readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.ContactDeleted) { return null; }		
-		
 		ContactDeleted s2 = new ContactDeleted();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);

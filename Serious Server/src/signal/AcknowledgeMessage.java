@@ -33,9 +33,6 @@ public class AcknowledgeMessage extends Signal {
 	}
 	
 	public static AcknowledgeMessage readFrom(ByteStream byteStream) {
-		Signal s = Signal.readFrom(byteStream);
-		if(s == null || s.getSignalType() != SignalType.AcknowledgeMessage) { return null; }		
-		
 		AcknowledgeMessage s2 = new AcknowledgeMessage();
 		
 		s2.m_messageID = byteStream.nextLong();
