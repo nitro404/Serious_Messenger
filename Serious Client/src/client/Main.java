@@ -4,7 +4,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Client client = new Client();
+		ClientWindow client = new ClientWindow();
 		client.initialize();
 		
 	}

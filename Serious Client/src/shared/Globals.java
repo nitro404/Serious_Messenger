@@ -16,4 +16,7 @@ public class Globals {
 	final public static Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
 	final public static Color DEFAULT_TEXT_COLOUR = new Color(0, 0, 0);
 	
+	// networking constants
+	final public static int DEFAULT_PORT = 25500;
+	final public static String DEFAULT_HOST = "localhost";
 }

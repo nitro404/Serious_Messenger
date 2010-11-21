@@ -77,8 +77,7 @@ public class UserDBMS {
 	public void dropUserProfileTable() {
 		try {
 			stmt.executeUpdate(
-				"IF NOT EXISTS " + userProfileTableName +
-					"DROP TABLE " + userProfileTableName
+				"DROP TABLE IF EXISTS " + userProfileTableName
 			);
 			
 			m_logger.addInfo("Dropped table " + userProfileTableName);
@@ -91,8 +90,7 @@ public class UserDBMS {
 	public void dropUserContactTable() {
 		try {
 			stmt.executeUpdate(
-				"IF NOT EXISTS " + userContactTableName +
-					"DROP TABLE " + userContactTableName
+				"DROP TABLE IF EXISTS " + userContactTableName
 			);
 			
 			m_logger.addInfo("Dropped table " + userContactTableName);
@@ -105,8 +103,7 @@ public class UserDBMS {
 	public void dropUserGroupTable() {
 		try {
 			stmt.executeUpdate(
-				"IF NOT EXISTS " + userGroupTableName +
-					"DROP TABLE " + userGroupTableName
+				"DROP TABLE IF EXISTS " + userGroupTableName
 			);
 			
 			m_logger.addInfo("Dropped table " + userGroupTableName);
@@ -119,8 +116,7 @@ public class UserDBMS {
 	public void dropUserDataTable() {
 		try {
 			stmt.executeUpdate(
-				"IF NOT EXISTS " + userDataTableName +
-					"DROP TABLE " + userDataTableName
+				"DROP TABLE IF EXISTS " + userDataTableName 
 			);
 			
 			m_logger.addInfo("Dropped table " + userDataTableName);
@@ -133,7 +129,7 @@ public class UserDBMS {
 	public void createUserDataTable() {
 		try {
 			stmt.executeUpdate(
-				"CREATE TABLE " + userDataTableName + " (" +
+				"CREATE TABLE IF NOT EXISTS " + userDataTableName + " (" +
 					"UserName		VARCHAR(32)		NOT NULL," +
 					"Password		VARCHAR(32)		NOT NULL," +
 					"IPAddress		VARCHAR(15)," +
@@ -153,7 +149,7 @@ public class UserDBMS {
 	public void createUserGroupTable() {
 		try {
 			stmt.executeUpdate(
-				"CREATE TABLE " + userGroupTableName + " (" +
+				"CREATE TABLE IF NOT EXISTS " + userGroupTableName + " (" +
 					"UserName		VARCHAR(32)		NOT NULL," +
 					"GroupName		VARCHAR(32)		NOT NULL," +
 					"PRIMARY KEY(UserName, GroupName)," +
@@ -171,7 +167,7 @@ public class UserDBMS {
 	public void createUserProfileTable() {
 		try {
 			stmt.executeUpdate(
-				"CREATE TABLE " + userProfileTableName + " (" +
+				"CREATE TABLE IF NOT EXISTS " + userProfileTableName + " (" +
 					"UserName		VARCHAR(32)		NOT NULL," +
 					"FirstName		VARCHAR(32)		NOT NULL," +
 					"MiddleName		VARCHAR(32)," +
@@ -200,7 +196,7 @@ public class UserDBMS {
 	public void createUserContactTable() {
 		try {
 			stmt.executeUpdate(
-				"CREATE TABLE " + userContactTableName + " (" +
+				"CREATE TABLE IF NOT EXISTS " + userContactTableName + " (" +
 					"UserName		VARCHAR(32)		NOT NULL," +
 					"Contact		VARCHAR(32)		NOT NULL," +
 					"GroupName		VARCHAR(32)		NOT NULL," +
