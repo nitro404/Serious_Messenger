@@ -97,6 +97,9 @@ public class InputSignalQueue {
 					ChangeStatus s2 = (ChangeStatus) s;
 					//update client
 				}
+				else {
+					//unexpected signal
+				}
 			}
 		}
 	}

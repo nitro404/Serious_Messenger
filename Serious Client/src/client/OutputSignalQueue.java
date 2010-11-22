@@ -81,6 +81,9 @@ public class OutputSignalQueue {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
+				else {
+					//unexpected signal
+				}
 			}
 		}
 	}
