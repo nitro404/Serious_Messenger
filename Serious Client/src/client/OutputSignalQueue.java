@@ -7,12 +7,12 @@ import shared.*;
 
 public class OutputSignalQueue {
 	
-	private ArrayDeque<Signal> m_inSignalQueue;
+	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
 	
 	public OutputSignalQueue(){
-		m_inSignalQueue = new ArrayDeque<Signal>();
+		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 	
 	public void initialize(Client c, DataInputStream in, DataOutputStream out){
@@ -23,13 +23,13 @@ public class OutputSignalQueue {
 	public void addSignal(Signal s){
 		if (s == null) { return; }
 		
-		m_inSignalQueue.add(s);
+		m_outSignalQueue.add(s);
 	}
 	
 	public void run(){
 		while (true){
-			if (!m_inSignalQueue.isEmpty()){
-				Signal s = m_inSignalQueue.remove();
+			if (!m_outSignalQueue.isEmpty()){
+				Signal s = m_outSignalQueue.remove();
 					
 				if (s.getSignalType() == SignalType.LoginRequest) {
 					s.writeTo(m_out);
