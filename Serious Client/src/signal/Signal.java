@@ -7,6 +7,9 @@ public class Signal {
 	
 	protected int m_signalType;
 	
+	final public static int LENGTH = Integer.SIZE +
+									 Long.SIZE;
+	
 	public Signal(int signalType) {
 		m_signalType = signalType;
 	}

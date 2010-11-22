@@ -9,19 +9,30 @@ public class ByteStream {
 	
 	private int m_position = 0;
 	
-	final public static int INITIAL_CAPACITY = 64;
+	private int m_initialCapacity;
+	final public static int DEFAULT_CAPACITY = 64;
 	final public static int CAPACITY_INCREMENT = 32;
 	
 	public ByteStream() {
-		m_data = new byte[INITIAL_CAPACITY];
+		m_data = new byte[DEFAULT_CAPACITY];
+		m_initialCapacity = DEFAULT_CAPACITY;
+	}
+	
+	public ByteStream(int initialCapacity) {
+		m_initialCapacity = (initialCapacity > 0) ? initialCapacity : DEFAULT_CAPACITY;
+		m_data = new byte[m_initialCapacity];
 	}
 	
 	public int size() {
 		return m_length;
 	}
 	
+	public byte[] getContents() {
+		return m_data;
+	}
+	
 	public void clear() {
-		m_data = new byte[INITIAL_CAPACITY];
+		m_data = new byte[m_initialCapacity];
 		m_length = 0;
 	}
 	
@@ -308,6 +319,18 @@ public class ByteStream {
 			temp[i] = m_data[i];
 		}
 		m_data = temp;
+	}
+	
+	public static ByteStream readFrom(DataInputStream in, int length) {
+		if(in == null || length < 1) { return null; }
+		ByteStream bs = new ByteStream(length);
+		try {
+			in.read(bs.getContents(), 0, length);
+		}
+		catch(IOException e) {
+			return null;
+		}
+		return bs;
 	}
 	
 	public boolean writeTo(DataOutputStream out) {

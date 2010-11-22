@@ -3,6 +3,8 @@ package server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayDeque;
+import java.util.Vector;
+
 import signal.*;
 import shared.*;
 
@@ -10,12 +12,16 @@ public class InputSignalQueue {
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
+	private Server m_server;
+	private Client m_client;
 
 	public InputSignalQueue() {
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Server s, DataInputStream in, DataOutputStream out) {
+	public void initialize(Server server, Client client, DataInputStream in, DataOutputStream out) {
+		m_server = server;
+		m_client = client;
 		m_in = in;
 		m_out = out;
 	}
@@ -28,8 +34,8 @@ public class InputSignalQueue {
 		m_inSignalQueue.add(s);
 	}
 	
-	public void run(){//0,2,8,10,12,14
-		while (true){
+	public void run() {
+		while (true) {
 			if (!m_inSignalQueue.isEmpty()){
 				Signal s = m_inSignalQueue.remove();
 				

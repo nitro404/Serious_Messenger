@@ -6,6 +6,9 @@ public class UserTyping extends Signal {
 	
 	private boolean m_typing;
 	
+	final public static int LENGTH = Byte.SIZE +
+									 Long.SIZE;
+	
 	private UserTyping() {
 		super(SignalType.UserTyping);
 	}

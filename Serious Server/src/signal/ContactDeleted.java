@@ -7,6 +7,10 @@ public class ContactDeleted extends Signal {
 	private String m_userName;
 	private boolean m_deleted;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									 Byte.SIZE +
+									 Long.SIZE;
+	
 	private ContactDeleted() {
 		super(SignalType.ContactDeleted);
 	}

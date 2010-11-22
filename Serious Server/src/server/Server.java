@@ -51,11 +51,18 @@ public class Server extends Thread {
 			}
 			
 			if(newClient != null) {
-				newClient.initialize();
+				newClient.initialize(this, m_logger);
 				m_clients.add(newClient);
 				m_logger.addInfo("Established connection to client #" + m_clientCounter + ".");
 			}
 		}
+	}
+	
+	public int numberOfClients() { return m_clients.size(); }
+	
+	public Client getClient(int index) {
+		if(index < 0 || index >= m_clients.size()) { return null; }
+		return m_clients.elementAt(index);
 	}
 	
 	public Object[] getLastSystemLogEntryAsArray() {

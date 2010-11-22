@@ -9,6 +9,12 @@ public class BroadcastLogin extends Signal {
 	private String m_personalMessage;
 	private byte m_status;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									 (Character.SIZE * Globals.MAX_NICKNAME_LENGTH) +
+									 (Character.SIZE * Globals.MAX_PERSONAL_MESSAGE_LENGTH) +
+									 Byte.SIZE +
+									 Long.SIZE;
+	
 	private BroadcastLogin() {
 		super(SignalType.LoginRequest);
 	}

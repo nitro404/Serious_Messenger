@@ -7,6 +7,10 @@ public class BlockContact extends Signal {
 	private String m_userName;
 	private boolean m_blocked;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									 Byte.SIZE +
+									 Long.SIZE;
+	
 	private BlockContact() {
 		super(SignalType.BlockContact);
 	}

@@ -6,9 +6,15 @@ public class Message extends Signal {
 	
 	private long m_messageID;
 	private boolean m_acknowledge;
+	private int m_messageLength = -1;
 	private String m_message; 
 	
 	private static long m_currentMessageID = 0;
+	
+	final public static int LENGTH = Long.SIZE +
+									 Byte.SIZE +
+									 Integer.SIZE +
+									 Long.SIZE;
 	
 	private Message() {
 		super(SignalType.Message);
@@ -19,10 +25,15 @@ public class Message extends Signal {
 		m_messageID = m_currentMessageID++;
 		m_acknowledge = true;
 		m_message = message;
+		m_messageLength = message.length();
 	}
 	
 	public long getMessageID() {
 		return m_messageID;
+	}
+	
+	public int getMessageLength() {
+		return m_messageLength;
 	}
 	
 	public String getMessage() {
@@ -43,9 +54,9 @@ public class Message extends Signal {
 		
 		s2.m_messageID = byteStream.nextLong();
 		s2.m_acknowledge = byteStream.nextBoolean();
-		int messageLength = byteStream.nextInteger();
+		s2.m_messageLength = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
-		s2.m_message = byteStream.nextString(messageLength);
+		s2.m_message = byteStream.nextString(s2.m_messageLength);
 		
 		if(checksum != s2.checksum()) { return null; }
 		

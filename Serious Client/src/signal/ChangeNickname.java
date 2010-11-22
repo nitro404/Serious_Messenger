@@ -6,6 +6,9 @@ public class ChangeNickname extends Signal {
 	
 	private String m_nickName;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_NICKNAME_LENGTH) +
+									 Long.SIZE;
+	
 	private ChangeNickname() {
 		super(SignalType.ChangeNickname);
 	}

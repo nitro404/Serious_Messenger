@@ -7,6 +7,10 @@ public class ContactAdded extends Signal {
 	private String m_userName;
 	private boolean m_added;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									 Byte.SIZE +
+									 Long.SIZE;
+	
 	private ContactAdded() {
 		super(SignalType.ContactAdded);
 	}

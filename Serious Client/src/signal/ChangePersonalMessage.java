@@ -6,6 +6,9 @@ public class ChangePersonalMessage extends Signal {
 	
 	private String m_personalMessage;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_PERSONAL_MESSAGE_LENGTH) +
+									 Long.SIZE;
+	
 	private ChangePersonalMessage() {
 		super(SignalType.ChangePersonalMessage);
 	}

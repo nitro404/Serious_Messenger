@@ -42,8 +42,8 @@ public class InputSignalQueue {
 					// add to collection
 				}
 				else if (s.getSignalType() == SignalType.Message) {
-					//Message s2 = (Message)s;
-					//random error ^
+					//Message s2 = (Message) s;
+					// conflicts with local message object, change signal to have signal at end (for all signals)
 				}
 				else if (s.getSignalType() == SignalType.AcknowledgeMessage) {
 					AcknowledgeMessage s2 = (AcknowledgeMessage) s;

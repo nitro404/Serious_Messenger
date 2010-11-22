@@ -2,7 +2,6 @@ package client;
 
 import java.io.*;
 import java.net.*;
-import java.util.Queue;
 import javax.swing.JOptionPane;
 import signal.*;
 

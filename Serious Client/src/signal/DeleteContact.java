@@ -6,6 +6,9 @@ public class DeleteContact extends Signal {
 	
 	private String m_userName;
 	
+	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									 Long.SIZE;
+	
 	private DeleteContact() {
 		super(SignalType.DeleteContact);
 	}

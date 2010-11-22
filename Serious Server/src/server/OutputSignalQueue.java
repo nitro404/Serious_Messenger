@@ -1,8 +1,7 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.util.ArrayDeque;
+import java.io.*;
+import java.util.*;
 import signal.*;
 import shared.*;
 
@@ -10,12 +9,16 @@ public class OutputSignalQueue {
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
+	private Server m_server;
+	private Client m_client;
 
 	public OutputSignalQueue() {
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Server s, DataInputStream in, DataOutputStream out) {
+	public void initialize(Server server, Client client, DataInputStream in, DataOutputStream out) {
+		m_server = server;
+		m_client = client;
 		m_in = in;
 		m_out = out;
 	}
