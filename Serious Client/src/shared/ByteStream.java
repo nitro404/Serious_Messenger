@@ -336,7 +336,7 @@ public class ByteStream {
 	public boolean writeTo(DataOutputStream out) {
 		if(out == null) { return false; }
 		try {
-			out.write(m_data);
+			out.write(m_data, 0, m_length);
 			return true;
 		}
 		catch(IOException e) { }

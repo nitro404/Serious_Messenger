@@ -8,9 +8,9 @@ public class ChangePassword extends Signal {
 	private String m_oldPassword;
 	private String m_newPassword;
 	
-	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
-									 ((Character.SIZE * Globals.MAX_PASSWORD_LENGTH) * 2) +
-									 Long.SIZE;
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									  ((Character.SIZE * Globals.MAX_PASSWORD_LENGTH) * 2) +
+									  Long.SIZE) / 8;
 	
 	private ChangePassword() {
 		super(SignalType.ChangePassword);

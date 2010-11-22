@@ -12,11 +12,11 @@ public class ChangeFont extends Signal {
 	private boolean m_strikeout;
 	private int[] m_colour;
 	
-	final public static int LENGTH = (Character.SIZE * Globals.MAX_FONTFACE_LENGTH) +
-									 Integer.SIZE +
-									 (Byte.SIZE * 4) +
-									 (Integer.SIZE * 3) +
-									 Long.SIZE;
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_FONTFACE_LENGTH) +
+									  Integer.SIZE +
+									  (Byte.SIZE * 4) +
+									  (Integer.SIZE * 3) +
+									  Long.SIZE) / 8;
 	
 	private ChangeFont() {
 		super(SignalType.ChangeFont);

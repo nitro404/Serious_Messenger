@@ -46,19 +46,19 @@ public class Logger {
 	public void addInfo(String text) {
 		SystemLogEntry e = new SystemLogEntry(SystemLogEntryType.Information, text);
 		m_systemLog.add(e);
-		m_serverWindow.addSystemLogEntry(e);
+		if(m_serverWindow != null) { m_serverWindow.addSystemLogEntry(e); }
 	}
 	
 	public void addWarning(String text) {
 		SystemLogEntry e = new SystemLogEntry(SystemLogEntryType.Warning, text);
 		m_systemLog.add(e);
-		m_serverWindow.addSystemLogEntry(e);
+		if(m_serverWindow != null) { m_serverWindow.addSystemLogEntry(e); }
 	}
 	
 	public void addError(String text) {
 		SystemLogEntry e = new SystemLogEntry(SystemLogEntryType.Error, text);
 		m_systemLog.add(e);
-		m_serverWindow.addSystemLogEntry(e);
+		if(m_serverWindow != null) { m_serverWindow.addSystemLogEntry(e); }
 	}
 	
 	public void addCommand(String userName, String text) {

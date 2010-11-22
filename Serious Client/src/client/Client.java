@@ -23,8 +23,8 @@ public class Client extends Thread {
 			m_connection = new Socket(host, port);
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
-			m_inSignalQueue.initialize(this, m_in, m_out);
-			m_outSignalQueue.initialize(this, m_in, m_out);
+			m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
+			m_outSignalQueue.initialize(this, m_out);
 			start();
 		}
 		catch(IOException e) {
@@ -32,8 +32,18 @@ public class Client extends Thread {
 		}
 	}
 	
+	public Socket getConnection() { return m_connection; }
+	
+	public boolean isConnected() { return m_connection.isConnected(); }
+	
+	public DataInputStream getInputStream() { return m_in; }
+	
+	public DataOutputStream getOutputStream() { return m_out; }
+	
 	public void run() {
-		
+		while(isConnected()) {
+			m_inSignalQueue.readSignal();
+		}
 	}
 
 }

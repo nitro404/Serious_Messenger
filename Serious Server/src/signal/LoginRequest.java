@@ -7,9 +7,9 @@ public class LoginRequest extends Signal {
 	private String m_userName;
 	private String m_password;
 	
-	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
-									 (Character.SIZE * Globals.MAX_PASSWORD_LENGTH) +
-									 Long.SIZE;
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									  (Character.SIZE * Globals.MAX_PASSWORD_LENGTH) +
+									  Long.SIZE) / 8;
 	
 	private LoginRequest() {
 		super(SignalType.LoginRequest);

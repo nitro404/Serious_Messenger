@@ -7,9 +7,9 @@ public class AcknowledgeMessage extends Signal {
 	private long m_messageID;
 	private boolean m_received;
 	
-	final public static int LENGTH = Long.SIZE +
-									 Byte.SIZE +
-									 Long.SIZE;
+	final public static int LENGTH = (Long.SIZE +
+									  Byte.SIZE +
+									  Long.SIZE) / 8;
 	
 	private AcknowledgeMessage() {
 		super(SignalType.AcknowledgeMessage);

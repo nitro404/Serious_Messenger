@@ -6,8 +6,8 @@ public class PasswordChanged extends Signal {
 	
 	private boolean m_passwordChanged;
 	
-	final public static int LENGTH = Byte.SIZE +
-									 Long.SIZE;
+	final public static int LENGTH = (Byte.SIZE +
+									  Long.SIZE) / 8;
 	
 	private PasswordChanged() {
 		super(SignalType.PasswordChanged);

@@ -30,16 +30,25 @@ public class Client extends Thread {
 	
 	public void initialize(Server server, Logger logger) {
 		try {
+			m_logger = logger;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
-			m_inSignalQueue.initialize(server, this, m_in, m_out);
-			m_outSignalQueue.initialize(server, this, m_in, m_out);
+			m_inSignalQueue.initialize(server, this, m_in, m_outSignalQueue, m_logger);
+			m_outSignalQueue.initialize(server, this, m_out, m_logger);
 			start();
 		}
 		catch(IOException e) {
 			m_logger.addError("Unable to initalize connection to client #" + m_clientNumber + ".");
 		}
 	}
+	
+	public Socket getConnection() { return m_connection; }
+	
+	public boolean isConnected() { return m_connection.isConnected(); }
+	
+	public DataInputStream getInputStream() { return m_in; }
+	
+	public DataOutputStream getOutputStream() { return m_out; }
 	
 	public int getClientNumber() { return m_clientNumber; }
 	
@@ -60,7 +69,9 @@ public class Client extends Thread {
 	public boolean isOnline() { return m_online; }
 	
 	public void run() {
-		
+		while(isConnected()) {
+			m_inSignalQueue.readSignal();
+		}
 	}
 	
 }

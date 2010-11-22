@@ -1,23 +1,28 @@
 package client;
 
 import java.io.*;
-import java.util.ArrayDeque;
+import java.util.*;
+import shared.*;
+
+import javax.swing.JOptionPane;
+
 import signal.*;
 import shared.*;
 
-public class OutputSignalQueue {
+public class OutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
-	private DataInputStream m_in;
 	private DataOutputStream m_out;
+	private Client m_client;
 	
 	public OutputSignalQueue(){
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client c, DataInputStream in, DataOutputStream out){
-		m_in = in;
+	public void initialize(Client client, DataOutputStream out) {
+		m_client = client;
 		m_out = out;
+		start();
 	}
 	
 	public void addSignal(Signal s){
@@ -26,58 +31,58 @@ public class OutputSignalQueue {
 		m_outSignalQueue.add(s);
 	}
 	
-	public void run(){
-		while (true){
-			if (!m_outSignalQueue.isEmpty()){
+	public void run() {
+		while(m_client.isConnected()) {
+			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
 					
-				if (s.getSignalType() == SignalType.LoginRequest) {
+				if(s.getSignalType() == SignalType.LoginRequest) {
+					s.writeTo(m_out); 
+				}
+				else if(s.getSignalType() == SignalType.Logout) {
 					s.writeTo(m_out);
 				}
-				else if (s.getSignalType() == SignalType.Logout) {
-					s.writeTo(m_out);
-				}
-				else if (s.getSignalType() == SignalType.BroadcastLogin) {
+				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.Message) {
+				else if(s.getSignalType() == SignalType.Message) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.AcknowledgeMessage) {
+				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.UserTyping) {
+				else if(s.getSignalType() == SignalType.UserTyping) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.ChangeFont) {
+				else if(s.getSignalType() == SignalType.ChangeFont) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.ChangePassword) {
+				else if(s.getSignalType() == SignalType.ChangePassword) {
 					s.writeTo(m_out);
 				}
-				else if (s.getSignalType() == SignalType.AddContact) {
+				else if(s.getSignalType() == SignalType.AddContact) {
 					s.writeTo(m_out);
 				}
-				else if (s.getSignalType() == SignalType.DeleteContact) {
+				else if(s.getSignalType() == SignalType.DeleteContact) {
 					s.writeTo(m_out);
 				}
-				else if (s.getSignalType() == SignalType.BlockContact) {
+				else if(s.getSignalType() == SignalType.BlockContact) {
 					s.writeTo(m_out);
 				}
-				else if (s.getSignalType() == SignalType.ChangeNickname) {
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.ChangePersonalMessage) {
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
 				//	s.writeTo(m_out);
 					//TODO: send to client
 				}
-				else if (s.getSignalType() == SignalType.ChangeStatus) {
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
@@ -85,6 +90,11 @@ public class OutputSignalQueue {
 					//unexpected signal
 				}
 			}
+			
+			try { sleep(Globals.QUEUE_INTERVAL); }
+			catch (InterruptedException e) { }
+			
 		}
 	}
+	
 }

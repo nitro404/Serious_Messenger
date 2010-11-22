@@ -11,10 +11,10 @@ public class Message extends Signal {
 	
 	private static long m_currentMessageID = 0;
 	
-	final public static int LENGTH = Long.SIZE +
-									 Byte.SIZE +
-									 Integer.SIZE +
-									 Long.SIZE;
+	final public static int LENGTH = (Long.SIZE +
+									  Byte.SIZE +
+									  Integer.SIZE +
+									  Long.SIZE) / 8;
 	
 	private Message() {
 		super(SignalType.Message);

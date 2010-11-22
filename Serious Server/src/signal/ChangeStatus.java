@@ -6,8 +6,8 @@ public class ChangeStatus extends Signal {
 	
 	private byte m_status;
 	
-	final public static int LENGTH = Byte.SIZE +
-									 Long.SIZE;
+	final public static int LENGTH = (Byte.SIZE +
+									  Long.SIZE) / 8;
 	
 	private ChangeStatus() {
 		super(SignalType.ChangeStatus);

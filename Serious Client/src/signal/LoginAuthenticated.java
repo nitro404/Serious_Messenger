@@ -6,8 +6,8 @@ public class LoginAuthenticated extends Signal {
 	
 	private boolean m_authenticated;
 	
-	final public static int LENGTH = Byte.SIZE +
-									 Long.SIZE;
+	final public static int LENGTH = (Byte.SIZE +
+									  Long.SIZE) / 8;
 	
 	private LoginAuthenticated() {
 		super(SignalType.LoginAuthenticated);

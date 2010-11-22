@@ -6,8 +6,8 @@ public class Logout extends Signal {
 	
 	private String m_userName;
 	
-	final public static int LENGTH = (Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
-									 Long.SIZE;
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									  Long.SIZE) / 8;
 	
 	private Logout() {
 		super(SignalType.Logout);
