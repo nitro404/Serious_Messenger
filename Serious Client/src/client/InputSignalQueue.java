@@ -29,7 +29,7 @@ public class InputSignalQueue {
 	public void run(){
 		while (true){
 			if (!m_inSignalQueue.isEmpty()){
-				Signal s = m_inSignalQueue.poll();
+				Signal s = m_inSignalQueue.remove();
 				
 				if (s.getSignalType() == SignalType.LoginAuthenticated) {
 					LoginAuthenticated s2 = (LoginAuthenticated) s;

@@ -29,7 +29,7 @@ public class OutputSignalQueue {
 	public void run(){
 		while (true){
 			if (!m_inSignalQueue.isEmpty()){
-				Signal s = m_inSignalQueue.poll();
+				Signal s = m_inSignalQueue.remove();
 					
 				if (s.getSignalType() == SignalType.LoginRequest) {
 					s.writeTo(m_out);
