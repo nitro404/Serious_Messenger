@@ -24,7 +24,7 @@ public class InputSignalQueue extends Thread {
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
-		start();
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
 	public void addSignal(Signal s){
@@ -33,13 +33,24 @@ public class InputSignalQueue extends Thread {
 		m_inSignalQueue.add(s);
 	}
 	
+	private void sendSignal(Signal s) {
+		if(s == null) { return; }
+		
+		m_outSignalQueue.addSignal(s);
+	}
+	
 	public void readSignal() {
+		if(!m_client.isConnected()) { return; }
+		
 		Signal s = Signal.readFrom(ByteStream.readFrom(m_in, Signal.LENGTH));
 		Signal s2 = null;
 		
 		if(s == null) { return; }
 		
-		if(s.getSignalType() == SignalType.LoginAuthenticated) {
+		if(s.getSignalType() == SignalType.Ping) {
+			s2 = s;
+		}
+		else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 			s2 = LoginAuthenticated.readFrom(ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
@@ -49,7 +60,7 @@ public class InputSignalQueue extends Thread {
 //			ByteStream bs = ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH);
 //			bs.readFrom(m_in, )
 //			s2 = LoginAuthenticated.readFrom();
-			// need to have read more shit and append or w/e on bytestream for this to work
+			// need to have read more stuff and append or w/e on bytestream for this to work
 		}
 		else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 			s2 = AcknowledgeMessage.readFrom(ByteStream.readFrom(m_in, AcknowledgeMessage.LENGTH));
@@ -95,15 +106,19 @@ public class InputSignalQueue extends Thread {
 				
 				if(s == null) { continue; }
 				
-				if(s.getSignalType() == SignalType.LoginAuthenticated) {
+				if(s.getSignalType() == SignalType.Ping) {
+					sendSignal(new Signal(SignalType.Pong));
+				}
+				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 					LoginAuthenticated s2 = (LoginAuthenticated) s;
 					if(s2.getAuthenticated()) {
+						m_client.authenticated();
 						JOptionPane.showMessageDialog(null, "Successfully Logged In");
 					}
 					else {
+						m_client.disconnect();
 						JOptionPane.showMessageDialog(null, "Login Failed");
 					}
-					// update client
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					BroadcastLogin s2 = (BroadcastLogin) s;
@@ -123,7 +138,7 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.UserTyping) {
 					UserTyping s2 = (UserTyping) s;
 					if (s2.getTyping()) {
-						//update gui + do shit
+						//update gui + do stuff
 					}
 				}
 				else if(s.getSignalType() == SignalType.ChangeFont) {
@@ -165,9 +180,6 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					ChangeStatus s2 = (ChangeStatus) s;
 					//update client
-				}
-				else {
-					//unexpected signal
 				}
 			}
 			

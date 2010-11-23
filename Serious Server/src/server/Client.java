@@ -2,8 +2,8 @@ package server;
 
 import java.io.*;
 import java.net.*;
-
-import signal.Signal;
+import shared.*;
+import signal.*;
 import logger.*;
 
 public class Client extends Thread {
@@ -13,17 +13,26 @@ public class Client extends Thread {
 	private String m_password;
 	private boolean m_online;
 	
+	private InetAddress m_ipAddress;
+	private int m_port;
+	
 	private Socket m_connection;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
 	private InputSignalQueue m_inSignalQueue;
 	private OutputSignalQueue m_outSignalQueue;
+	private int m_timeElapsed = 0;
+	private boolean m_awaitingResponse = false;
 	
 	private Logger m_logger;
+	
+	public static int currentPort = 25502;
 	
 	public Client(Socket connection, int clientNumber) {
 		m_clientNumber = clientNumber;
 		m_connection = connection;
+		m_ipAddress = connection.getInetAddress();
+		m_port = currentPort++;
 		m_inSignalQueue = new InputSignalQueue();
 		m_outSignalQueue = new OutputSignalQueue();
 	}
@@ -38,13 +47,58 @@ public class Client extends Thread {
 			start();
 		}
 		catch(IOException e) {
-			m_logger.addError("Unable to initalize connection to client #" + m_clientNumber + ".");
+			m_logger.addError("Unable to initalize connection to client #" + m_clientNumber);
 		}
 	}
 	
 	public Socket getConnection() { return m_connection; }
 	
-	public boolean isConnected() { return m_connection.isConnected(); }
+	public InetAddress getIPAddress() { return m_ipAddress; }
+	
+	public String getIPAddressString() { return m_ipAddress.getHostAddress(); }
+	
+	public int getPort() { return m_port; }
+	
+	public boolean isConnected() {
+		return m_connection.isConnected() && !timeout();
+	}
+	
+	public boolean ping() {
+		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
+			m_timeElapsed = 0;
+			m_awaitingResponse = true;
+			m_outSignalQueue.addSignal(new Signal(SignalType.Ping));
+			return true;
+		}
+		return false;
+	}
+	
+	public void pong() {
+		m_timeElapsed = 0;
+		m_awaitingResponse = false;
+	}
+	
+	public boolean awaitingResponse() { return m_awaitingResponse; }
+	
+	public int timeElapsed() { return m_timeElapsed; }
+	
+	public void addTime(long time) {
+		if(time <= 0) { return; }
+		m_timeElapsed += time;
+	}
+	
+	public boolean timeout() {
+		return m_awaitingResponse && m_timeElapsed >= Globals.CONNECTION_TIMEOUT;
+	}
+	
+	public void terminate() {
+		try {
+			m_out.close();
+			m_in.close();
+			m_connection.close();
+		}
+		catch(IOException e) { }
+	}
 	
 	public DataInputStream getInputStream() { return m_in; }
 	
@@ -65,6 +119,10 @@ public class Client extends Thread {
 			   password != null &&
 			   m_password.equals(password);
 	}
+	
+	public void setUserName(String userName) { m_userName = userName; }
+	
+	public void setPassword(String password) { m_password = password; }
 	
 	public boolean isOnline() { return m_online; }
 	

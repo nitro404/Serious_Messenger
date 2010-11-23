@@ -3,11 +3,7 @@ package client;
 import java.io.*;
 import java.util.*;
 import shared.*;
-
-import javax.swing.JOptionPane;
-
 import signal.*;
-import shared.*;
 
 public class OutputSignalQueue extends Thread {
 	
@@ -22,7 +18,7 @@ public class OutputSignalQueue extends Thread {
 	public void initialize(Client client, DataOutputStream out) {
 		m_client = client;
 		m_out = out;
-		start();
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
 	public void addSignal(Signal s){
@@ -35,12 +31,16 @@ public class OutputSignalQueue extends Thread {
 		while(m_client.isConnected()) {
 			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
-					
-				if(s.getSignalType() == SignalType.LoginRequest) {
+				
+				if(s.getSignalType() == SignalType.Pong) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.LoginRequest) {
 					s.writeTo(m_out); 
 				}
 				else if(s.getSignalType() == SignalType.Logout) {
 					s.writeTo(m_out);
+					m_client.disconnect();
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					//s.writeTo(m_out);
@@ -85,9 +85,6 @@ public class OutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					//s.writeTo(m_out);
 					//TODO: send to client
-				}
-				else {
-					//unexpected signal
 				}
 			}
 			

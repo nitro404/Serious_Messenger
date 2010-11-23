@@ -35,7 +35,7 @@ public class ClientWindow extends JFrame {
     	
         initComponents();
         
-        fileSignOutMenuItem.setEnabled(false);
+        //fileSignOutMenuItem.setEnabled(false);
         contactsAddContactMenuItem.setEnabled(false);
         contactsGreateGroupMenuItem.setEnabled(false);
         nickNameTextField.setEnabled(false);
@@ -44,11 +44,6 @@ public class ClientWindow extends JFrame {
     }
     
     public void initialize() {
-    	initialize(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
-    }
-    
-    public void initialize(String host, int port) {
-    	m_client.initialize(host, port);
     	setVisible(true);
     }
     
@@ -191,12 +186,32 @@ public class ClientWindow extends JFrame {
         pack();
     }
     
+    public void update() {
+    	if(m_client.getClientState() == ClientState.Disconnected) {
+    		fileSignInMenuItem.setEnabled(true);
+    		fileSignOutMenuItem.setEnabled(true);
+    	}
+    }
+    
     private void fileSignInMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	if(m_client.getClientState() != ClientState.Disconnected) {
+    		JOptionPane.showMessageDialog(null, "Please log out first.", "Already Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+    	String userName = JOptionPane.showInputDialog(null, "Username:", "Username", JOptionPane.QUESTION_MESSAGE);
+    	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
+    	m_client.initialize();
+    	m_client.login(userName, password);
     }
 
     private void fileSignOutMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	if(m_client.getClientState() == ClientState.Disconnected) {
+    		JOptionPane.showMessageDialog(null, "Unable to log out, you are not logged in.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+        m_client.logout();
     }
 
     private void fileExitMenuItemActionPerformed(ActionEvent evt) {

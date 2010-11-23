@@ -132,7 +132,6 @@ public class UserDBMS {
 				"CREATE TABLE IF NOT EXISTS " + userDataTableName + " (" +
 					"UserName		VARCHAR(32)		NOT NULL," +
 					"Password		VARCHAR(32)		NOT NULL," +
-					"IPAddress		VARCHAR(15)," +
 					"LastLogin		DATETIME		NOT NULL," +
 					"JoinDate		DATETIME		NOT NULL," +
 					"PRIMARY KEY(UserName)" +
@@ -227,16 +226,11 @@ public class UserDBMS {
 	*/
 	
 	public void createUser(String userName, String password) {
-		createUser(userName, password, "");
-	}
-	
-	public void createUser(String userName, String password, String ipAddress) {
 		try {
 			stmt.executeUpdate(
 				"INSERT INTO " + userDataTableName + " VALUES(" +
 					"'" + userName + "', " +
 					"'" + password + "', " +
-					"'" + ipAddress + "', " +
 					"CURRENT_TIMESTAMP, " +
 					"CURRENT_TIMESTAMP" +
 				")"
@@ -333,6 +327,44 @@ public class UserDBMS {
 			m_logger.addError("Error removing profile for user " + userName + ": " + e.getMessage());
 		}
 	}
+	
+	
+
+	public boolean userLogin(String userName, String password) {
+		try {
+			boolean authenticated = stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
+					"SET LastLogin = CURRENT_TIMESTAMP " +
+				"WHERE UserName = '" + userName + "' " +
+					"AND Password = '" + password + "'"
+			) != 0;
+			
+			if(authenticated) {
+				m_logger.addInfo("User " + userName + " logged in");
+			}
+			
+			return authenticated;
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error processing login request for user " + userName + ": " + e.getMessage());
+		}
+		return false;
+	}
+	
+	public void userLogout(String userName) {
+		try {
+			stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
+					"SET LastLogin = CURRENT_TIMESTAMP " +
+				"WHERE UserName = '" + userName + "'"
+			);
+			
+			m_logger.addInfo("User " + userName + " logged out");
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error processing logout request for user " + userName + ": " + e.getMessage());
+		}
+	}
 
 	public void changeUserPassword(String userName, String oldPassword, String newPassword) {
 		try {
@@ -350,38 +382,6 @@ public class UserDBMS {
 		}
 	}
 	
-	public void userLogin(String userName, String ipAddress) {
-		try {
-			stmt.executeUpdate(
-				"UPDATE " + userDataTableName + " " +
-					"SET LastLogin = CURRENT_TIMESTAMP, " +
-					"IPAddress = '" + ipAddress + "' " +
-				"WHERE UserName = '" + userName + "'"
-			);
-			
-			m_logger.addInfo("User " + userName + " logged in");
-		}
-		catch(SQLException e) {
-			m_logger.addError("Error processing login request for user " + userName + ": " + e.getMessage());
-		}
-	}
-	
-	public void userLogout(String userName) {
-		try {
-			stmt.executeUpdate(
-				"UPDATE " + userDataTableName + " " +
-					"SET LastLogin = CURRENT_TIMESTAMP, " +
-					"IPAddress = ''" +
-				"WHERE UserName = '" + userName + "'"
-			);
-			
-			m_logger.addInfo("User " + userName + " logged out");
-		}
-		catch(SQLException e) {
-			m_logger.addError("Error processing logout request for user " + userName + ": " + e.getMessage());
-		}
-	}
-
 	public void addContact(String userName, String contact) {
 		try {
 			stmt.executeUpdate(
@@ -436,6 +436,21 @@ public class UserDBMS {
 		catch(SQLException e) {
 			m_logger.addError("Error " + ((blocked == 0) ? " un" : " ") + "blocking contact " + contact + " for user " + userName);
 		}
+	}
+	
+	public int executeUpdate(String query) {
+		int updated = -1;
+		
+		try {
+			updated = stmt.executeUpdate(query);
+			
+			m_logger.addInfo("Executed custom update");
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error executing custom update: " + e.getMessage());
+		}
+		
+		return updated;
 	}
 	
 	public String[][] executeQuery(String query) {

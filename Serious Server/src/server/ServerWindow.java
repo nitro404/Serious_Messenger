@@ -498,8 +498,9 @@ public class ServerWindow extends JFrame {
     }
     
     private void serverDatabaseExecuteUpdateMenuItemActionPerformed(ActionEvent evt) {
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    	//TODO: finish me
+    	String query = JOptionPane.showInputDialog(null, "Update Database", "What do you wish to update?", JOptionPane.QUESTION_MESSAGE);
+    	int updated = m_server.executeUpdate(query);
+    	JOptionPane.showMessageDialog(null, "Update result: " + updated, "Update Results", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void serverTablesCreateMenuItemActionPerformed(ActionEvent evt) {

@@ -23,7 +23,7 @@ public class OutputSignalQueue extends Thread {
 		m_client = client;
 		m_out = out;
 		m_logger = logger;
-		start();
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 
 	public void addSignal(Signal s) {
@@ -37,23 +37,26 @@ public class OutputSignalQueue extends Thread {
 			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
 
-				if(s.getSignalType() == SignalType.LoginAuthenticated) {
-					//s.writeTo(m_out);
+				if(s.getSignalType() == SignalType.Ping) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
+					s.writeTo(m_out);
 				} 
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
-					// s.writeTo(clientOut);
+					s.writeTo(m_out);
 				} 
 				else if(s.getSignalType() == SignalType.ContactAdded) {
-					// s.writeTo(clientOut);
+					s.writeTo(m_out);
 				} 
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
-					// s.writeTo(clientOut);
+					s.writeTo(m_out);
 				} 
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
-					// s.writeTo(clientOut);
+					s.writeTo(m_out);
 				} 
 				else {
-					// unexpected signal
+					m_logger.addWarning("Unexpected output signal of type: " + s.getSignalType());
 				}
 			}
 			

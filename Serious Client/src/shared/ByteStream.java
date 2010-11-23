@@ -325,6 +325,7 @@ public class ByteStream {
 		if(in == null || length < 1) { return null; }
 		ByteStream bs = new ByteStream(length);
 		try {
+			if(in.available() <= 0) { return null; }
 			in.read(bs.getContents(), 0, length);
 		}
 		catch(IOException e) {

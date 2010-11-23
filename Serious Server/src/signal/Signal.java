@@ -28,7 +28,7 @@ public class Signal {
 		int id = byteStream.nextInteger();
 		long idChecksum = byteStream.nextLong();
 		if(ByteStream.getChecksum(id) != idChecksum) {
-			return new Signal(SignalType.Invalid);
+			return null;
 		}
 		else {
 			return new Signal(id);

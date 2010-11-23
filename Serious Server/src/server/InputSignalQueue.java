@@ -2,6 +2,9 @@ package server;
 
 import java.io.*;
 import java.util.*;
+
+import javax.swing.JOptionPane;
+
 import signal.*;
 import shared.*;
 import logger.*;
@@ -25,22 +28,33 @@ public class InputSignalQueue extends Thread {
 		m_in = in;
 		m_outSignalQueue = out;
 		m_logger = logger;
-		start();
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 
 	public void addSignal(Signal s) {
-		if (s == null) { return; }
+		if(s == null) { return; }
 
 		m_inSignalQueue.add(s);
 	}
 	
+	private void sendSignal(Signal s) {
+		if(s == null) { return; }
+		
+		m_outSignalQueue.addSignal(s);
+	}
+	
 	public void readSignal() {
+		if(!m_client.isConnected()) { return; }
+		
 		Signal s = Signal.readFrom(ByteStream.readFrom(m_in, Signal.LENGTH));
 		Signal s2 = null;
 		
 		if(s == null) { return; }
 		
-		if(s.getSignalType() == SignalType.LoginRequest) {
+		if(s.getSignalType() == SignalType.Pong) {
+			s2 = s;
+		}
+		else if(s.getSignalType() == SignalType.LoginRequest) {
 			s2 = LoginRequest.readFrom(ByteStream.readFrom(m_in, LoginRequest.LENGTH)); 
 		}	
 		else if(s.getSignalType() == SignalType.Logout) {
@@ -59,7 +73,8 @@ public class InputSignalQueue extends Thread {
 			s2 = BlockContact.readFrom(ByteStream.readFrom(m_in, BlockContact.LENGTH));
 		}
 		else {
-			return;
+// TODO: FIX THIS
+			m_logger.addWarning("Unexpected input signal of type: " + s.getSignalType());
 		}
 		
 		addSignal(s2);
@@ -70,23 +85,23 @@ public class InputSignalQueue extends Thread {
 			if(!m_inSignalQueue.isEmpty()) {
 				Signal s = m_inSignalQueue.remove();
 				
-				if(s.getSignalType() == SignalType.LoginRequest) {
+				if(s.getSignalType() == SignalType.Pong) {
+					m_client.pong();
+				}
+				else if(s.getSignalType() == SignalType.LoginRequest) {
 					LoginRequest s2 = (LoginRequest) s;
 					
-					/*
-					boolean authenticated = false;
-					if(s2.getUserName().equalsIgnoreCase("nitro404") &&
-					   s2.getPassword().equalsIgnoreCase("password")) {
-						authenticated = true;
-					}
-					m_outSignalQueue.addSignal(new LoginAuthenticated(authenticated));
-					m_logger.addCommand(s2.getUserName(), "Login Request [" + s2.getUserName() + "," + s2.getPassword() + "]: " + ((authenticated) ? "Accepted" : "Rejected"));
-					*/
-					//do stuff
+					boolean authenticated = m_server.authenticateUser(m_client, s2.getUserName(), s2.getPassword());
+					sendSignal(new LoginAuthenticated(authenticated));
+					
+					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
 				}	
 				else if(s.getSignalType() == SignalType.Logout) {
 					Logout s2 = (Logout) s;
-					//do stuff
+					
+					m_client.terminate();
+					
+					m_logger.addCommand(s2.getUserName(), "Logged Out");
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePassword s2 = (ChangePassword) s;
@@ -103,6 +118,9 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.BlockContact) {
 					BlockContact s2 = (BlockContact) s;
 					//do stuff
+				}
+				else {
+					m_logger.addWarning("Unexpected input signal of type: " + s.getSignalType());
 				}
 			}
 			
