@@ -11,12 +11,12 @@ public class Client extends Thread {
 	private int m_clientNumber;
 	private String m_userName;
 	private String m_password;
-	private boolean m_online;
 	
 	private InetAddress m_ipAddress;
 	private int m_port;
 	
 	private Socket m_connection;
+	private boolean m_connected = false;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
 	private InputSignalQueue m_inSignalQueue;
@@ -40,6 +40,7 @@ public class Client extends Thread {
 	
 	public void initialize(Server server, Logger logger) {
 		try {
+			m_connected = true;
 			m_logger = logger;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
@@ -48,6 +49,7 @@ public class Client extends Thread {
 			if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 		}
 		catch(IOException e) {
+			m_connected = false;
 			m_logger.addError("Unable to initalize connection to client #" + m_clientNumber);
 		}
 	}
@@ -61,7 +63,7 @@ public class Client extends Thread {
 	public int getPort() { return m_port; }
 	
 	public boolean isConnected() {
-		return m_connection.isConnected() && !timeout();
+		return m_connected && !timeout();
 	}
 	
 	public boolean ping() {
@@ -92,13 +94,12 @@ public class Client extends Thread {
 		return m_awaitingResponse && m_timeElapsed >= Globals.CONNECTION_TIMEOUT;
 	}
 	
-	public void terminate() {
-		try {
-			m_out.close();
-			m_in.close();
-			m_connection.close();
-		}
-		catch(IOException e) { }
+	public void disconnect() {
+		m_connected = false;
+		
+		try { m_out.close(); } catch(IOException e) { }
+		try { m_in.close(); } catch(IOException e) { }
+		try { m_connection.close(); } catch(IOException e) { }
 	}
 	
 	public DataInputStream getInputStream() { return m_in; }
@@ -124,8 +125,6 @@ public class Client extends Thread {
 	public void setUserName(String userName) { m_userName = userName; }
 	
 	public void setPassword(String password) { m_password = password; }
-	
-	public boolean isOnline() { return m_online; }
 	
 	public void run() {
 		while(isConnected()) {

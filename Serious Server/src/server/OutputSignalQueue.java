@@ -45,6 +45,10 @@ public class OutputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 					s.writeTo(m_out);
+					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
+					if(!s2.getAuthenticated()) {
+						m_client.disconnect();
+					}
 				} 
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					s.writeTo(m_out);

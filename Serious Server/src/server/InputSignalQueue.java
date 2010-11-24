@@ -103,9 +103,11 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Logout) {
 					LogoutSignal s2 = (LogoutSignal) s;
 					
-					m_client.terminate();
+					m_client.disconnect();
 					
 					m_logger.addCommand(s2.getUserName(), "Logged Out");
+					
+					m_logger.addInfo("Client #" + m_client.getClientNumber() + " (" + s2.getUserName() + ") logged out");
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePasswordSignal s2 = (ChangePasswordSignal) s;

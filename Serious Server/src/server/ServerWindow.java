@@ -78,7 +78,6 @@ public class ServerWindow extends JFrame {
 	
 	public void initialize(int port) {
 		m_server.initialize(port, this);
-		m_server.start();
 		setVisible(true);
 	}
 	

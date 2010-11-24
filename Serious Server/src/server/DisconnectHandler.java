@@ -32,12 +32,14 @@ public class DisconnectHandler extends Thread {
 				c.ping();
 				
 				if(!c.isConnected()) {
-					c.terminate();
+					c.disconnect();
 					
 					m_clients.remove(i);
 					i--;
 					
-					m_logger.addInfo("Client #" + c.getClientNumber() + " (" + c.getUserName() + ") " + (c.timeout() ? "timed out" : "disconnected"));
+					if(c.timeout()) {
+						m_logger.addInfo("Client #" + c.getClientNumber() + " (" + c.getUserName() + ") timed out");
+					}
 				}
 			}
 			

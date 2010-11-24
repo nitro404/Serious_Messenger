@@ -30,13 +30,12 @@ public class Client extends Thread {
 	
 	public void initialize() {
 		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
-		m_disconnectHandler.initialize(this);
 	}
 
 	public Socket getConnection() { return m_connection; }
 	
 	public boolean isConnected() {
-		return m_connection.isConnected() && !timeout();
+		return m_state > ClientState.Disconnected && !timeout();
 	}
 	
 	public DataInputStream getInputStream() { return m_in; }
@@ -49,13 +48,14 @@ public class Client extends Thread {
 		if(m_state != ClientState.Disconnected) { return; }
 		
 		try {
+			setState(ClientState.Connected);
 			m_connection = new Socket(host, port);
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
 			m_outSignalQueue.initialize(this, m_out);
 			if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
-			setState(ClientState.Connected);
+			m_disconnectHandler.initialize(this);
 		}
 		catch(IOException e) {
 			setState(ClientState.Disconnected);
@@ -64,14 +64,11 @@ public class Client extends Thread {
 	}
 	
 	public void disconnect() {
-		try {
-			m_out.close();
-			m_in.close();
-			m_connection.close();
-		}
-		catch(IOException e) { }
-		
 		setState(ClientState.Disconnected);
+		
+		try { m_out.close(); } catch(IOException e) { }
+		try { m_in.close(); } catch(IOException e) { }
+		try { m_connection.close(); } catch(IOException e) { }
 	}
 	
 	public void login(String userName, String password) {

@@ -40,6 +40,7 @@ public class Server extends Thread {
 		m_dbms.initialize(m_logger);
 		m_dbms.connect();
 		m_disconnectHandler.initialize(m_clients, m_logger);
+		start();
 	}
 	
 	public void run() {
@@ -54,6 +55,7 @@ public class Server extends Thread {
 				m_logger.addError("Unable to connect to client #" + m_clientCounter);
 			}
 			
+			// if a connection was establish to the client, store the client object
 			if(newClient != null) {
 				newClient.initialize(this, m_logger);
 				m_clients.add(newClient);
@@ -92,6 +94,7 @@ public class Server extends Thread {
 	public boolean authenticateUser(Client client, String userName, String password) {
 		boolean authenticated = m_dbms.userLogin(userName, password);
 		
+		// make sure the user isn't already logged in
 		if(authenticated) {
 			for(int i=0;i<m_clients.size();i++) {
 				if(userName.equalsIgnoreCase(m_clients.elementAt(i).getUserName())) {
