@@ -23,7 +23,7 @@ public class OutputSignalQueue extends Thread {
 		m_client = client;
 		m_out = out;
 		m_logger = logger;
-		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 
 	public void addSignal(Signal s) {

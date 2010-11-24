@@ -19,9 +19,9 @@ public class Globals {
 	// networking constants
 	final public static int DEFAULT_PORT = 25500;
 	final public static String DEFAULT_HOST = "localhost";
-	final public static long QUEUE_INTERVAL = 100;
+	final public static long QUEUE_INTERVAL = 50;
 	final public static long TIMEOUT_INTERVAL = 100;
-	final public static long PING_INTERVAL = 2500;
-	final public static long CONNECTION_TIMEOUT = 10000;
+	final public static long PING_INTERVAL = 5000;
+	final public static long CONNECTION_TIMEOUT = 5000;
 	
 }

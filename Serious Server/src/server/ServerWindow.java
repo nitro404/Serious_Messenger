@@ -18,12 +18,6 @@ public class ServerWindow extends JFrame {
     private JMenuItem serverFileDisconnectMenuItem;
     private JMenuItem serverFileExitMenuItem;
     
-    private JMenu serverSettingsMenu;
-    private JCheckBoxMenuItem serverSettingsAutoconnectMenuItem;
-    private JCheckBoxMenuItem serverSettingsAutoreconnectMenuItem;
-    private JMenuItem serverSettingsSQLAddressMenuItem;
-    private JMenuItem serverSettingsSQLPortMenuItem;
-    
     private JMenu serverDatabaseMenu;
     private JMenuItem serverDatabaseExecuteQueryMenuItem;
     private JMenuItem serverDatabaseExecuteUpdateMenuItem;
@@ -94,12 +88,6 @@ public class ServerWindow extends JFrame {
         serverFileConnectMenuItem = new JMenuItem();
         serverFileDisconnectMenuItem = new JMenuItem();
         serverFileExitMenuItem = new JMenuItem();
-        
-        serverSettingsMenu = new JMenu();
-        serverSettingsAutoconnectMenuItem = new JCheckBoxMenuItem();
-        serverSettingsAutoreconnectMenuItem = new JCheckBoxMenuItem();
-        serverSettingsSQLAddressMenuItem = new JMenuItem();
-        serverSettingsSQLPortMenuItem = new JMenuItem();
         
         serverDatabaseMenu = new JMenu();
         serverDatabaseExecuteQueryMenuItem = new JMenuItem();
@@ -344,44 +332,6 @@ public class ServerWindow extends JFrame {
 
         serverMenuBar.add(serverFileMenu);
 
-        serverSettingsMenu.setText("Settings");
-
-        serverSettingsAutoconnectMenuItem.setSelected(true);
-        serverSettingsAutoconnectMenuItem.setText("Autoconnect to SQL Database on Startup");
-        serverSettingsAutoconnectMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverSettingsAutoconnectMenuItemActionPerformed(evt);
-            }
-        });
-        serverSettingsMenu.add(serverSettingsAutoconnectMenuItem);
-
-        serverSettingsAutoreconnectMenuItem.setSelected(true);
-        serverSettingsAutoreconnectMenuItem.setText("Auto-reconnect to SQL Database ");
-        serverSettingsAutoreconnectMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverSettingsAutoreconnectMenuItemActionPerformed(evt);
-            }
-        });
-        serverSettingsMenu.add(serverSettingsAutoreconnectMenuItem);
-
-        serverSettingsSQLAddressMenuItem.setText("Change SQL Database Address");
-        serverSettingsSQLAddressMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverSettingsSQLAddressMenuItemActionPerformed(evt);
-            }
-        });
-        serverSettingsMenu.add(serverSettingsSQLAddressMenuItem);
-
-        serverSettingsSQLPortMenuItem.setText("Change SQL Database Port");
-        serverSettingsSQLPortMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                serverSettingsSQLPortMenuItemActionPerformed(evt);
-            }
-        });
-        serverSettingsMenu.add(serverSettingsSQLPortMenuItem);
-
-        serverMenuBar.add(serverSettingsMenu);
-
         serverDatabaseMenu.setText("Database");
 
         serverDatabaseExecuteQueryMenuItem.setText("Execute Query");
@@ -457,11 +407,21 @@ public class ServerWindow extends JFrame {
 	}
 	
     private void serverFileConnectMenuItemActionPerformed(ActionEvent evt) {
-    	m_server.databaseConnect();
+    	if(!m_server.databaseConnnected()) {
+    		m_server.databaseConnect();
+    	}
+    	else {
+    		JOptionPane.showMessageDialog(null, "Already connected to database.", "Already Connected", JOptionPane.INFORMATION_MESSAGE);
+    	}
     }
     
     private void serverFileDisconnectMenuItemActionPerformed(ActionEvent evt) {
-    	m_server.databaseDisconnect();
+    	if(m_server.databaseConnnected()) {
+    		m_server.databaseDisconnect();
+    	}
+    	else {
+    		JOptionPane.showMessageDialog(null, "Not connected to database.", "Not Connected", JOptionPane.INFORMATION_MESSAGE);
+    	}
     }
     
     private void serverFileExitMenuItemActionPerformed(ActionEvent evt) {

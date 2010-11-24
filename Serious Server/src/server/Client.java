@@ -46,7 +46,7 @@ public class Client extends Thread {
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(server, this, m_in, m_outSignalQueue, m_logger);
 			m_outSignalQueue.initialize(server, this, m_out, m_logger);
-			if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
+			if(getState() == Thread.State.NEW) { start(); }
 		}
 		catch(IOException e) {
 			m_connected = false;
@@ -129,6 +129,9 @@ public class Client extends Thread {
 	public void run() {
 		while(isConnected()) {
 			m_inSignalQueue.readSignal();
+			
+			try { sleep(Globals.QUEUE_INTERVAL); }
+			catch (InterruptedException e) { }
 		}
 	}
 	

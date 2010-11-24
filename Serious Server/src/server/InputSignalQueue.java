@@ -25,7 +25,7 @@ public class InputSignalQueue extends Thread {
 		m_in = in;
 		m_outSignalQueue = out;
 		m_logger = logger;
-		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 
 	public void addSignal(Signal s) {

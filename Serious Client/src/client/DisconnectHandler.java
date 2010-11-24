@@ -14,7 +14,7 @@ public class DisconnectHandler extends Thread {
 	public void initialize(Client client) {
 		m_client = client;
 		if(m_client == null) { return; }
-		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
 	public void run() {

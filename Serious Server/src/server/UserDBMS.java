@@ -11,6 +11,7 @@ import logger.*;
 public class UserDBMS {
 	
 	private Connection sqlConnection = null;
+	private boolean m_connected = false;
 	private Statement stmt = null;
 	final private static String databaseFileName = "serious.db";
 	private String userDataTableName = "UserData";
@@ -31,6 +32,8 @@ public class UserDBMS {
 		m_logger.addInfo("Connecting to SQL Database: " + databaseFileName);
 		
 		try {
+			m_connected = true;
+			
 			DriverManager.registerDriver(new org.sqlite.JDBC());
 			sqlConnection = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
 
@@ -39,12 +42,14 @@ public class UserDBMS {
 			stmt = sqlConnection.createStatement();
 		}
 		catch(SQLException e) {
+			m_connected = false;
 			m_logger.addError("Error connecting to SQL database: " + e.getMessage());
 		}
 	}
 	
 	public void disconnect() {
 		try {
+			m_connected = false;
 			stmt = null;
 			sqlConnection.close();
 			
@@ -53,6 +58,10 @@ public class UserDBMS {
 		catch(SQLException e) {
 			m_logger.addError("Error disconnecting from SQL database: " + e.getMessage());
 		}
+	}
+	
+	public boolean isConnected() {
+		return m_connected;
 	}
 	
 	public void resetTables() {

@@ -40,7 +40,7 @@ public class Server extends Thread {
 		m_dbms.initialize(m_logger);
 		m_dbms.connect();
 		m_disconnectHandler.initialize(m_clients, m_logger);
-		start();
+		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
 	public void run() {
@@ -77,6 +77,10 @@ public class Server extends Thread {
 	
 	public void databaseDisconnect() {
 		m_dbms.disconnect();
+	}
+	
+	public boolean databaseConnnected() {
+		return m_dbms.isConnected();
 	}
 	
 	public void createTables() {
