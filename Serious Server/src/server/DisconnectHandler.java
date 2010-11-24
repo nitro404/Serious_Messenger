@@ -1,8 +1,7 @@
 package server;
 
 import java.util.Vector;
-
-import shared.Globals;
+import shared.*;
 import logger.*;
 
 public class DisconnectHandler extends Thread {
@@ -19,7 +18,7 @@ public class DisconnectHandler extends Thread {
 		m_clients = clients;
 		m_logger = logger;
 		if(m_clients == null) { return; }
-		if(getState() == Thread.State.NEW) { start(); }
+		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 	}
 	
 	public void run() {

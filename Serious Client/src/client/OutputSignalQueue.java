@@ -18,7 +18,7 @@ public class OutputSignalQueue extends Thread {
 	public void initialize(Client client, DataOutputStream out) {
 		m_client = client;
 		m_out = out;
-		if(getState() == Thread.State.NEW) { start(); }
+		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 	}
 	
 	public void addSignal(Signal s){
@@ -32,7 +32,10 @@ public class OutputSignalQueue extends Thread {
 			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
 				
-				if(s.getSignalType() == SignalType.Pong) {
+				if(s.getSignalType() == SignalType.Ping) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.Pong) {
 					s.writeTo(m_out);
 				}
 				else if(s.getSignalType() == SignalType.LoginRequest) {

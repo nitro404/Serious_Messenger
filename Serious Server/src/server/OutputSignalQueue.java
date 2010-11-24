@@ -23,7 +23,7 @@ public class OutputSignalQueue extends Thread {
 		m_client = client;
 		m_out = out;
 		m_logger = logger;
-		if(getState() == Thread.State.NEW) { start(); }
+		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 	}
 
 	public void addSignal(Signal s) {
@@ -38,6 +38,9 @@ public class OutputSignalQueue extends Thread {
 				Signal s = m_outSignalQueue.remove();
 
 				if(s.getSignalType() == SignalType.Ping) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.Pong) {
 					s.writeTo(m_out);
 				}
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {

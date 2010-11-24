@@ -24,7 +24,7 @@ public class InputSignalQueue extends Thread {
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
-		if(getState() == Thread.State.NEW) { start(); }
+		if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 	}
 	
 	public void addSignal(Signal s){
@@ -48,6 +48,9 @@ public class InputSignalQueue extends Thread {
 		if(s == null) { return; }
 		
 		if(s.getSignalType() == SignalType.Ping) {
+			s2 = s;
+		}
+		else if(s.getSignalType() == SignalType.Pong) {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.LoginAuthenticated) {
@@ -108,6 +111,9 @@ public class InputSignalQueue extends Thread {
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
+				}
+				else if(s.getSignalType() == SignalType.Pong) {
+					m_client.pong();
 				}
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 					LoginAuthenticated s2 = (LoginAuthenticated) s;

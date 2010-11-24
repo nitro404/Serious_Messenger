@@ -2,9 +2,8 @@ package client;
 
 import java.io.*;
 import java.net.*;
-import javax.swing.JOptionPane;
-
-import shared.Globals;
+import javax.swing.*;
+import shared.*;
 import signal.*;
 
 public class Client extends Thread {
@@ -19,18 +18,26 @@ public class Client extends Thread {
 	private InputSignalQueue m_inSignalQueue;
 	private OutputSignalQueue m_outSignalQueue;
 	
+	private DisconnectHandler m_disconnectHandler = null;
+	private int m_timeElapsed = 0;
+	private boolean m_awaitingResponse = false;
+	
 	public Client() {
 		m_inSignalQueue = new InputSignalQueue();
 		m_outSignalQueue = new OutputSignalQueue();
+		m_disconnectHandler = new DisconnectHandler();
 	}
 	
 	public void initialize() {
 		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
+		m_disconnectHandler.initialize(this);
 	}
 
 	public Socket getConnection() { return m_connection; }
 	
-	public boolean isConnected() { return m_connection.isConnected(); }
+	public boolean isConnected() {
+		return m_connection.isConnected() && !timeout();
+	}
 	
 	public DataInputStream getInputStream() { return m_in; }
 	
@@ -47,7 +54,7 @@ public class Client extends Thread {
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
 			m_outSignalQueue.initialize(this, m_out);
-			if(getState() == Thread.State.NEW) { start(); }
+			if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 			setState(ClientState.Connected);
 		}
 		catch(IOException e) {
@@ -87,6 +94,34 @@ public class Client extends Thread {
 		// get contact list, then set status to online
 		
 		m_state = ClientState.Online;
+	}
+	
+	public boolean ping() {
+		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
+			m_timeElapsed = 0;
+			m_awaitingResponse = true;
+			m_outSignalQueue.addSignal(new Signal(SignalType.Ping));
+			return true;
+		}
+		return false;
+	}
+	
+	public void pong() {
+		m_timeElapsed = 0;
+		m_awaitingResponse = false;
+	}
+	
+	public boolean awaitingResponse() { return m_awaitingResponse; }
+	
+	public int timeElapsed() { return m_timeElapsed; }
+	
+	public void addTime(long time) {
+		if(time <= 0) { return; }
+		m_timeElapsed += time;
+	}
+	
+	public boolean timeout() {
+		return m_awaitingResponse && m_timeElapsed >= Globals.CONNECTION_TIMEOUT;
 	}
 
 	public boolean setState(int newState) {

@@ -21,6 +21,7 @@ public class Client extends Thread {
 	private DataOutputStream m_out;
 	private InputSignalQueue m_inSignalQueue;
 	private OutputSignalQueue m_outSignalQueue;
+	
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
@@ -44,7 +45,7 @@ public class Client extends Thread {
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(server, this, m_in, m_outSignalQueue, m_logger);
 			m_outSignalQueue.initialize(server, this, m_out, m_logger);
-			start();
+			if(getState() == Thread.State.NEW || getState() == Thread.State.TERMINATED) { start(); }
 		}
 		catch(IOException e) {
 			m_logger.addError("Unable to initalize connection to client #" + m_clientNumber);
