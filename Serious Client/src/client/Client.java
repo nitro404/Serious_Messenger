@@ -79,7 +79,7 @@ public class Client extends Thread {
 		
 		m_userName = userName;
 		m_password = password;
-		m_outSignalQueue.addSignal(new LoginRequest(userName, password));
+		m_outSignalQueue.addSignal(new LoginRequestSignal(userName, password));
 		
 		setState(ClientState.AwaitingAuthentication);
 	}
@@ -87,7 +87,7 @@ public class Client extends Thread {
 	public void logout() {
 		if(m_state == ClientState.Disconnected) { return; }
 		
-		m_outSignalQueue.addSignal(new Logout(m_userName));
+		m_outSignalQueue.addSignal(new LogoutSignal(m_userName));
 	}
 	
 	public void authenticated() {

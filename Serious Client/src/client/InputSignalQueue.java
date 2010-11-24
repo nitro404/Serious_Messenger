@@ -1,11 +1,8 @@
 package client;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayDeque;
-
-import javax.swing.JOptionPane;
-
+import javax.swing.*;
 import shared.*;
 import signal.*;
 
@@ -54,10 +51,10 @@ public class InputSignalQueue extends Thread {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.LoginAuthenticated) {
-			s2 = LoginAuthenticated.readFrom(ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH));
+			s2 = LoginAuthenticatedSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
-			s2 = BroadcastLogin.readFrom(ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH));
+			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.Message) {
 //			ByteStream bs = ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH);
@@ -66,34 +63,34 @@ public class InputSignalQueue extends Thread {
 			// need to have read more stuff and append or w/e on bytestream for this to work
 		}
 		else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
-			s2 = AcknowledgeMessage.readFrom(ByteStream.readFrom(m_in, AcknowledgeMessage.LENGTH));
+			s2 = AcknowledgeMessageSignal.readFrom(ByteStream.readFrom(m_in, AcknowledgeMessageSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.UserTyping) {
-			s2 = UserTyping.readFrom(ByteStream.readFrom(m_in, UserTyping.LENGTH));
+			s2 = UserTypingSignal.readFrom(ByteStream.readFrom(m_in, UserTypingSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangeFont) {
-			s2 = ChangeFont.readFrom(ByteStream.readFrom(m_in, ChangeFont.LENGTH));
+			s2 = ChangeFontSignal.readFrom(ByteStream.readFrom(m_in, ChangeFontSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.PasswordChanged) {
-			s2 = PasswordChanged.readFrom(ByteStream.readFrom(m_in, PasswordChanged.LENGTH));
+			s2 = PasswordChangedSignal.readFrom(ByteStream.readFrom(m_in, PasswordChangedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ContactAdded) {
-			s2 = ContactAdded.readFrom(ByteStream.readFrom(m_in, ContactAdded.LENGTH));
+			s2 = ContactAddedSignal.readFrom(ByteStream.readFrom(m_in, ContactAddedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ContactDeleted) {
-			s2 = ContactDeleted.readFrom(ByteStream.readFrom(m_in, ContactDeleted.LENGTH));
+			s2 = ContactDeletedSignal.readFrom(ByteStream.readFrom(m_in, ContactDeletedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ContactBlocked) {
-			s2 = ContactBlocked.readFrom(ByteStream.readFrom(m_in, ContactBlocked.LENGTH));
+			s2 = ContactBlockedSignal.readFrom(ByteStream.readFrom(m_in, ContactBlockedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangeNickname) {
-			s2 = ChangeNickname.readFrom(ByteStream.readFrom(m_in, ChangeNickname.LENGTH));
+			s2 = ChangeNicknameSignal.readFrom(ByteStream.readFrom(m_in, ChangeNicknameSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
-			s2 = ChangePersonalMessage.readFrom(ByteStream.readFrom(m_in, ChangePersonalMessage.LENGTH));
+			s2 = ChangePersonalMessageSignal.readFrom(ByteStream.readFrom(m_in, ChangePersonalMessageSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangeStatus) {
-			s2 = ChangeStatus.readFrom(ByteStream.readFrom(m_in, ChangeStatus.LENGTH));
+			s2 = ChangeStatusSignal.readFrom(ByteStream.readFrom(m_in, ChangeStatusSignal.LENGTH));
 		}
 		else {
 			return;
@@ -116,7 +113,7 @@ public class InputSignalQueue extends Thread {
 					m_client.pong();
 				}
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
-					LoginAuthenticated s2 = (LoginAuthenticated) s;
+					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(s2.getAuthenticated()) {
 						m_client.authenticated();
 						JOptionPane.showMessageDialog(null, "Successfully Logged In");
@@ -127,64 +124,64 @@ public class InputSignalQueue extends Thread {
 					}
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
-					BroadcastLogin s2 = (BroadcastLogin) s;
+					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
 					Contact c = new Contact(s2.getUserName(), s2.getNickName(), s2.getPersonalMessage(), s2.getStatus(), Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR);
 					// add to collection
 				}
 				else if(s.getSignalType() == SignalType.Message) {
-					//Message s2 = (Message) s;
+					MessageSignal s2 = (MessageSignal) s;
 					// conflicts with local message object, change signal to have signal at end (for all signals)
 				}
 				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
-					AcknowledgeMessage s2 = (AcknowledgeMessage) s;
+					AcknowledgeMessageSignal s2 = (AcknowledgeMessageSignal) s;
 					if (s2.getReceived()) {
 						//resend message
 					}
 				}
 				else if(s.getSignalType() == SignalType.UserTyping) {
-					UserTyping s2 = (UserTyping) s;
+					UserTypingSignal s2 = (UserTypingSignal) s;
 					if (s2.getTyping()) {
 						//update gui + do stuff
 					}
 				}
 				else if(s.getSignalType() == SignalType.ChangeFont) {
-					ChangeFont s2 = (ChangeFont) s;
+					ChangeFontSignal s2 = (ChangeFontSignal) s;
 					//create font style
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
-					PasswordChanged s2 = (PasswordChanged) s;
+					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
 					if (s2.getPasswordChanged()) {
 						//do something
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactAdded) {
-					ContactAdded s2 = (ContactAdded) s;
+					ContactAddedSignal s2 = (ContactAddedSignal) s;
 					if (s2.getAdded()) {
 						//update client list locaclly
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
-					ContactDeleted s2 = (ContactDeleted) s;
+					ContactDeletedSignal s2 = (ContactDeletedSignal) s;
 					if (s2.getDeleted()){
 						//update client gui
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
-					ContactBlocked s2 = (ContactBlocked) s;
+					ContactBlockedSignal s2 = (ContactBlockedSignal) s;
 					if (s2.getBlocked()){
 						//update client gui
 					}
 				}
 				else if(s.getSignalType() == SignalType.ChangeNickname) {
-					ChangeNickname s2 = (ChangeNickname) s;
+					ChangeNicknameSignal s2 = (ChangeNicknameSignal) s;
 					//update client
 				}
 				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
-					ChangePersonalMessage s2 = (ChangePersonalMessage) s;
+					ChangePersonalMessageSignal s2 = (ChangePersonalMessageSignal) s;
 					//update client
 				}
 				else if(s.getSignalType() == SignalType.ChangeStatus) {
-					ChangeStatus s2 = (ChangeStatus) s;
+					ChangeStatusSignal s2 = (ChangeStatusSignal) s;
 					//update client
 				}
 			}

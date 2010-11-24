@@ -339,10 +339,6 @@ public class UserDBMS {
 					"AND Password = '" + password + "'"
 			) != 0;
 			
-			if(authenticated) {
-				m_logger.addInfo("User " + userName + " logged in");
-			}
-			
 			return authenticated;
 		}
 		catch(SQLException e) {

@@ -2,9 +2,6 @@ package server;
 
 import java.io.*;
 import java.util.*;
-
-import javax.swing.JOptionPane;
-
 import signal.*;
 import shared.*;
 import logger.*;
@@ -59,22 +56,22 @@ public class InputSignalQueue extends Thread {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.LoginRequest) {
-			s2 = LoginRequest.readFrom(ByteStream.readFrom(m_in, LoginRequest.LENGTH)); 
+			s2 = LoginRequestSignal.readFrom(ByteStream.readFrom(m_in, LoginRequestSignal.LENGTH)); 
 		}	
 		else if(s.getSignalType() == SignalType.Logout) {
-			s2 = Logout.readFrom(ByteStream.readFrom(m_in, Logout.LENGTH));
+			s2 = LogoutSignal.readFrom(ByteStream.readFrom(m_in, LogoutSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangePassword) {
-			s2 = ChangePassword.readFrom(ByteStream.readFrom(m_in, ChangePassword.LENGTH));
+			s2 = ChangePasswordSignal.readFrom(ByteStream.readFrom(m_in, ChangePasswordSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.AddContact) {
-			s2 = AddContact.readFrom(ByteStream.readFrom(m_in, AddContact.LENGTH));
+			s2 = AddContactSignal.readFrom(ByteStream.readFrom(m_in, AddContactSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.DeleteContact) {
-			s2 = DeleteContact.readFrom(ByteStream.readFrom(m_in, DeleteContact.LENGTH));
+			s2 = DeleteContactSignal.readFrom(ByteStream.readFrom(m_in, DeleteContactSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.BlockContact) {
-			s2 = BlockContact.readFrom(ByteStream.readFrom(m_in, BlockContact.LENGTH));
+			s2 = BlockContactSignal.readFrom(ByteStream.readFrom(m_in, BlockContactSignal.LENGTH));
 		}
 		else {
 // TODO: FIX THIS
@@ -96,34 +93,34 @@ public class InputSignalQueue extends Thread {
 					m_client.pong();
 				}
 				else if(s.getSignalType() == SignalType.LoginRequest) {
-					LoginRequest s2 = (LoginRequest) s;
+					LoginRequestSignal s2 = (LoginRequestSignal) s;
 					
 					boolean authenticated = m_server.authenticateUser(m_client, s2.getUserName(), s2.getPassword());
-					sendSignal(new LoginAuthenticated(authenticated));
+					sendSignal(new LoginAuthenticatedSignal(authenticated));
 					
 					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
 				}	
 				else if(s.getSignalType() == SignalType.Logout) {
-					Logout s2 = (Logout) s;
+					LogoutSignal s2 = (LogoutSignal) s;
 					
 					m_client.terminate();
 					
 					m_logger.addCommand(s2.getUserName(), "Logged Out");
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
-					ChangePassword s2 = (ChangePassword) s;
+					ChangePasswordSignal s2 = (ChangePasswordSignal) s;
 					//do stuff
 				}
 				else if(s.getSignalType() == SignalType.AddContact) {
-					AddContact s2 = (AddContact) s;
+					AddContactSignal s2 = (AddContactSignal) s;
 					//do stuff
 				}
 				else if(s.getSignalType() == SignalType.DeleteContact) {
-					DeleteContact s2 = (DeleteContact) s;
+					DeleteContactSignal s2 = (DeleteContactSignal) s;
 					//do stuff
 				}
 				else if(s.getSignalType() == SignalType.BlockContact) {
-					BlockContact s2 = (BlockContact) s;
+					BlockContactSignal s2 = (BlockContactSignal) s;
 					//do stuff
 				}
 				else {

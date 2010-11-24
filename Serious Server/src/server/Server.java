@@ -93,8 +93,18 @@ public class Server extends Thread {
 		boolean authenticated = m_dbms.userLogin(userName, password);
 		
 		if(authenticated) {
+			for(int i=0;i<m_clients.size();i++) {
+				if(userName.equalsIgnoreCase(m_clients.elementAt(i).getUserName())) {
+					authenticated = false;
+				}
+			}
+		}
+		
+		if(authenticated) {
 			client.setUserName(userName);
 			client.setPassword(password);
+			
+			m_logger.addInfo("User " + userName + " logged in");
 		}
 		
 		return authenticated;
