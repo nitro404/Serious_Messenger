@@ -6,13 +6,15 @@ import shared.*;
 public class DisconnectHandler extends Thread {
 	
 	private Client m_client;
+	private MessageBoxSystem m_messageBoxSystem;
 	
 	public DisconnectHandler() {
 		
 	}
 	
-	public void initialize(Client client) {
+	public void initialize(Client client, MessageBoxSystem messageBoxSystem) {
 		m_client = client;
+		m_messageBoxSystem = messageBoxSystem;
 		if(m_client == null) { return; }
 		if(getState() == Thread.State.NEW) { start(); }
 	}
@@ -31,7 +33,7 @@ public class DisconnectHandler extends Thread {
 				m_client.disconnect();
 				
 				if(m_client.timeout()) {
-					JOptionPane.showMessageDialog(null, "Connection to server timed out.", "Lost Connection", JOptionPane.WARNING_MESSAGE);
+					m_messageBoxSystem.show(null, "Connection to server timed out.", "Lost Connection", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 			

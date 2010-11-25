@@ -18,13 +18,14 @@ public class Client {
 	private InputSignalQueue m_inSignalQueue = null;
 	private OutputSignalQueue m_outSignalQueue = null;
 	private ClientThread m_clientThread = null;
+	private MessageBoxSystem m_messageBoxSystem = null;
 	
 	private DisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
 	public Client() {
-		
+		m_messageBoxSystem = new MessageBoxSystem();
 	}
 	
 	public void initialize() {
@@ -51,6 +52,8 @@ public class Client {
 		m_timeElapsed = 0;
 		m_awaitingResponse = false;
 		
+		m_messageBoxSystem.initialize();
+		
 		try {
 			m_connection = new Socket(host, port);
 			m_out = new DataOutputStream(m_connection.getOutputStream());
@@ -63,7 +66,7 @@ public class Client {
 			
 			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
 				m_inSignalQueue = new InputSignalQueue();
-				m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
+				m_inSignalQueue.initialize(this, m_in, m_outSignalQueue, m_messageBoxSystem);
 			}
 			
 			if(m_clientThread == null || m_clientThread.isTerminated()) {
@@ -73,21 +76,24 @@ public class Client {
 			
 			if(m_disconnectHandler == null || m_disconnectHandler.isTerminated()) {
 				m_disconnectHandler = new DisconnectHandler();
-				m_disconnectHandler.initialize(this);
+				m_disconnectHandler.initialize(this, m_messageBoxSystem);
 			}
 		}
 		catch(IOException e) {
 			disconnect();
-			JOptionPane.showMessageDialog(null, "Unable to connect to Serious Server at " + host + ":" + port + ": " + e.getMessage(), "Error Connecting to Server", JOptionPane.ERROR_MESSAGE);
+			m_messageBoxSystem.show(null, "Unable to connect to Serious Server at " + host + ":" + port + ": " + e.getMessage(), "Error Connecting to Server", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
 	public void disconnect() {
 		setState(ClientState.Disconnected);
 		
-		try { m_out.close(); } catch(IOException e) { }
-		try { m_in.close(); } catch(IOException e) { }
-		try { m_connection.close(); } catch(IOException e) { }
+		try {
+			try { m_out.close(); } catch(IOException e) { }
+			try { m_in.close(); } catch(IOException e) { }
+			try { m_connection.close(); } catch(IOException e) { }
+		}
+		catch(NullPointerException e) { }
 		
 		m_out = null;
 		m_in = null;

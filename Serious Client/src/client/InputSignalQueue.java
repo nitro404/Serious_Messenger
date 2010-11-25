@@ -12,15 +12,17 @@ public class InputSignalQueue extends Thread {
 	private DataInputStream m_in;
 	private OutputSignalQueue m_outSignalQueue;
 	private Client m_client;
+	private MessageBoxSystem m_messageBoxSystem;
 	
 	public InputSignalQueue(){
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client client, DataInputStream in, OutputSignalQueue out) {
+	public void initialize(Client client, DataInputStream in, OutputSignalQueue out, MessageBoxSystem messageBoxSystem) {
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
+		m_messageBoxSystem = messageBoxSystem;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
@@ -120,11 +122,11 @@ public class InputSignalQueue extends Thread {
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(s2.getAuthenticated()) {
 						m_client.authenticated();
-						JOptionPane.showMessageDialog(null, "Successfully Logged In");
+						m_messageBoxSystem.show(null, "Successfully logged in!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
 						m_client.disconnect();
-						JOptionPane.showMessageDialog(null, "Login Failed");
+						m_messageBoxSystem.show(null, "Unable to log in.", "Login Failed", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
