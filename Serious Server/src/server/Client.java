@@ -39,8 +39,9 @@ public class Client extends Thread {
 	}
 	
 	public void initialize(Server server, Logger logger) {
+		m_connected = true;
+		
 		try {
-			m_connected = true;
 			m_logger = logger;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
@@ -100,6 +101,10 @@ public class Client extends Thread {
 		try { m_out.close(); } catch(IOException e) { }
 		try { m_in.close(); } catch(IOException e) { }
 		try { m_connection.close(); } catch(IOException e) { }
+
+		m_out = null;
+		m_in = null;
+		m_connection = null;
 	}
 	
 	public DataInputStream getInputStream() { return m_in; }

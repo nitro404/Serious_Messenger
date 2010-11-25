@@ -20,8 +20,12 @@ public class OutputSignalQueue extends Thread {
 		m_out = out;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
+
+	public boolean isTerminated() {
+		return getState() == Thread.State.TERMINATED; 
+	}
 	
-	public void addSignal(Signal s){
+	public void addSignal(Signal s) {
 		if (s == null) { return; }
 		
 		m_outSignalQueue.add(s);
@@ -39,7 +43,7 @@ public class OutputSignalQueue extends Thread {
 					s.writeTo(m_out);
 				}
 				else if(s.getSignalType() == SignalType.LoginRequest) {
-					s.writeTo(m_out); 
+					s.writeTo(m_out);
 				}
 				else if(s.getSignalType() == SignalType.Logout) {
 					s.writeTo(m_out);

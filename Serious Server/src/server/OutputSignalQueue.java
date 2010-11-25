@@ -25,7 +25,11 @@ public class OutputSignalQueue extends Thread {
 		m_logger = logger;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
-
+	
+	public boolean isTerminated() {
+		return getState() == Thread.State.TERMINATED; 
+	}
+	
 	public void addSignal(Signal s) {
 		if (s == null) { return; }
 
@@ -48,6 +52,7 @@ public class OutputSignalQueue extends Thread {
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(!s2.getAuthenticated()) {
 						m_client.disconnect();
+						m_logger.addInfo("Client #" + m_client.getClientNumber() + " disconnected: login rejected");
 					}
 				} 
 				else if(s.getSignalType() == SignalType.PasswordChanged) {

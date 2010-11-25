@@ -6,7 +6,7 @@ import javax.swing.*;
 import shared.*;
 import signal.*;
 
-public class Client extends Thread {
+public class Client {
 	
 	private int m_state = ClientState.Disconnected;
 	private String m_userName;
@@ -15,17 +15,16 @@ public class Client extends Thread {
 	private Socket m_connection;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
-	private InputSignalQueue m_inSignalQueue;
-	private OutputSignalQueue m_outSignalQueue;
+	private InputSignalQueue m_inSignalQueue = null;
+	private OutputSignalQueue m_outSignalQueue = null;
+	private ClientThread m_clientThread = null;
 	
 	private DisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
 	public Client() {
-		m_inSignalQueue = new InputSignalQueue();
-		m_outSignalQueue = new OutputSignalQueue();
-		m_disconnectHandler = new DisconnectHandler();
+		
 	}
 	
 	public void initialize() {
@@ -47,18 +46,38 @@ public class Client extends Thread {
 	public void connect(String host, int port) {
 		if(m_state != ClientState.Disconnected) { return; }
 		
+		setState(ClientState.Connected);
+		
+		m_timeElapsed = 0;
+		m_awaitingResponse = false;
+		
 		try {
-			setState(ClientState.Connected);
 			m_connection = new Socket(host, port);
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
-			m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
-			m_outSignalQueue.initialize(this, m_out);
-			if(getState() == Thread.State.NEW) { start(); }
-			m_disconnectHandler.initialize(this);
+			
+			if(m_outSignalQueue == null || m_outSignalQueue.isTerminated()) {
+				m_outSignalQueue = new OutputSignalQueue();
+				m_outSignalQueue.initialize(this, m_out);
+			}
+			
+			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
+				m_inSignalQueue = new InputSignalQueue();
+				m_inSignalQueue.initialize(this, m_in, m_outSignalQueue);
+			}
+			
+			if(m_clientThread == null || m_clientThread.isTerminated()) {
+				m_clientThread = new ClientThread();
+				m_clientThread.initialize(this);
+			}
+			
+			if(m_disconnectHandler == null || m_disconnectHandler.isTerminated()) {
+				m_disconnectHandler = new DisconnectHandler();
+				m_disconnectHandler.initialize(this);
+			}
 		}
 		catch(IOException e) {
-			setState(ClientState.Disconnected);
+			disconnect();
 			JOptionPane.showMessageDialog(null, "Unable to connect to Serious Server at " + host + ":" + port + ": " + e.getMessage(), "Error Connecting to Server", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -69,6 +88,10 @@ public class Client extends Thread {
 		try { m_out.close(); } catch(IOException e) { }
 		try { m_in.close(); } catch(IOException e) { }
 		try { m_connection.close(); } catch(IOException e) { }
+		
+		m_out = null;
+		m_in = null;
+		m_connection = null;
 	}
 	
 	public void login(String userName, String password) {
@@ -76,6 +99,7 @@ public class Client extends Thread {
 		
 		m_userName = userName;
 		m_password = password;
+		
 		m_outSignalQueue.addSignal(new LoginRequestSignal(userName, password));
 		
 		setState(ClientState.AwaitingAuthentication);
@@ -90,7 +114,7 @@ public class Client extends Thread {
 	public void authenticated() {
 		// get contact list, then set status to online
 		
-		m_state = ClientState.Online;
+		setState(ClientState.Online);
 	}
 	
 	public boolean ping() {
@@ -163,14 +187,9 @@ public class Client extends Thread {
 		}
 		return true;
 	}
-		
-	public void run() {
-		while(isConnected()) {
-			m_inSignalQueue.readSignal();
-			
-			try { sleep(Globals.QUEUE_INTERVAL); }
-			catch (InterruptedException e) { }
-		}
+	
+	public void readSignal() {
+		m_inSignalQueue.readSignal();
 	}
-
+	
 }

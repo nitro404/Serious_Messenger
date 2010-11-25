@@ -16,6 +16,10 @@ public class DisconnectHandler extends Thread {
 		if(m_client == null) { return; }
 		if(getState() == Thread.State.NEW) { start(); }
 	}
+
+	public boolean isTerminated() {
+		return getState() == Thread.State.TERMINATED; 
+	}
 	
 	public void run() {
 		while(m_client.isConnected()) {
@@ -24,10 +28,11 @@ public class DisconnectHandler extends Thread {
 			m_client.ping();
 			
 			if(!m_client.isConnected()) {
+				m_client.disconnect();
+				
 				if(m_client.timeout()) {
 					JOptionPane.showMessageDialog(null, "Connection to server timed out.", "Lost Connection", JOptionPane.WARNING_MESSAGE);
 				}
-				m_client.disconnect();
 			}
 			
 			try { sleep(Globals.TIMEOUT_INTERVAL); }

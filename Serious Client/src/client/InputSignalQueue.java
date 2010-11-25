@@ -24,7 +24,11 @@ public class InputSignalQueue extends Thread {
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
-	public void addSignal(Signal s){
+	public boolean isTerminated() {
+		return getState() == Thread.State.TERMINATED; 
+	}
+	
+	public void addSignal(Signal s) {
 		if (s == null){ return; }
 		
 		m_inSignalQueue.add(s);

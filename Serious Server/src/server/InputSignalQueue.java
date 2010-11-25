@@ -27,7 +27,11 @@ public class InputSignalQueue extends Thread {
 		m_logger = logger;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
-
+	
+	public boolean isTerminated() {
+		return getState() == Thread.State.TERMINATED; 
+	}
+	
 	public void addSignal(Signal s) {
 		if(s == null) { return; }
 
@@ -74,7 +78,6 @@ public class InputSignalQueue extends Thread {
 			s2 = BlockContactSignal.readFrom(ByteStream.readFrom(m_in, BlockContactSignal.LENGTH));
 		}
 		else {
-// TODO: FIX THIS
 			m_logger.addWarning("Unexpected input signal of type: " + s.getSignalType());
 		}
 		

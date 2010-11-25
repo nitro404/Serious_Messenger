@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import shared.*;
 
 public class ClientWindow extends JFrame {
 	
@@ -201,6 +200,7 @@ public class ClientWindow extends JFrame {
     	
     	String userName = JOptionPane.showInputDialog(null, "Username:", "Username", JOptionPane.QUESTION_MESSAGE);
     	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
+    	
     	m_client.initialize();
     	m_client.login(userName, password);
     }
