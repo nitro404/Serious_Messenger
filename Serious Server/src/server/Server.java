@@ -95,26 +95,39 @@ public class Server extends Thread {
 		m_dbms.resetTables();
 	}
 	
-	public boolean authenticateUser(Client client, String userName, String password) {
-		boolean authenticated = m_dbms.userLogin(userName, password);
+	public boolean userLogin(Client client, String userName, String password) {
+	
 		
 		// make sure the user isn't already logged in
-		if(authenticated) {
-			for(int i=0;i<m_clients.size();i++) {
-				if(userName.equalsIgnoreCase(m_clients.elementAt(i).getUserName())) {
-					authenticated = false;
-				}
+		boolean alreadyLoggedIn = false;
+		for(int i=0;i<m_clients.size();i++) {
+			if(userName.equalsIgnoreCase(m_clients.elementAt(i).getUserName())) {
+				alreadyLoggedIn = true;
 			}
 		}
 		
-		if(authenticated) {
-			client.setUserName(userName);
-			client.setPassword(password);
+		// if the user is not already logged in, authenticate the user and update the database/client info
+		boolean authenticated = false;
+		if(!alreadyLoggedIn) {
+			authenticated = m_dbms.userLogin(userName, password);
 			
-			m_logger.addInfo("User " + userName + " logged in");
+			if(authenticated) {
+				client.setUserName(userName);
+				client.setPassword(password);
+			}
 		}
 		
 		return authenticated;
+	}
+	
+	public boolean changeUserPassword(Client client, String userName, String oldPassword, String newPassword) {
+		if(client.getUserName() != null &&
+		   client.getUserName().equalsIgnoreCase(userName) &&
+		   m_dbms.changeUserPassword(userName, oldPassword, newPassword)) {
+			client.setPassword(newPassword);
+			return true;
+		}
+		return false;
 	}
 	
 	public int executeUpdate(String query) {

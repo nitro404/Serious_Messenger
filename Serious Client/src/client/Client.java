@@ -88,12 +88,9 @@ public class Client {
 	public void disconnect() {
 		setState(ClientState.Disconnected);
 		
-		try {
-			try { m_out.close(); } catch(IOException e) { }
-			try { m_in.close(); } catch(IOException e) { }
-			try { m_connection.close(); } catch(IOException e) { }
-		}
-		catch(NullPointerException e) { }
+		try { if(m_out != null) { m_out.close(); } } catch(IOException e) { }
+		try { if(m_in != null) { m_in.close(); } } catch(IOException e) { }
+		try { if(m_connection != null) { m_connection.close(); } } catch(IOException e) { }
 		
 		m_out = null;
 		m_in = null;
@@ -121,6 +118,12 @@ public class Client {
 		// get contact list, then set status to online
 		
 		setState(ClientState.Online);
+	}
+	
+	public void changePassword(String oldPassword, String newPassword) {
+		if(oldPassword == null || newPassword == null) { return; }
+		
+		m_outSignalQueue.addSignal(new ChangePasswordSignal(m_userName, oldPassword, newPassword));
 	}
 	
 	public boolean ping() {

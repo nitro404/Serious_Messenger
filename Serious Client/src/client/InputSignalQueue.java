@@ -140,13 +140,13 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 					AcknowledgeMessageSignal s2 = (AcknowledgeMessageSignal) s;
-					if (s2.getReceived()) {
+					if(s2.getReceived()) {
 						//resend message
 					}
 				}
 				else if(s.getSignalType() == SignalType.UserTyping) {
 					UserTypingSignal s2 = (UserTypingSignal) s;
-					if (s2.getTyping()) {
+					if(s2.getTyping()) {
 						//update gui + do stuff
 					}
 				}
@@ -156,25 +156,28 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
-					if (s2.getPasswordChanged()) {
-						//do something
+					if(s2.getPasswordChanged()) {
+						m_messageBoxSystem.show(null, "Password changed successfully!", "Password Change Succeeded", JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						m_messageBoxSystem.show(null, "Unable to change password.", "Password Change Failed", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactAdded) {
 					ContactAddedSignal s2 = (ContactAddedSignal) s;
-					if (s2.getAdded()) {
+					if(s2.getAdded()) {
 						//update client list locaclly
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
 					ContactDeletedSignal s2 = (ContactDeletedSignal) s;
-					if (s2.getDeleted()){
+					if(s2.getDeleted()) {
 						//update client gui
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
 					ContactBlockedSignal s2 = (ContactBlockedSignal) s;
-					if (s2.getBlocked()){
+					if(s2.getBlocked()) {
 						//update client gui
 					}
 				}

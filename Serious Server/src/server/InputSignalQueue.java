@@ -98,7 +98,7 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.LoginRequest) {
 					LoginRequestSignal s2 = (LoginRequestSignal) s;
 					
-					boolean authenticated = m_server.authenticateUser(m_client, s2.getUserName(), s2.getPassword());
+					boolean authenticated = m_server.userLogin(m_client, s2.getUserName(), s2.getPassword());
 					sendSignal(new LoginAuthenticatedSignal(authenticated));
 					
 					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
@@ -114,7 +114,12 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePasswordSignal s2 = (ChangePasswordSignal) s;
-					//do stuff
+					
+					boolean passwordChanged = m_server.changeUserPassword(m_client, s2.getUserName(), s2.getOldPassword(), s2.getNewPassword());
+					
+					sendSignal(new PasswordChangedSignal(passwordChanged));
+					
+					m_logger.addCommand(s2.getUserName(), "Password Change Request: " + ((passwordChanged) ? "Succeeded" : "Failed"));
 				}
 				else if(s.getSignalType() == SignalType.AddContact) {
 					AddContactSignal s2 = (AddContactSignal) s;

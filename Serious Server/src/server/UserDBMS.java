@@ -337,8 +337,6 @@ public class UserDBMS {
 		}
 	}
 	
-	
-
 	public boolean userLogin(String userName, String password) {
 		try {
 			boolean authenticated = stmt.executeUpdate(
@@ -347,6 +345,10 @@ public class UserDBMS {
 				"WHERE UserName = '" + userName + "' " +
 					"AND Password = '" + password + "'"
 			) != 0;
+			
+			if(authenticated) {
+				m_logger.addInfo("User " + userName + " logged in");
+			}
 			
 			return authenticated;
 		}
@@ -371,20 +373,25 @@ public class UserDBMS {
 		}
 	}
 
-	public void changeUserPassword(String userName, String oldPassword, String newPassword) {
+	public boolean changeUserPassword(String userName, String oldPassword, String newPassword) {
 		try {
-			stmt.executeUpdate(
-				"UPADTE " + userDataTableName + " " +
+			boolean passwordChanged = stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
 					"SET Password = '" + newPassword + "' " +
 				"WHERE UserName = '" + userName + "' " +
 					"AND Password = '" + oldPassword + "'"
-			);
+			) != 0;
 			
-			m_logger.addInfo("Changed password for user " + userName);
+			if(passwordChanged) {
+				m_logger.addInfo("Changed password for user " + userName);
+			}
+			
+			return passwordChanged;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error changing password for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
 	public void addContact(String userName, String contact) {

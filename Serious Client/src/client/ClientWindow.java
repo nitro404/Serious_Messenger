@@ -14,6 +14,7 @@ public class ClientWindow extends JFrame {
 	private JMenu fileMenu;
     private JMenuItem fileSignInMenuItem;
     private JMenuItem fileSignOutMenuItem;
+    private JMenuItem fileChangePasswordMenuItem;
     private JMenuItem fileExitMenuItem;
 	
     private JMenu contactsMenu;
@@ -56,6 +57,7 @@ public class ClientWindow extends JFrame {
         fileMenu = new JMenu();
         fileSignInMenuItem = new JMenuItem();
         fileSignOutMenuItem = new JMenuItem();
+        fileChangePasswordMenuItem = new JMenuItem();
         fileExitMenuItem = new JMenuItem();
         
         contactsMenu = new JMenu();
@@ -127,6 +129,14 @@ public class ClientWindow extends JFrame {
         });
         fileMenu.add(fileSignOutMenuItem);
 
+        fileChangePasswordMenuItem.setText("Change Password");
+        fileChangePasswordMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+            	fileChangePasswordMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(fileChangePasswordMenuItem);
+        
         fileExitMenuItem.setText("Exit");
         fileExitMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -212,6 +222,29 @@ public class ClientWindow extends JFrame {
     	}
     	
         m_client.logout();
+    }
+    
+    private void fileChangePasswordMenuItemActionPerformed(ActionEvent evt) {
+    	if(m_client.getClientState() < ClientState.Online) {
+    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+		String oldPassword = JOptionPane.showInputDialog(null, "Old Password:", "Old Password", JOptionPane.QUESTION_MESSAGE);
+    	String newPassword = JOptionPane.showInputDialog(null, "New Password:", "New Password", JOptionPane.QUESTION_MESSAGE);
+    	String confirmNewPassword = JOptionPane.showInputDialog(null, "Confirm New Password:", "Confirm New Password", JOptionPane.QUESTION_MESSAGE);
+    	
+    	if(oldPassword == null || newPassword == null || confirmNewPassword == null) {
+    		JOptionPane.showMessageDialog(null, "Please fill out all information fields.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+    	if(!newPassword.equals(confirmNewPassword)) {
+    		JOptionPane.showMessageDialog(null, "New password does not match.", "Mismatched Passwords", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+    	m_client.changePassword(oldPassword, newPassword);
     }
 
     private void fileExitMenuItemActionPerformed(ActionEvent evt) {

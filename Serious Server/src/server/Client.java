@@ -98,9 +98,9 @@ public class Client extends Thread {
 	public void disconnect() {
 		m_connected = false;
 		
-		try { m_out.close(); } catch(IOException e) { }
-		try { m_in.close(); } catch(IOException e) { }
-		try { m_connection.close(); } catch(IOException e) { }
+		try { if(m_out != null) { m_out.close(); } } catch(IOException e) { }
+		try { if(m_in != null) { m_in.close(); } } catch(IOException e) { }
+		try { if(m_connection != null) { m_connection.close(); } } catch(IOException e) { }
 
 		m_out = null;
 		m_in = null;
