@@ -132,6 +132,12 @@ public class Client {
 		m_outSignalQueue.addSignal(new AddContactSignal(contactUserName));
 	}
 	
+	public void deleteContact(String contactUserName) {
+		if(contactUserName == null) { return; }
+		
+		m_outSignalQueue.addSignal(new DeleteContactSignal(contactUserName));
+	}
+	
 	public boolean ping() {
 		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
 			m_timeElapsed = 0;

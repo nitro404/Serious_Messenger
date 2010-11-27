@@ -142,6 +142,15 @@ public class Server extends Thread {
 		return false;
 	}
 	
+	public boolean deleteUserContact(Client client, String contactUserName) {
+		if(client == null || contactUserName == null) { return false; }
+		
+		if(client.getUserName() != null) {
+			return m_dbms.deleteUserContact(client.getUserName(), contactUserName);
+		}
+		return false;
+	}
+	
 	public int executeUpdate(String query) {
 		return m_dbms.executeUpdate(query);
 	}

@@ -46,7 +46,7 @@ public class Client extends Thread {
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(server, this, m_in, m_outSignalQueue, m_logger);
-			m_outSignalQueue.initialize(server, this, m_out, m_logger);
+			m_outSignalQueue.initialize(this, m_out, m_logger);
 			if(getState() == Thread.State.NEW) { start(); }
 		}
 		catch(IOException e) {

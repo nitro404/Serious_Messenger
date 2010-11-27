@@ -19,6 +19,7 @@ public class ClientWindow extends JFrame {
 	
     private JMenu contactsMenu;
     private JMenuItem contactsAddContactMenuItem;
+    private JMenuItem contactsDeleteContactMenuItem;
     private JMenuItem contactsGreateGroupMenuItem;
     
 	private JScrollPane contactListScrollPane;
@@ -37,6 +38,7 @@ public class ClientWindow extends JFrame {
         
         //fileSignOutMenuItem.setEnabled(false);
         //contactsAddContactMenuItem.setEnabled(false);
+        //contactsDeleteContactMenuItem.setEnabled(false);
         //contactsGreateGroupMenuItem.setEnabled(false);
         //nickNameTextField.setEnabled(false);
         //statusComboBox.setEnabled(false);
@@ -62,6 +64,7 @@ public class ClientWindow extends JFrame {
         
         contactsMenu = new JMenu();
         contactsAddContactMenuItem = new JMenuItem();
+        contactsDeleteContactMenuItem = new JMenuItem();
         contactsGreateGroupMenuItem = new JMenuItem();
         
         contactListScrollPane = new JScrollPane();
@@ -156,6 +159,14 @@ public class ClientWindow extends JFrame {
             }
         });
         contactsMenu.add(contactsAddContactMenuItem);
+        
+        contactsDeleteContactMenuItem.setText("Delete Contact");
+        contactsDeleteContactMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                contactsDeleteContactMenuItemActionPerformed(evt);
+            }
+        });
+        contactsMenu.add(contactsDeleteContactMenuItem);
 
         contactsGreateGroupMenuItem.setText("Create Group");
         contactsGreateGroupMenuItem.addActionListener(new ActionListener() {
@@ -260,6 +271,17 @@ public class ClientWindow extends JFrame {
 		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
 		
 		m_client.addContact(contactUserName);
+    }
+    
+    private void contactsDeleteContactMenuItemActionPerformed(ActionEvent evt) {
+    	if(m_client.getClientState() < ClientState.Online) {
+    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
+		
+		m_client.deleteContact(contactUserName);
     }
 
     private void contactsGreateGroupMenuItemActionPerformed(ActionEvent evt) {

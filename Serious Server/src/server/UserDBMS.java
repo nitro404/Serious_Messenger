@@ -409,7 +409,9 @@ public class UserDBMS {
 				")"
 			) != 0;
 			
-			m_logger.addInfo("User " + userName + " added contact " + contactUserName);
+			if(contactAdded) {
+				m_logger.addInfo("User " + userName + " added contact " + contactUserName);
+			}
 			
 			return contactAdded;
 		}
@@ -419,19 +421,24 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public void removeUserContact(String userName, String contact) {
+	public boolean deleteUserContact(String userName, String contactUserName) {
 		try {
-			stmt.executeUpdate(
+			boolean contactDeleted = stmt.executeUpdate(
 				"DELETE FROM " + userContactTableName + " " +
 				"WHERE UserName = '" + userName + "' " +
-					"AND Contact = '" + contact + "'"
-			);
+					"AND Contact = '" + contactUserName + "'"
+			) != 0;
 			
-			m_logger.addInfo("User " + userName + " removed contact " + contact);
+			if(contactDeleted) {
+				m_logger.addInfo("User " + userName + " deleted contact " + contactUserName);
+			}
+			
+			return contactDeleted;
 		}
 		catch(SQLException e) {
-			m_logger.addError("Error removing contact " + contact + " for user " + userName + ": " + e.getMessage());
+			m_logger.addError("Error deleting contact " + contactUserName + " for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
 	public void blockUserContact(String userName, String contact) {

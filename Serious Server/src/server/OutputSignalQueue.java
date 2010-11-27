@@ -10,7 +10,6 @@ public class OutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
-	private Server m_server;
 	private Client m_client;
 	private Logger m_logger;
 
@@ -18,8 +17,7 @@ public class OutputSignalQueue extends Thread {
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Server server, Client client, DataOutputStream out, Logger logger) {
-		m_server = server;
+	public void initialize(Client client, DataOutputStream out, Logger logger) {
 		m_client = client;
 		m_out = out;
 		m_logger = logger;

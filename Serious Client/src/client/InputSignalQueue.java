@@ -141,13 +141,13 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 					AcknowledgeMessageSignal s2 = (AcknowledgeMessageSignal) s;
 					if(s2.getReceived()) {
-						//resend message
+						//re-send message
 					}
 				}
 				else if(s.getSignalType() == SignalType.UserTyping) {
 					UserTypingSignal s2 = (UserTypingSignal) s;
 					if(s2.getTyping()) {
-						//update gui + do stuff
+						//update GUI + do stuff
 					}
 				}
 				else if(s.getSignalType() == SignalType.ChangeFont) {
@@ -175,7 +175,10 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
 					ContactDeletedSignal s2 = (ContactDeletedSignal) s;
 					if(s2.getDeleted()) {
-						//update client gui
+						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " deleted successfully!", "Contact Deleted", JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						m_messageBoxSystem.show(null, "Unable to delete contact " + s2.getUserName(), "Unable to Delete Contact", JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactBlocked) {

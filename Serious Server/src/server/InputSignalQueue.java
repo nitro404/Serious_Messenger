@@ -132,7 +132,12 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.DeleteContact) {
 					DeleteContactSignal s2 = (DeleteContactSignal) s;
-					//do stuff
+					
+					boolean contactDeleted = m_server.deleteUserContact(m_client, s2.getUserName());
+					
+					sendSignal(new ContactDeletedSignal(s2.getUserName(), contactDeleted));
+					
+					m_logger.addCommand(s2.getUserName(), "Deleted Contact: " + s2.getUserName() + " (" + ((contactDeleted) ? "Succeeded" : "Failed") + ")");
 				}
 				else if(s.getSignalType() == SignalType.BlockContact) {
 					BlockContactSignal s2 = (BlockContactSignal) s;
