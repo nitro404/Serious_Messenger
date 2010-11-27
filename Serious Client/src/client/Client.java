@@ -126,6 +126,12 @@ public class Client {
 		m_outSignalQueue.addSignal(new ChangePasswordSignal(m_userName, oldPassword, newPassword));
 	}
 	
+	public void addContact(String contactUserName) {
+		if(contactUserName == null) { return; }
+		
+		m_outSignalQueue.addSignal(new AddContactSignal(contactUserName));
+	}
+	
 	public boolean ping() {
 		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
 			m_timeElapsed = 0;

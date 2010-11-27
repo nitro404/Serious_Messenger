@@ -39,6 +39,10 @@ public class SQLResult {
 		catch(SQLException e) { }
 	}
 	
+	public int getColumnCount() { return m_headers.size(); }
+	
+	public int getRowCount() { return m_data.size(); }
+	
 	public SQLResultRow getHeaders() {
 		return m_headers;
 	}

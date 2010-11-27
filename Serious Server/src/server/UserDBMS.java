@@ -391,24 +391,35 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public void addContact(String userName, String contact) {
+	public boolean addUserContact(String userName, String contactUserName) {
 		try {
-			stmt.executeUpdate(
+			// verify that the contact exists
+			SQLResult contactResult = new SQLResult(stmt.executeQuery(
+				"SELECT * FROM " + userDataTableName + " " +
+				"WHERE UserName = '" + contactUserName + "'"
+			));
+			if(!(contactResult.getRowCount() == 1)) { return false; }
+			
+			boolean contactAdded = stmt.executeUpdate(
 				"INSERT INTO " + userContactTableName + " VALUES(" +	
 					"'" + userName + "', " +
-					"'" + contact + "', " +
+					"'" + contactUserName + "', " +
+					"'', " +
 					"0" +
 				")"
-			);
+			) != 0;
 			
-			m_logger.addInfo("User " + userName + " added contact " + contact);
+			m_logger.addInfo("User " + userName + " added contact " + contactUserName);
+			
+			return contactAdded;
 		}
 		catch(SQLException e) {
-			m_logger.addError("Error adding contact " + contact + " for user " + userName + ": " + e.getMessage());
+			m_logger.addError("Error adding contact " + contactUserName + " for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
-	public void removeContact(String userName, String contact) {
+	public void removeUserContact(String userName, String contact) {
 		try {
 			stmt.executeUpdate(
 				"DELETE FROM " + userContactTableName + " " +
@@ -423,15 +434,15 @@ public class UserDBMS {
 		}
 	}
 	
-	public void blockContact(String userName, String contact) {
-		setBlockContact(userName, contact, 1);
+	public void blockUserContact(String userName, String contact) {
+		setBlockUserContact(userName, contact, 1);
 	}
 	
-	public void unblockContact(String userName, String contact) {
-		setBlockContact(userName, contact, 0);
+	public void unblockUserContact(String userName, String contact) {
+		setBlockUserContact(userName, contact, 0);
 	}
 	
-	public void setBlockContact(String userName, String contact, int blocked) {
+	public void setBlockUserContact(String userName, String contact, int blocked) {
 		try {
 			stmt.executeUpdate(
 				"UPDATE " + userContactTableName + " " +

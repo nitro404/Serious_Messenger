@@ -36,11 +36,11 @@ public class ClientWindow extends JFrame {
         initComponents();
         
         //fileSignOutMenuItem.setEnabled(false);
-        contactsAddContactMenuItem.setEnabled(false);
-        contactsGreateGroupMenuItem.setEnabled(false);
-        nickNameTextField.setEnabled(false);
-        statusComboBox.setEnabled(false);
-        personalMessageTextField.setEnabled(false);
+        //contactsAddContactMenuItem.setEnabled(false);
+        //contactsGreateGroupMenuItem.setEnabled(false);
+        //nickNameTextField.setEnabled(false);
+        //statusComboBox.setEnabled(false);
+        //personalMessageTextField.setEnabled(false);
     }
     
     public void initialize() {
@@ -252,7 +252,14 @@ public class ClientWindow extends JFrame {
     }
     
     private void contactsAddContactMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	if(m_client.getClientState() < ClientState.Online) {
+    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
+		
+		m_client.addContact(contactUserName);
     }
 
     private void contactsGreateGroupMenuItemActionPerformed(ActionEvent evt) {

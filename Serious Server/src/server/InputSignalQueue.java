@@ -123,7 +123,12 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.AddContact) {
 					AddContactSignal s2 = (AddContactSignal) s;
-					//do stuff
+					
+					boolean contactAdded = m_server.addUserContact(m_client, s2.getUserName());
+					
+					sendSignal(new ContactAddedSignal(s2.getUserName(), contactAdded));
+					
+					m_logger.addCommand(s2.getUserName(), "Added Contact: " + s2.getUserName() + " (" + ((contactAdded) ? "Succeeded" : "Failed") + ")");
 				}
 				else if(s.getSignalType() == SignalType.DeleteContact) {
 					DeleteContactSignal s2 = (DeleteContactSignal) s;

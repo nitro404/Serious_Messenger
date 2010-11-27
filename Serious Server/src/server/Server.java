@@ -71,6 +71,10 @@ public class Server extends Thread {
 		return m_clients.elementAt(index);
 	}
 	
+	public UserDBMS getDBMS() {
+		return m_dbms;
+	}
+	
 	public void databaseConnect() {
 		m_dbms.connect();
 	}
@@ -96,7 +100,6 @@ public class Server extends Thread {
 	}
 	
 	public boolean userLogin(Client client, String userName, String password) {
-	
 		
 		// make sure the user isn't already logged in
 		boolean alreadyLoggedIn = false;
@@ -130,16 +133,21 @@ public class Server extends Thread {
 		return false;
 	}
 	
+	public boolean addUserContact(Client client, String contactUserName) {
+		if(client == null || contactUserName == null) { return false; }
+		
+		if(client.getUserName() != null) {
+			return m_dbms.addUserContact(client.getUserName(), contactUserName);
+		}
+		return false;
+	}
+	
 	public int executeUpdate(String query) {
 		return m_dbms.executeUpdate(query);
 	}
 	
 	public SQLResult executeQuery(String query) {
 		return m_dbms.executeQuery(query);
-	}
-	
-	public UserDBMS getDBMS() {
-		return m_dbms;
 	}
 	
 	public Object[] getLastSystemLogEntryAsArray() {

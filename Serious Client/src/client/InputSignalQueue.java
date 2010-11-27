@@ -166,7 +166,10 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactAdded) {
 					ContactAddedSignal s2 = (ContactAddedSignal) s;
 					if(s2.getAdded()) {
-						//update client list locaclly
+						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " added successfully!", "Contact Added", JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getUserName(), "Unable to Add Contact", JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
