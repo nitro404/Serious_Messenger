@@ -138,6 +138,18 @@ public class Client {
 		m_outSignalQueue.addSignal(new DeleteContactSignal(contactUserName));
 	}
 	
+	public void blockContact(String contactUserName) {
+		if(contactUserName == null) { return; }
+		
+		m_outSignalQueue.addSignal(new BlockContactSignal(contactUserName, true));
+	}
+	
+	public void unblockContact(String contactUserName) {
+		if(contactUserName == null) { return; }
+		
+		m_outSignalQueue.addSignal(new BlockContactSignal(contactUserName, false));
+	}
+	
 	public boolean ping() {
 		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
 			m_timeElapsed = 0;

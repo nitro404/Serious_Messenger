@@ -20,6 +20,8 @@ public class ClientWindow extends JFrame {
     private JMenu contactsMenu;
     private JMenuItem contactsAddContactMenuItem;
     private JMenuItem contactsDeleteContactMenuItem;
+    private JMenuItem contactsBlockContactMenuItem;
+    private JMenuItem contactsUnblockContactMenuItem;
     private JMenuItem contactsGreateGroupMenuItem;
     
 	private JScrollPane contactListScrollPane;
@@ -39,6 +41,8 @@ public class ClientWindow extends JFrame {
         //fileSignOutMenuItem.setEnabled(false);
         //contactsAddContactMenuItem.setEnabled(false);
         //contactsDeleteContactMenuItem.setEnabled(false);
+        //contactsBlockContactMenuItem.setEnabled(false);
+        //contactsUnblockContactMenuItem.setEnabled(false);
         //contactsGreateGroupMenuItem.setEnabled(false);
         //nickNameTextField.setEnabled(false);
         //statusComboBox.setEnabled(false);
@@ -65,6 +69,8 @@ public class ClientWindow extends JFrame {
         contactsMenu = new JMenu();
         contactsAddContactMenuItem = new JMenuItem();
         contactsDeleteContactMenuItem = new JMenuItem();
+        contactsBlockContactMenuItem = new JMenuItem();
+        contactsUnblockContactMenuItem = new JMenuItem();
         contactsGreateGroupMenuItem = new JMenuItem();
         
         contactListScrollPane = new JScrollPane();
@@ -167,6 +173,22 @@ public class ClientWindow extends JFrame {
             }
         });
         contactsMenu.add(contactsDeleteContactMenuItem);
+        
+        contactsBlockContactMenuItem.setText("Block Contact");
+        contactsBlockContactMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                contactsBlockContactMenuItemActionPerformed(evt);
+            }
+        });
+        contactsMenu.add(contactsBlockContactMenuItem);
+        
+        contactsUnblockContactMenuItem.setText("Unblock Contact");
+        contactsUnblockContactMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                contactsUnblockContactMenuItemActionPerformed(evt);
+            }
+        });
+        contactsMenu.add(contactsUnblockContactMenuItem);
 
         contactsGreateGroupMenuItem.setText("Create Group");
         contactsGreateGroupMenuItem.addActionListener(new ActionListener() {
@@ -282,6 +304,28 @@ public class ClientWindow extends JFrame {
 		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
 		
 		m_client.deleteContact(contactUserName);
+    }
+    
+    private void contactsBlockContactMenuItemActionPerformed(ActionEvent evt) {
+    	if(m_client.getClientState() < ClientState.Online) {
+    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
+		
+		m_client.blockContact(contactUserName);
+    }
+    
+    private void contactsUnblockContactMenuItemActionPerformed(ActionEvent evt) {
+    	if(m_client.getClientState() < ClientState.Online) {
+    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+		String contactUserName = JOptionPane.showInputDialog(null, "Contact's User Name:", "Contact User Name", JOptionPane.QUESTION_MESSAGE);
+		
+		m_client.unblockContact(contactUserName);
     }
 
     private void contactsGreateGroupMenuItemActionPerformed(ActionEvent evt) {

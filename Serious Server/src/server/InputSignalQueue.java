@@ -141,7 +141,17 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.BlockContact) {
 					BlockContactSignal s2 = (BlockContactSignal) s;
-					//do stuff
+					
+					int result = m_server.blockUserContact(m_client, s2.getUserName(), s2.getBlocked());
+					
+					boolean contactBlocked = result == 1;
+					boolean succeeded = result != 2;
+					
+					sendSignal(new ContactBlockedSignal(s2.getUserName(), contactBlocked, succeeded));
+					
+					if(succeeded) {
+						m_logger.addCommand(s2.getUserName(), (contactBlocked ? "Blocked" : "Unblocked") + " Contact: " + s2.getUserName());
+					}
 				}
 				else {
 					m_logger.addWarning("Unexpected input signal of type: " + s.getSignalType());

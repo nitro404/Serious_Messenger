@@ -441,28 +441,49 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public void blockUserContact(String userName, String contact) {
-		setBlockUserContact(userName, contact, 1);
-	}
-	
-	public void unblockUserContact(String userName, String contact) {
-		setBlockUserContact(userName, contact, 0);
-	}
-	
-	public void setBlockUserContact(String userName, String contact, int blocked) {
+	public int setBlockUserContact(String userName, String contactUserName, boolean blocked) {
 		try {
 			stmt.executeUpdate(
 				"UPDATE " + userContactTableName + " " +
-					"SET Blocked = " + blocked +
+					"SET Blocked = '" + (blocked ? 1 : 0) + "' " +
 				"WHERE UserName = '" + userName + "' " +
-					"AND Contact = '" + contact + "'"
+					"AND Contact = '" + contactUserName + "'"
 			);
 			
-			m_logger.addInfo("User " + userName + ((blocked == 0) ? " un" : " ") + "blocked contact " + contact);
+			SQLResult result = new SQLResult(stmt.executeQuery(
+				"SELECT * FROM " + userContactTableName + " " +
+				"WHERE UserName = '" + userName + "' " +
+					"AND Contact = '" + contactUserName + "'"
+			));
+			
+			if(result.getRowCount() != 1) { return 2; }
+			
+			int columnIndex = -1;
+			for(int i=0;i<result.getColumnCount();i++) {
+				if(result.getHeader(i).equalsIgnoreCase("Blocked")) {
+					columnIndex = i;
+					break;
+				}
+			}
+			
+			if(columnIndex == -1) { return 2; }
+			
+			int blockedValue = 0;
+			try {
+				blockedValue = Integer.parseInt(result.getElement(0, columnIndex));
+			}
+			catch(NumberFormatException e) {
+				return 2;
+			}
+			
+			m_logger.addInfo("User " + userName + " " + (blocked ? "" : "un") + "blocked contact " + contactUserName);
+			
+			return blockedValue;
 		}
 		catch(SQLException e) {
-			m_logger.addError("Error " + ((blocked == 0) ? " un" : " ") + "blocking contact " + contact + " for user " + userName);
+			m_logger.addError("Error " + (blocked ? "" : "un") + "blocking contact " + contactUserName + " for user " + userName + ": " + e.getMessage());
 		}
+		return 2;
 	}
 	
 	public int executeUpdate(String query) {

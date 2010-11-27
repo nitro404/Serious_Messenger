@@ -169,7 +169,7 @@ public class InputSignalQueue extends Thread {
 						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " added successfully!", "Contact Added", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getUserName(), "Unable to Add Contact", JOptionPane.INFORMATION_MESSAGE);
+						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getUserName(), "Unable to Add Contact", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
@@ -178,13 +178,17 @@ public class InputSignalQueue extends Thread {
 						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " deleted successfully!", "Contact Deleted", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						m_messageBoxSystem.show(null, "Unable to delete contact " + s2.getUserName(), "Unable to Delete Contact", JOptionPane.INFORMATION_MESSAGE);
+						m_messageBoxSystem.show(null, "Unable to delete contact " + s2.getUserName(), "Unable to Delete Contact", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
 					ContactBlockedSignal s2 = (ContactBlockedSignal) s;
-					if(s2.getBlocked()) {
-						//update client gui
+					
+					if(s2.getSucceeded()) {
+						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " is now " + (s2.getBlocked() ? "" : "un") + "blocked.", "Contact " + (s2.getBlocked() ? "Blocked" : "Unblocked"), JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						m_messageBoxSystem.show(null, "Unable to block/unblock contact " + s2.getUserName(), "Unable to Block/Unblock", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 				else if(s.getSignalType() == SignalType.ChangeNickname) {

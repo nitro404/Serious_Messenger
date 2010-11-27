@@ -151,6 +151,15 @@ public class Server extends Thread {
 		return false;
 	}
 	
+	public int blockUserContact(Client client, String contactUserName, boolean blocked) {
+		if(client == null || contactUserName == null) { return 2; }
+		
+		if(client.getUserName() != null) {
+			return m_dbms.setBlockUserContact(client.getUserName(), contactUserName, blocked);
+		}
+		return 2;
+	}
+	
 	public int executeUpdate(String query) {
 		return m_dbms.executeUpdate(query);
 	}
