@@ -134,6 +134,14 @@ public class Server extends Thread {
 		return m_dbms.executeUpdate(query);
 	}
 	
+	public SQLResult executeQuery(String query) {
+		return m_dbms.executeQuery(query);
+	}
+	
+	public UserDBMS getDBMS() {
+		return m_dbms;
+	}
+	
 	public Object[] getLastSystemLogEntryAsArray() {
 		return m_logger.getLastSystemLogEntryAsArray();
 	}

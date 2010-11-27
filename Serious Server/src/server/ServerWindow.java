@@ -11,6 +11,9 @@ public class ServerWindow extends JFrame {
 	
 	private Server m_server;
 	
+	private TableUpdateThread m_tableUpdateThread;
+	private MessageBoxSystem m_messageBoxSystem;
+	
     private JMenuBar serverMenuBar;
     
     private JMenu serverFileMenu;
@@ -42,27 +45,25 @@ public class ServerWindow extends JFrame {
     private JPanel userDataPanel;
     private JScrollPane userDataScrollPane;
     private JTable userDataTable;
-    private DefaultTableModel userDataTableModel;
     
     private JPanel userProfilePanel;
     private JScrollPane userProfileScrollPane;
     private JTable userProfileTable;
-    private DefaultTableModel userProfileTableModel;
     
     private JPanel userContactPanel;
     private JScrollPane userContactScrollPane;
     private JTable userContactTable;
-    private DefaultTableModel userContactTableModel;
     
     private JPanel userGroupPanel;
     private JScrollPane userGroupScrollPane;
     private JTable userGroupTable;
-    private DefaultTableModel userGroupTableModel;
     
 	private static final long serialVersionUID = 1L;
 	
 	public ServerWindow() {
 		m_server = new Server();
+		m_messageBoxSystem = new MessageBoxSystem();
+		m_tableUpdateThread = new TableUpdateThread();
 		initComponents();
 	}
 	
@@ -72,6 +73,8 @@ public class ServerWindow extends JFrame {
 	
 	public void initialize(int port) {
 		m_server.initialize(port, this);
+		m_messageBoxSystem.initialize();
+		m_tableUpdateThread.initialize(m_server.getDBMS(), userDataTable, userProfileTable, userContactTable, userGroupTable);
 		setVisible(true);
 	}
 	
@@ -209,7 +212,7 @@ public class ServerWindow extends JFrame {
         serverTabbedPane.addTab("Command Log", commandLogPanel);
         
         // User Data Table ========================================================================
-        userDataTableModel = new DefaultTableModel(
+        DefaultTableModel userDataTableModel = new DefaultTableModel(
         	null,
         	new String[] {
         		"UserName", "Password", "IPAddress", "LastLogin", "JoinDate"
@@ -233,7 +236,7 @@ public class ServerWindow extends JFrame {
         serverTabbedPane.addTab("User Data", userDataPanel);
         
         // User Profile Table =====================================================================
-        userProfileTableModel = new DefaultTableModel(
+        DefaultTableModel userProfileTableModel = new DefaultTableModel(
         	null,
         	new String[] {
         		"UserName", "FirstName", "MiddleName", "LastName", "Gender", "BirthDate", "Email", "HomePhone", "MobilePhone", "WorkPhone", "Country", "StateProv", "ZipPostal"
@@ -257,7 +260,7 @@ public class ServerWindow extends JFrame {
         serverTabbedPane.addTab("User Profile", userProfilePanel);
         
         // User Contact Table =====================================================================
-        userContactTableModel = new DefaultTableModel(
+        DefaultTableModel userContactTableModel = new DefaultTableModel(
         	null,
         	new String[] {
         		"UserName", "Contact", "GroupName", "Blocked"
@@ -281,7 +284,7 @@ public class ServerWindow extends JFrame {
         serverTabbedPane.addTab("User Contact", userContactPanel);
         
         // User Group Table =======================================================================
-        userGroupTableModel = new DefaultTableModel(
+        DefaultTableModel userGroupTableModel = new DefaultTableModel(
         	null,
         	new String[] {
         		"UserName", "UserGroup"
@@ -409,18 +412,20 @@ public class ServerWindow extends JFrame {
     private void serverFileConnectMenuItemActionPerformed(ActionEvent evt) {
     	if(!m_server.databaseConnnected()) {
     		m_server.databaseConnect();
+    		m_tableUpdateThread.setDBMS(m_server.getDBMS());
     	}
     	else {
-    		JOptionPane.showMessageDialog(null, "Already connected to database.", "Already Connected", JOptionPane.INFORMATION_MESSAGE);
+    		m_messageBoxSystem.show(null, "Already connected to database.", "Already Connected", JOptionPane.INFORMATION_MESSAGE);
     	}
     }
     
     private void serverFileDisconnectMenuItemActionPerformed(ActionEvent evt) {
     	if(m_server.databaseConnnected()) {
     		m_server.databaseDisconnect();
+    		m_tableUpdateThread.setDBMS(null);
     	}
     	else {
-    		JOptionPane.showMessageDialog(null, "Not connected to database.", "Not Connected", JOptionPane.INFORMATION_MESSAGE);
+    		m_messageBoxSystem.show(null, "Not connected to database.", "Not Connected", JOptionPane.INFORMATION_MESSAGE);
     	}
     }
     
@@ -428,38 +433,19 @@ public class ServerWindow extends JFrame {
     	m_server.databaseDisconnect();
         System.exit(0);
     }
-
-    private void serverSettingsAutoconnectMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    }
-
-    private void serverSettingsAutoreconnectMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    }
-
-    private void serverSettingsSQLAddressMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    }
-
-    private void serverSettingsSQLPortMenuItemActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    }
     
     private void serverDatabaseExecuteQueryMenuItemActionPerformed(ActionEvent evt) {
-    	JOptionPane.showMessageDialog(null, "Not yet implemented!", "Under Construction", JOptionPane.WARNING_MESSAGE);
-    	//String query = JOptionPane.showInputDialog(null, "Query Database", "What do you wish to query?", JOptionPane.QUESTION_MESSAGE);
-    	//String[][] result = m_dbms.executeQuery(query);
-    	//TODO: finish me
+    	String query = JOptionPane.showInputDialog(null, "Query Database", "What do you wish to query?", JOptionPane.QUESTION_MESSAGE);
+    	
+    	SQLResult result = m_server.executeQuery(query);
+    	
+    	m_messageBoxSystem.show(null, result, "Query Results", JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void serverDatabaseExecuteUpdateMenuItemActionPerformed(ActionEvent evt) {
     	String query = JOptionPane.showInputDialog(null, "Update Database", "What do you wish to update?", JOptionPane.QUESTION_MESSAGE);
     	int updated = m_server.executeUpdate(query);
-    	JOptionPane.showMessageDialog(null, "Update result: " + updated, "Update Results", JOptionPane.INFORMATION_MESSAGE);
+    	m_messageBoxSystem.show(null, "Update result: " + updated, "Update Results", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void serverTablesCreateMenuItemActionPerformed(ActionEvent evt) {

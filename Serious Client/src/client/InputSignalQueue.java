@@ -136,7 +136,7 @@ public class InputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.Message) {
 					MessageSignal s2 = (MessageSignal) s;
-					// conflicts with local message object, change signal to have signal at end (for all signals)
+					// display message
 				}
 				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 					AcknowledgeMessageSignal s2 = (AcknowledgeMessageSignal) s;

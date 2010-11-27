@@ -1,11 +1,8 @@
 package server;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.*;
 import logger.*;
 
 public class UserDBMS {
@@ -13,11 +10,11 @@ public class UserDBMS {
 	private Connection sqlConnection = null;
 	private boolean m_connected = false;
 	private Statement stmt = null;
-	final private static String databaseFileName = "serious.db";
-	private String userDataTableName = "UserData";
-	private String userGroupTableName = "UserGroup";
-	private String userProfileTableName = "UserProfile";
-	private String userContactTableName = "UserContact";
+	final public static String databaseFileName = "serious.db";
+	final public static String userDataTableName = "UserData";
+	final public static String userGroupTableName = "UserGroup";
+	final public static String userProfileTableName = "UserProfile";
+	final public static String userContactTableName = "UserContact";
 	private Logger m_logger;
 	
 	public UserDBMS() {
@@ -465,37 +462,51 @@ public class UserDBMS {
 		return updated;
 	}
 	
-	public String[][] executeQuery(String query) {
+	public SQLResult executeQuery(String query) {
 		try {
 			ResultSet rs = stmt.executeQuery(query);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			
-			//TODO: finish me
-			
-			/*
-			rs.last();
-			int numberOfElements = rs.getRow();
-			rs.first();
-			String[][] result = new String[numberOfElements][rsmd.getColumnCount()];
-			
-			for(int i=0;i<rsmd.getColumnCount();i++) {
-				System.out.println(rsmd.getColumnName(i));
-			}
-			
-			while(rs.next()) {
-				for(int i=0;i<rsmd.getColumnCount();i++) {
-					System.out.println(rs.getObject(rsmd.getColumnName(i)));
-				}
-			}
-			*/
 			
 			m_logger.addInfo("Executed custom query");
+			
+			return new SQLResult(rs);
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error executing custom query: " + e.getMessage());
 		}
 		
 		return null;
+	}
+	
+	public void updateTable(String tableName, JTable table) {
+		if(tableName == null || table == null) { return; }
+		
+		try {
+			DefaultTableModel tableModel = new DefaultTableModel();
+			
+			ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName);
+			ResultSetMetaData meta = rs.getMetaData();
+			
+			int numberOfColumns = meta.getColumnCount();
+			String[] columnNames = new String[numberOfColumns];
+			for(int i=1;i<=numberOfColumns;i++) {
+				columnNames[i-1] = meta.getColumnName(i);
+			}
+			tableModel.setColumnIdentifiers(columnNames);
+			
+			String[] rowData;
+			while(rs.next()) {
+				rowData = new String[numberOfColumns];
+				for(int i=1;i<=numberOfColumns;i++) {
+					rowData[i-1] = rs.getString(i);
+				}
+				tableModel.addRow(rowData);
+			}
+			
+			table.setModel(tableModel);
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error updating table " + tableName + ": " + e.getMessage());
+		}
 	}
 	
 }

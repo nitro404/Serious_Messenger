@@ -1,8 +1,7 @@
-package client;
+package shared;
 
 import java.util.*;
 import java.awt.*;
-
 import javax.swing.*;
 
 public class MessageBoxSystem extends Thread {
