@@ -64,7 +64,11 @@ public class OutputSignalQueue extends Thread {
 				} 
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
 					s.writeTo(m_out);
-				} 
+				}
+				else if(s.getSignalType() == SignalType.UserCreated) {
+					s.writeTo(m_out);
+					m_client.disconnect();
+				}
 				else {
 					m_logger.addWarning("Unexpected output signal of type: " + s.getSignalType());
 				}

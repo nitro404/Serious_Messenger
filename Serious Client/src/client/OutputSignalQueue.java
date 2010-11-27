@@ -93,6 +93,9 @@ public class OutputSignalQueue extends Thread {
 					//s.writeTo(m_out);
 					//TODO: send to client
 				}
+				else if(s.getSignalType() == SignalType.CreateUser) {
+					s.writeTo(m_out);
+				}
 			}
 			
 			try { sleep(Globals.QUEUE_INTERVAL); }

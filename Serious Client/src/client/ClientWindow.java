@@ -1,7 +1,6 @@
 package client;
 
 import javax.swing.*;
-import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -14,6 +13,7 @@ public class ClientWindow extends JFrame {
 	private JMenu fileMenu;
     private JMenuItem fileSignInMenuItem;
     private JMenuItem fileSignOutMenuItem;
+    private JMenuItem fileCreateAccountMenuItem;
     private JMenuItem fileChangePasswordMenuItem;
     private JMenuItem fileExitMenuItem;
 	
@@ -39,6 +39,7 @@ public class ClientWindow extends JFrame {
         initComponents();
         
         //fileSignOutMenuItem.setEnabled(false);
+        //fileCreateAccountMenuItem.setEnabled(false);
         //contactsAddContactMenuItem.setEnabled(false);
         //contactsDeleteContactMenuItem.setEnabled(false);
         //contactsBlockContactMenuItem.setEnabled(false);
@@ -63,6 +64,7 @@ public class ClientWindow extends JFrame {
         fileMenu = new JMenu();
         fileSignInMenuItem = new JMenuItem();
         fileSignOutMenuItem = new JMenuItem();
+        fileCreateAccountMenuItem = new JMenuItem();
         fileChangePasswordMenuItem = new JMenuItem();
         fileExitMenuItem = new JMenuItem();
         
@@ -137,6 +139,14 @@ public class ClientWindow extends JFrame {
             }
         });
         fileMenu.add(fileSignOutMenuItem);
+        
+        fileCreateAccountMenuItem.setText("Create Account");
+        fileCreateAccountMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                fileCreateAccountMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(fileCreateAccountMenuItem);
 
         fileChangePasswordMenuItem.setText("Change Password");
         fileChangePasswordMenuItem.addActionListener(new ActionListener() {
@@ -255,6 +265,20 @@ public class ClientWindow extends JFrame {
     	}
     	
         m_client.logout();
+    }
+    
+    private void fileCreateAccountMenuItemActionPerformed(ActionEvent evt) {
+    	if(m_client.getClientState() != ClientState.Disconnected) {
+    		JOptionPane.showMessageDialog(null, "Please log out before creating an account.", "Please Log Out", JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+    	
+    	String userName = JOptionPane.showInputDialog(null, "Username:", "Username", JOptionPane.QUESTION_MESSAGE);
+    	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
+    	
+    	m_client.initialize();
+    	
+    	m_client.createAccount(userName, password);
     }
     
     private void fileChangePasswordMenuItemActionPerformed(ActionEvent evt) {

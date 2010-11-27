@@ -99,6 +99,17 @@ public class Server extends Thread {
 		m_dbms.resetTables();
 	}
 	
+	public boolean createUser(Client client, String userName, String password) {
+		boolean userCreated = m_dbms.createUser(userName, password);
+		
+		if(userCreated && client.getUserName() == null) {
+			client.setUserName(userName);
+			client.setPassword(password);
+		}
+		
+		return userCreated;
+	}
+	
 	public boolean userLogin(Client client, String userName, String password) {
 		
 		// make sure the user isn't already logged in

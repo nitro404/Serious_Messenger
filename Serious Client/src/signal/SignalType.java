@@ -24,9 +24,11 @@ public class SignalType {
 	final public static int ChangeNickname = 19;
 	final public static int ChangePersonalMessage = 20;
 	final public static int ChangeStatus = 21;
+	final public static int CreateUser = 22;
+	final public static int UserCreated = 23;
 	
 	public static boolean isValid(int signalType) {
-		return signalType >= 1 && signalType <= 21;
+		return signalType >= 1 && signalType <= 23;
 	}
 	
 }

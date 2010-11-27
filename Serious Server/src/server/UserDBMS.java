@@ -231,25 +231,36 @@ public class UserDBMS {
 	"SELECT * FROM UserContact WHERE UserName = '" + userName + "';"
 	*/
 	
-	public void createUser(String userName, String password) {
+	public boolean createUser(String userName, String password) {
 		try {
-			stmt.executeUpdate(
+			// verify that the user does not already exist
+			if(new SQLResult(stmt.executeQuery(
+				"SELECT * FROM " + userDataTableName + " " +
+				"WHERE UserName = '" + userName + "' " 
+			)).getRowCount() != 0) { return false; }
+			
+			boolean userCreated = stmt.executeUpdate(
 				"INSERT INTO " + userDataTableName + " VALUES(" +
 					"'" + userName + "', " +
 					"'" + password + "', " +
 					"CURRENT_TIMESTAMP, " +
 					"CURRENT_TIMESTAMP" +
 				")"
-			);
+			) != 0;
 			
-			m_logger.addInfo("Added user " + userName + " to database");
+			if(userCreated) {
+				m_logger.addInfo("Added user " + userName + " to database");
+			}
+			
+			return userCreated;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error adding user " + userName + " to database: " + e.getMessage());
 		}
+		return false;
 	}
 	
-	public void removeUser(String userName) {
+	public void deleteUser(String userName) {
 		if(userName == null) { return; }
 		String temp = userName.trim();
 		if(temp.length() == 0) { return; }
@@ -260,10 +271,10 @@ public class UserDBMS {
 			stmt.executeUpdate("DELETE FROM " + userGroupTableName + " WHERE UserName = '" + userName + "'");
 			stmt.executeUpdate("DELETE FROM " + userDataTableName + " WHERE UserName = '" + userName + "'");
 			
-			m_logger.addInfo("Removed user " + userName + " from database");
+			m_logger.addInfo("Deleted user " + userName + " from database");
 		}
 		catch(SQLException e) {
-			m_logger.addError("Error removing " + userName + " from database: " + e.getMessage());
+			m_logger.addError("Error deleting " + userName + " from database: " + e.getMessage());
 		}
 	}
 

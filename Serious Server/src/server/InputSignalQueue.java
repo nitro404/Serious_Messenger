@@ -77,6 +77,9 @@ public class InputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.BlockContact) {
 			s2 = BlockContactSignal.readFrom(ByteStream.readFrom(m_in, BlockContactSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.CreateUser) {
+			s2 = CreateUserSignal.readFrom(ByteStream.readFrom(m_in, CreateUserSignal.LENGTH));
+		}
 		else {
 			m_logger.addWarning("Unexpected input signal of type: " + s.getSignalType());
 		}
@@ -151,6 +154,17 @@ public class InputSignalQueue extends Thread {
 					
 					if(succeeded) {
 						m_logger.addCommand(s2.getUserName(), (contactBlocked ? "Blocked" : "Unblocked") + " Contact: " + s2.getUserName());
+					}
+				}
+				else if(s.getSignalType() == SignalType.CreateUser) {
+					CreateUserSignal s2 = (CreateUserSignal) s;
+					
+					boolean userCreated = m_server.createUser(m_client, s2.getUserName(), s2.getPassword());
+					
+					sendSignal(new UserCreatedSignal(userCreated));
+					
+					if(userCreated) {
+						m_logger.addCommand(s2.getUserName(), "Created Account");
 					}
 				}
 				else {

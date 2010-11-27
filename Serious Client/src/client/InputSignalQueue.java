@@ -98,6 +98,9 @@ public class InputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.ChangeStatus) {
 			s2 = ChangeStatusSignal.readFrom(ByteStream.readFrom(m_in, ChangeStatusSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.UserCreated) {
+			s2 = UserCreatedSignal.readFrom(ByteStream.readFrom(m_in, UserCreatedSignal.LENGTH));
+		}
 		else {
 			return;
 		}
@@ -202,6 +205,18 @@ public class InputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					ChangeStatusSignal s2 = (ChangeStatusSignal) s;
 					//update client
+				}
+				else if(s.getSignalType() == SignalType.UserCreated) {
+					UserCreatedSignal s2 = (UserCreatedSignal) s;
+					
+					if(s2.getCreated()) {
+						m_messageBoxSystem.show(null, "Successfully created user account!\n\nYou can now sign in with your username and password.", "Created Account", JOptionPane.INFORMATION_MESSAGE);
+					}
+					else {
+						m_messageBoxSystem.show(null, "Unable to create user account.", "Create User Account Failed", JOptionPane.WARNING_MESSAGE);
+					}
+					
+					m_client.disconnect();
 				}
 			}
 			

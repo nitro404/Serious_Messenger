@@ -31,6 +31,14 @@ public class Client {
 	public void initialize() {
 		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
 	}
+	
+	public String getUserName() { return m_userName; }
+	
+	public String getPassword() { return m_password; }
+	
+	public void setUserName(String userName) { m_userName = userName; }
+	
+	public void setPassword(String password) { m_password = password; }
 
 	public Socket getConnection() { return m_connection; }
 	
@@ -95,6 +103,12 @@ public class Client {
 		m_out = null;
 		m_in = null;
 		m_connection = null;
+	}
+	
+	public void createAccount(String userName, String password) {
+		if(m_state != ClientState.Connected) { return; }
+		
+		m_outSignalQueue.addSignal(new CreateUserSignal(userName, password));
 	}
 	
 	public void login(String userName, String password) {
