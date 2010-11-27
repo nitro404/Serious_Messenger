@@ -19,8 +19,8 @@ public class Client extends Thread {
 	private boolean m_connected = false;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
-	private InputSignalQueue m_inSignalQueue;
-	private OutputSignalQueue m_outSignalQueue;
+	private ClientInputSignalQueue m_inSignalQueue;
+	private ClientOutputSignalQueue m_outSignalQueue;
 	
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
@@ -34,8 +34,8 @@ public class Client extends Thread {
 		m_connection = connection;
 		m_ipAddress = connection.getInetAddress();
 		m_port = currentPort++;
-		m_inSignalQueue = new InputSignalQueue();
-		m_outSignalQueue = new OutputSignalQueue();
+		m_inSignalQueue = new ClientInputSignalQueue();
+		m_outSignalQueue = new ClientOutputSignalQueue();
 	}
 	
 	public void initialize(Server server, Logger logger) {

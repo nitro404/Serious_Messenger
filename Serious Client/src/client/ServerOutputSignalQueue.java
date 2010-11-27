@@ -5,13 +5,13 @@ import java.util.*;
 import shared.*;
 import signal.*;
 
-public class OutputSignalQueue extends Thread {
+public class ServerOutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
 	private Client m_client;
 	
-	public OutputSignalQueue(){
+	public ServerOutputSignalQueue(){
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 	

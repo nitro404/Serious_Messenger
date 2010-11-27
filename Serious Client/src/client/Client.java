@@ -15,8 +15,8 @@ public class Client {
 	private Socket m_connection;
 	private DataInputStream m_in;
 	private DataOutputStream m_out;
-	private InputSignalQueue m_inSignalQueue = null;
-	private OutputSignalQueue m_outSignalQueue = null;
+	private ServerInputSignalQueue m_inSignalQueue = null;
+	private ServerOutputSignalQueue m_outSignalQueue = null;
 	private ClientThread m_clientThread = null;
 	private MessageBoxSystem m_messageBoxSystem = null;
 	
@@ -68,12 +68,12 @@ public class Client {
 			m_in = new DataInputStream(m_connection.getInputStream());
 			
 			if(m_outSignalQueue == null || m_outSignalQueue.isTerminated()) {
-				m_outSignalQueue = new OutputSignalQueue();
+				m_outSignalQueue = new ServerOutputSignalQueue();
 				m_outSignalQueue.initialize(this, m_out);
 			}
 			
 			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
-				m_inSignalQueue = new InputSignalQueue();
+				m_inSignalQueue = new ServerInputSignalQueue();
 				m_inSignalQueue.initialize(this, m_in, m_outSignalQueue, m_messageBoxSystem);
 			}
 			

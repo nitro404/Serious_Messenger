@@ -6,14 +6,14 @@ import signal.*;
 import shared.*;
 import logger.*;
 
-public class OutputSignalQueue extends Thread {
+public class ClientOutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
 	private Client m_client;
 	private Logger m_logger;
 
-	public OutputSignalQueue() {
+	public ClientOutputSignalQueue() {
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 

@@ -6,20 +6,20 @@ import signal.*;
 import shared.*;
 import logger.*;
 
-public class InputSignalQueue extends Thread {
+public class ClientInputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
-	private OutputSignalQueue m_outSignalQueue;
+	private ClientOutputSignalQueue m_outSignalQueue;
 	private Server m_server;
 	private Client m_client;
 	private Logger m_logger;
 
-	public InputSignalQueue() {
+	public ClientInputSignalQueue() {
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Server server, Client client, DataInputStream in, OutputSignalQueue out, Logger logger) {
+	public void initialize(Server server, Client client, DataInputStream in, ClientOutputSignalQueue out, Logger logger) {
 		m_server = server;
 		m_client = client;
 		m_in = in;

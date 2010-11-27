@@ -6,19 +6,19 @@ import javax.swing.*;
 import shared.*;
 import signal.*;
 
-public class InputSignalQueue extends Thread {
+public class ServerInputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
-	private OutputSignalQueue m_outSignalQueue;
+	private ServerOutputSignalQueue m_outSignalQueue;
 	private Client m_client;
 	private MessageBoxSystem m_messageBoxSystem;
 	
-	public InputSignalQueue(){
+	public ServerInputSignalQueue(){
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client client, DataInputStream in, OutputSignalQueue out, MessageBoxSystem messageBoxSystem) {
+	public void initialize(Client client, DataInputStream in, ServerOutputSignalQueue out, MessageBoxSystem messageBoxSystem) {
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
