@@ -1,6 +1,6 @@
 package server;
 
-public class Main {
+public class SeriousServer {
 	
 	public static void main(String[] args) {
 		ServerWindow server = new ServerWindow();

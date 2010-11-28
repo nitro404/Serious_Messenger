@@ -2,17 +2,17 @@ package client;
 
 import shared.*;
 
-public class ClientThread extends Thread {
+public class ContactThread extends Thread {
 	
-	private Client m_client;
+	private Contact m_contact;
 	
-	public ClientThread() {
+	public ContactThread() {
 		
 	}
 	
-	public void initialize(Client client) {
-		m_client = client;
-		if(m_client == null) { return; }
+	public void initialize(Contact contact) {
+		m_contact = contact;
+		if(m_contact == null) { return; }
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 
@@ -21,8 +21,8 @@ public class ClientThread extends Thread {
 	}
 	
 	public void run() {
-		while(m_client.isConnected()) {
-			m_client.readSignal();
+		while(m_contact.isConnected()) {
+			m_contact.readSignal();
 			
 			try { sleep(Globals.QUEUE_INTERVAL); }
 			catch (InterruptedException e) { }

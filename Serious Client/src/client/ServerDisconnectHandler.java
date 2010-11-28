@@ -3,12 +3,12 @@ package client;
 import javax.swing.*;
 import shared.*;
 
-public class DisconnectHandler extends Thread {
+public class ServerDisconnectHandler extends Thread {
 	
 	private Client m_client;
 	private MessageBoxSystem m_messageBoxSystem;
 	
-	public DisconnectHandler() {
+	public ServerDisconnectHandler() {
 		
 	}
 	

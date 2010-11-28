@@ -7,7 +7,7 @@ public class ClientState {
 	final public static byte AwaitingAuthentication = 2;
 	final public static byte Online = 3;
 	
-	public static boolean isValid(int state) {
+	public static boolean isValid(byte state) {
 		return state >= 0 && state <= 3;
 	}
 	

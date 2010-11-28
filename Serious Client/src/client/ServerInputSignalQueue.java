@@ -62,21 +62,6 @@ public class ServerInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
 			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
 		}
-		else if(s.getSignalType() == SignalType.Message) {
-//			ByteStream bs = ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH);
-//			bs.readFrom(m_in, )
-//			s2 = LoginAuthenticated.readFrom();
-			// need to have read more stuff and append or w/e on bytestream for this to work
-		}
-		else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
-			s2 = AcknowledgeMessageSignal.readFrom(ByteStream.readFrom(m_in, AcknowledgeMessageSignal.LENGTH));
-		}
-		else if(s.getSignalType() == SignalType.UserTyping) {
-			s2 = UserTypingSignal.readFrom(ByteStream.readFrom(m_in, UserTypingSignal.LENGTH));
-		}
-		else if(s.getSignalType() == SignalType.ChangeFont) {
-			s2 = ChangeFontSignal.readFrom(ByteStream.readFrom(m_in, ChangeFontSignal.LENGTH));
-		}
 		else if(s.getSignalType() == SignalType.PasswordChanged) {
 			s2 = PasswordChangedSignal.readFrom(ByteStream.readFrom(m_in, PasswordChangedSignal.LENGTH));
 		}
@@ -88,15 +73,6 @@ public class ServerInputSignalQueue extends Thread {
 		}
 		else if(s.getSignalType() == SignalType.ContactBlocked) {
 			s2 = ContactBlockedSignal.readFrom(ByteStream.readFrom(m_in, ContactBlockedSignal.LENGTH));
-		}
-		else if(s.getSignalType() == SignalType.ChangeNickname) {
-			s2 = ChangeNicknameSignal.readFrom(ByteStream.readFrom(m_in, ChangeNicknameSignal.LENGTH));
-		}
-		else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
-			s2 = ChangePersonalMessageSignal.readFrom(ByteStream.readFrom(m_in, ChangePersonalMessageSignal.LENGTH));
-		}
-		else if(s.getSignalType() == SignalType.ChangeStatus) {
-			s2 = ChangeStatusSignal.readFrom(ByteStream.readFrom(m_in, ChangeStatusSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.UserCreated) {
 			s2 = UserCreatedSignal.readFrom(ByteStream.readFrom(m_in, UserCreatedSignal.LENGTH));
@@ -134,28 +110,8 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
-					Contact c = new Contact(s2.getUserName(), s2.getNickName(), s2.getPersonalMessage(), s2.getStatus(), Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR);
+//					Contact c = new Contact(s2.getUserName(), s2.getNickName(), s2.getPersonalMessage(), s2.getStatus(), Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR);
 					// add to collection
-				}
-				else if(s.getSignalType() == SignalType.Message) {
-					MessageSignal s2 = (MessageSignal) s;
-					// display message
-				}
-				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
-					AcknowledgeMessageSignal s2 = (AcknowledgeMessageSignal) s;
-					if(s2.getReceived()) {
-						//re-send message
-					}
-				}
-				else if(s.getSignalType() == SignalType.UserTyping) {
-					UserTypingSignal s2 = (UserTypingSignal) s;
-					if(s2.getTyping()) {
-						//update GUI + do stuff
-					}
-				}
-				else if(s.getSignalType() == SignalType.ChangeFont) {
-					ChangeFontSignal s2 = (ChangeFontSignal) s;
-					//create font style
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
@@ -193,18 +149,6 @@ public class ServerInputSignalQueue extends Thread {
 					else {
 						m_messageBoxSystem.show(null, "Unable to block/unblock contact " + s2.getUserName(), "Unable to Block/Unblock", JOptionPane.WARNING_MESSAGE);
 					}
-				}
-				else if(s.getSignalType() == SignalType.ChangeNickname) {
-					ChangeNicknameSignal s2 = (ChangeNicknameSignal) s;
-					//update client
-				}
-				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
-					ChangePersonalMessageSignal s2 = (ChangePersonalMessageSignal) s;
-					//update client
-				}
-				else if(s.getSignalType() == SignalType.ChangeStatus) {
-					ChangeStatusSignal s2 = (ChangeStatusSignal) s;
-					//update client
 				}
 				else if(s.getSignalType() == SignalType.UserCreated) {
 					UserCreatedSignal s2 = (UserCreatedSignal) s;

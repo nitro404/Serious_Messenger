@@ -4,21 +4,35 @@ import java.util.Vector;
 import java.awt.*;
 import shared.*;
 
-public class User extends Contact {
+public class User extends ContactData {
 	
 	protected String m_password;
 	
 	protected Vector<Contact> m_contacts;
 	
+	private ContactDisconnectHandler m_disconnectHandler;
+	
+	public User() {
+		super(null, null, null, StatusType.Offline, null, null);
+		m_password = null;
+		m_contacts = new Vector<Contact>();
+		m_disconnectHandler = new ContactDisconnectHandler(); 
+	}
+	
 	public User(String userName, String password, String nickName, String personalMessage, int status, Font font, Color textColour) {
 		super(userName, nickName, personalMessage, status, font, textColour);
-		m_password = (password == null) ? "" : password;
+		m_password = password;
 		m_contacts = new Vector<Contact>();
+		m_disconnectHandler = new ContactDisconnectHandler();
+	}
+	
+	public void initialize() {
+		m_disconnectHandler.initialize(m_contacts);
 	}
 	
 	public String getPassword() { return m_password; }
 	
-	public void setPassword(String password) { if(password != null) { m_password = password; } } 
+	public void setPassword(String password) { m_password = password; } 
 	
 	public int getContactIndex(String userName) {
 		if(userName == null || userName.length() == 0) { return -1; }

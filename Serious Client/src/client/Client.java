@@ -6,11 +6,9 @@ import javax.swing.*;
 import shared.*;
 import signal.*;
 
-public class Client {
+public class Client extends User {
 	
 	private int m_state = ClientState.Disconnected;
-	private String m_userName;
-	private String m_password;
 	
 	private Socket m_connection;
 	private DataInputStream m_in;
@@ -20,25 +18,19 @@ public class Client {
 	private ClientThread m_clientThread = null;
 	private MessageBoxSystem m_messageBoxSystem = null;
 	
-	private DisconnectHandler m_disconnectHandler = null;
+	private ServerDisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
 	public Client() {
+		super();
 		m_messageBoxSystem = new MessageBoxSystem();
 	}
 	
 	public void initialize() {
 		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
+		super.initialize();
 	}
-	
-	public String getUserName() { return m_userName; }
-	
-	public String getPassword() { return m_password; }
-	
-	public void setUserName(String userName) { m_userName = userName; }
-	
-	public void setPassword(String password) { m_password = password; }
 
 	public Socket getConnection() { return m_connection; }
 	
@@ -83,7 +75,7 @@ public class Client {
 			}
 			
 			if(m_disconnectHandler == null || m_disconnectHandler.isTerminated()) {
-				m_disconnectHandler = new DisconnectHandler();
+				m_disconnectHandler = new ServerDisconnectHandler();
 				m_disconnectHandler.initialize(this, m_messageBoxSystem);
 			}
 		}
@@ -192,7 +184,7 @@ public class Client {
 		return m_awaitingResponse && m_timeElapsed >= Globals.CONNECTION_TIMEOUT;
 	}
 
-	public boolean setState(int newState) {
+	public boolean setState(byte newState) {
 		if(!ClientState.isValid(newState)) { return false; }
 		if(m_state == newState) { return true; }
 		

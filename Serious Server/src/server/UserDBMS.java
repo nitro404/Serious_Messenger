@@ -260,22 +260,26 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public void deleteUser(String userName) {
-		if(userName == null) { return; }
-		String temp = userName.trim();
-		if(temp.length() == 0) { return; }
+	public boolean deleteUser(String userName) {
+		if(userName == null) { return false; }
+		
+		boolean userDeleted = false;
 		
 		try {
-			stmt.executeUpdate("DELETE FROM " + userProfileTableName + " WHERE UserName = '" + userName + "'");
-			stmt.executeUpdate("DELETE FROM " + userContactTableName + " WHERE UserName = '" + userName + "' OR Contact = '" + userName + "'");
-			stmt.executeUpdate("DELETE FROM " + userGroupTableName + " WHERE UserName = '" + userName + "'");
-			stmt.executeUpdate("DELETE FROM " + userDataTableName + " WHERE UserName = '" + userName + "'");
+			userDeleted = stmt.executeUpdate("DELETE FROM " + userProfileTableName + " WHERE UserName = '" + userName + "'") != 0 || userDeleted;
+			userDeleted = stmt.executeUpdate("DELETE FROM " + userContactTableName + " WHERE UserName = '" + userName + "' OR Contact = '" + userName + "'") != 0  || userDeleted;
+			userDeleted = stmt.executeUpdate("DELETE FROM " + userGroupTableName + " WHERE UserName = '" + userName + "'") != 0 || userDeleted;
+			userDeleted = stmt.executeUpdate("DELETE FROM " + userDataTableName + " WHERE UserName = '" + userName + "'") != 0 || userDeleted;
 			
-			m_logger.addInfo("Deleted user " + userName + " from database");
+			if(userDeleted) {
+				m_logger.addInfo("Deleted user " + userName + " from database");
+			}
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error deleting " + userName + " from database: " + e.getMessage());
 		}
+		
+		return userDeleted;
 	}
 
 	public void createUserProfile(String userName, String firstName, String middleName, String lastName, char gender, String birthDate, String email, String homePhone, String mobilePhone, String workPhone, String country, String stateProvince, String zipPostalCode) {
@@ -411,6 +415,7 @@ public class UserDBMS {
 			));
 			if(!(contactResult.getRowCount() == 1)) { return false; }
 			
+			// add the contact to the database
 			boolean contactAdded = stmt.executeUpdate(
 				"INSERT INTO " + userContactTableName + " VALUES(" +	
 					"'" + userName + "', " +
@@ -434,6 +439,7 @@ public class UserDBMS {
 	
 	public boolean deleteUserContact(String userName, String contactUserName) {
 		try {
+			// delete the contact from the database
 			boolean contactDeleted = stmt.executeUpdate(
 				"DELETE FROM " + userContactTableName + " " +
 				"WHERE UserName = '" + userName + "' " +

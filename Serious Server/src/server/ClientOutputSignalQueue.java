@@ -68,6 +68,7 @@ public class ClientOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.UserCreated) {
 					s.writeTo(m_out);
 					m_client.disconnect();
+					m_logger.addInfo("Client #" + m_client.getClientNumber() + " disconnected");
 				}
 				else {
 					m_logger.addWarning("Unexpected output signal of type: " + s.getSignalType());

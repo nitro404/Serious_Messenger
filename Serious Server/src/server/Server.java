@@ -11,7 +11,7 @@ public class Server extends Thread {
 	
 	private ServerSocket m_connection;
 	private Vector<Client> m_clients;
-	private DisconnectHandler m_disconnectHandler;
+	private ClientDisconnectHandler m_disconnectHandler;
 	private static int m_clientCounter = 0;
 	
 	private UserDBMS m_dbms;
@@ -21,7 +21,7 @@ public class Server extends Thread {
 		m_clients = new Vector<Client>();
 		m_dbms = new UserDBMS();
 		m_logger = new Logger();
-		m_disconnectHandler = new DisconnectHandler();
+		m_disconnectHandler = new ClientDisconnectHandler();
 	}
 	
 	public void initialize(int port, ServerWindow serverWindow) {
@@ -108,6 +108,23 @@ public class Server extends Thread {
 		}
 		
 		return userCreated;
+	}
+	
+	public boolean deleteUser(String userName) {
+		boolean userDeleted = m_dbms.deleteUser(userName);
+		
+		if(userDeleted) {
+			for(int i=0;i<m_clients.size();i++) {
+				String clientUserName = m_clients.elementAt(i).getUserName();
+				if(clientUserName != null && clientUserName.equalsIgnoreCase(userName)) {
+					m_clients.elementAt(i).disconnect();
+					m_logger.addInfo("Client #" + m_clients.elementAt(i).getClientNumber() + " (" + clientUserName + ") disconnecting: account deleted");
+					break;
+				}
+			}
+		}
+		
+		return userDeleted;
 	}
 	
 	public boolean userLogin(Client client, String userName, String password) {

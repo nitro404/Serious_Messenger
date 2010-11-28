@@ -4,13 +4,13 @@ import java.util.Vector;
 import shared.*;
 import logger.*;
 
-public class DisconnectHandler extends Thread {
+public class ClientDisconnectHandler extends Thread {
 	
 	private Vector<Client> m_clients;
 	
 	private Logger m_logger;
 	
-	public DisconnectHandler() {
+	public ClientDisconnectHandler() {
 		
 	}
 	

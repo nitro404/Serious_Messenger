@@ -22,6 +22,7 @@ public class ServerWindow extends JFrame {
     private JMenuItem serverFileExitMenuItem;
     
     private JMenu serverDatabaseMenu;
+    private JMenuItem serverDatabaseDeleteUserMenuItem;
     private JMenuItem serverDatabaseExecuteQueryMenuItem;
     private JMenuItem serverDatabaseExecuteUpdateMenuItem;
     
@@ -93,6 +94,7 @@ public class ServerWindow extends JFrame {
         serverFileExitMenuItem = new JMenuItem();
         
         serverDatabaseMenu = new JMenu();
+        serverDatabaseDeleteUserMenuItem = new JMenuItem();
         serverDatabaseExecuteQueryMenuItem = new JMenuItem();
         serverDatabaseExecuteUpdateMenuItem = new JMenuItem();
         
@@ -336,7 +338,15 @@ public class ServerWindow extends JFrame {
         serverMenuBar.add(serverFileMenu);
 
         serverDatabaseMenu.setText("Database");
-
+        
+        serverDatabaseDeleteUserMenuItem.setText("Delete User");
+        serverDatabaseDeleteUserMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                serverDatabaseDeleteUserMenuItemActionPerformed(evt);
+            }
+        });
+        serverDatabaseMenu.add(serverDatabaseDeleteUserMenuItem);
+        
         serverDatabaseExecuteQueryMenuItem.setText("Execute Query");
         serverDatabaseExecuteQueryMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -434,8 +444,25 @@ public class ServerWindow extends JFrame {
         System.exit(0);
     }
     
+    private void serverDatabaseDeleteUserMenuItemActionPerformed(ActionEvent evt) {
+    	String userName = JOptionPane.showInputDialog(null, "Username:", "Delete User", JOptionPane.QUESTION_MESSAGE);
+    	
+    	if(userName == null) { return; }
+    	
+    	boolean userDeleted = m_server.deleteUser(userName);
+    	
+    	if(userDeleted) {
+    		m_messageBoxSystem.show(null, "User deleted successfully!", "User Deleted", JOptionPane.INFORMATION_MESSAGE);
+    	}
+    	else {
+    		m_messageBoxSystem.show(null, "Unable to delete user.", "Unable to Delete User", JOptionPane.INFORMATION_MESSAGE);
+    	}
+    }
+    
     private void serverDatabaseExecuteQueryMenuItemActionPerformed(ActionEvent evt) {
-    	String query = JOptionPane.showInputDialog(null, "Query Database", "What do you wish to query?", JOptionPane.QUESTION_MESSAGE);
+    	String query = JOptionPane.showInputDialog(null, "What do you wish to query?", "Query Database", JOptionPane.QUESTION_MESSAGE);
+    	
+    	if(query == null) { return; }
     	
     	SQLResult result = m_server.executeQuery(query);
     	
@@ -444,20 +471,36 @@ public class ServerWindow extends JFrame {
     
     private void serverDatabaseExecuteUpdateMenuItemActionPerformed(ActionEvent evt) {
     	String query = JOptionPane.showInputDialog(null, "Update Database", "What do you wish to update?", JOptionPane.QUESTION_MESSAGE);
+    	
+    	if(query == null) { return; }
+    	
     	int updated = m_server.executeUpdate(query);
+    	
     	m_messageBoxSystem.show(null, "Update result: " + updated, "Update Results", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void serverTablesCreateMenuItemActionPerformed(ActionEvent evt) {
-    	m_server.createTables();
+    	int result = JOptionPane.showConfirmDialog(null, "Are you sure you wish to create all tables?", "Create Tables", JOptionPane.YES_NO_CANCEL_OPTION);
+    	
+    	if(result == JOptionPane.YES_OPTION) {
+    		m_server.createTables();
+    	}
     }
 
     private void serverTablesDeleteMenuItemActionPerformed(ActionEvent evt) {
-    	m_server.dropTables();
+    	int result = JOptionPane.showConfirmDialog(null, "Are you sure you wish to delete all tables?", "Delete Tables", JOptionPane.YES_NO_CANCEL_OPTION);
+    	
+    	if(result == JOptionPane.YES_OPTION) {
+    		m_server.dropTables();
+    	}
     }
 
     private void serverTablesResetMenuItemActionPerformed(ActionEvent evt) {
-    	m_server.resetTables();
+    	int result = JOptionPane.showConfirmDialog(null, "Are you sure you wish to reset (clear) all tables?", "Reset Tables", JOptionPane.YES_NO_CANCEL_OPTION);
+    	
+    	if(result == JOptionPane.YES_OPTION) {
+    		m_server.resetTables();
+    	}
     }
 	
 }

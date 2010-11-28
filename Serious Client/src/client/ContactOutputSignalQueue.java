@@ -5,13 +5,13 @@ import java.util.*;
 import shared.*;
 import signal.*;
 
-public class ServerOutputSignalQueue extends Thread {
+public class ContactOutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
 	private Client m_client;
 	
-	public ServerOutputSignalQueue(){
+	public ContactOutputSignalQueue(){
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 	
@@ -42,29 +42,25 @@ public class ServerOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Pong) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.LoginRequest) {
+				else if(s.getSignalType() == SignalType.Message) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.Logout) {
-					s.writeTo(m_out);
-					m_client.disconnect();
-				}
-				else if(s.getSignalType() == SignalType.BroadcastLogin) {
+				else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.ChangePassword) {
+				else if(s.getSignalType() == SignalType.UserTyping) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.AddContact) {
+				else if(s.getSignalType() == SignalType.ChangeFont) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.DeleteContact) {
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.BlockContact) {
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
 					s.writeTo(m_out);
 				}
-				else if(s.getSignalType() == SignalType.CreateUser) {
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					s.writeTo(m_out);
 				}
 			}
