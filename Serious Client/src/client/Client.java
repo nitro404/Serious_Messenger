@@ -121,9 +121,9 @@ public class Client extends User {
 	}
 	
 	public void authenticated() {
-		// get contact list, then set status to online
-		
 		setState(ClientState.Online);
+		
+		m_outSignalQueue.addSignal(new BroadcastLoginSignal(m_userName, m_nickName, m_personalMessage, m_status));
 	}
 	
 	public void changePassword(String oldPassword, String newPassword) {
@@ -191,6 +191,7 @@ public class Client extends User {
 		if(m_state == ClientState.Disconnected) {
 			if(newState == ClientState.Connected) {
 				m_state = newState;
+				m_status = StatusType.Offline;
 				return true;
 			}
 			else {
@@ -200,10 +201,12 @@ public class Client extends User {
 		else if(m_state == ClientState.Connected) {
 			if(newState == ClientState.AwaitingAuthentication) {
 				m_state = newState;
+				m_status = StatusType.Offline;
 				return true;
 			}
 			else if(newState == ClientState.Disconnected) {
 				m_state = newState;
+				m_status = StatusType.Offline;
 				return true;
 			}
 			else {
@@ -213,15 +216,18 @@ public class Client extends User {
 		else if(m_state == ClientState.AwaitingAuthentication) {
 			if(newState == ClientState.Online) {
 				m_state = newState;
+				m_status = StatusType.Online;
 				return true;
 			}
 			else if(newState == ClientState.Disconnected) {
 				m_state = newState;
+				m_status = StatusType.Offline;
 			}
 		}
 		else if(m_state == ClientState.Online) {
 			if(newState == ClientState.Disconnected) {
 				m_state = newState;
+				m_status = StatusType.Offline;
 			}
 		}
 		return true;

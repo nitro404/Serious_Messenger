@@ -24,11 +24,11 @@ public class Contact extends ContactData {
 	
 	private Client m_client;
 	
-	public Contact(String userName, String nickName, String personalMessage, int status, Font font, Color textColour, String ipAddress, int port) {
+	public Contact(String userName, String nickName, String personalMessage, byte status, Font font, Color textColour, String ipAddress, int port) {
 		this(userName, nickName, personalMessage, status, font, textColour, parseIPAddress(ipAddress), port);
 	}
 	
-	public Contact(String userName, String nickName, String personalMessage, int status, Font font, Color textColour, InetAddress ipAddress, int port) {
+	public Contact(String userName, String nickName, String personalMessage, byte status, Font font, Color textColour, InetAddress ipAddress, int port) {
 		super(userName, nickName, personalMessage, status, font, textColour);
 		setIPAddress(ipAddress);
 		setPort(port);

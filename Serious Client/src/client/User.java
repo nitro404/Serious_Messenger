@@ -5,7 +5,7 @@ import java.awt.*;
 import shared.*;
 
 public class User extends ContactData {
-	
+	 
 	protected String m_password;
 	
 	protected Vector<Contact> m_contacts;
@@ -19,7 +19,7 @@ public class User extends ContactData {
 		m_disconnectHandler = new ContactDisconnectHandler(); 
 	}
 	
-	public User(String userName, String password, String nickName, String personalMessage, int status, Font font, Color textColour) {
+	public User(String userName, String password, String nickName, String personalMessage, byte status, Font font, Color textColour) {
 		super(userName, nickName, personalMessage, status, font, textColour);
 		m_password = password;
 		m_contacts = new Vector<Contact>();
@@ -179,12 +179,12 @@ public class User extends ContactData {
 		}
 	}
 	
-	public void setContactStatus(String userName, int status) {
+	public void setContactStatus(String userName, byte status) {
 		Contact c = getContact(userName);
 		if(c != null) { c.setStatus(status); }
 	}
 	
-	public void setContactStatus(int index, int status) {
+	public void setContactStatus(int index, byte status) {
 		if(index < 0 || index >= m_contacts.size()) {
 			m_contacts.elementAt(index).setStatus(status);
 		}

@@ -65,6 +65,9 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.Logout) {
 			s2 = LogoutSignal.readFrom(ByteStream.readFrom(m_in, LogoutSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.BroadcastLogin) {
+			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
+		}
 		else if(s.getSignalType() == SignalType.ChangePassword) {
 			s2 = ChangePasswordSignal.readFrom(ByteStream.readFrom(m_in, ChangePasswordSignal.LENGTH));
 		}
@@ -114,6 +117,21 @@ public class ClientInputSignalQueue extends Thread {
 					m_logger.addCommand(s2.getUserName(), "Logged Out");
 					
 					m_logger.addInfo("Client #" + m_client.getClientNumber() + " (" + s2.getUserName() + ") logged out");
+				}
+				else if(s.getSignalType() == SignalType.BroadcastLogin) {
+					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
+					
+					if(m_client.getUserName() != null) {
+						s2.setUserName(m_client.getUserName());
+						s2.setIPAddress(m_client.getIPAddress());
+						s2.setPort(m_client.getPort());
+					}
+					
+					Vector<ClientData> contacts = m_server.getUserContacts(m_client.getUserName());
+					
+					m_server.broadcastUserLogin(s2, contacts);
+					
+					// TODO: send contact info to client
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePasswordSignal s2 = (ChangePasswordSignal) s;

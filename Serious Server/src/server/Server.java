@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import shared.*;
+import signal.*;
 import logger.*;
 
 public class Server extends Thread {
@@ -151,6 +152,20 @@ public class Server extends Thread {
 		return authenticated;
 	}
 	
+	public void broadcastUserLogin(BroadcastLoginSignal s, Vector<ClientData> contacts) {
+		if(s == null || contacts == null) { return; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			String clientUserName = m_clients.elementAt(i).getUserName();
+			for(int j=0;j<contacts.size();j++) {
+				if(clientUserName != null && clientUserName.equalsIgnoreCase(contacts.elementAt(j).getUserName())) {
+					m_clients.elementAt(i).sendSignal(s);
+					break;
+				}
+			}
+		}
+	}
+	
 	public boolean changeUserPassword(Client client, String userName, String oldPassword, String newPassword) {
 		if(client.getUserName() != null &&
 		   client.getUserName().equalsIgnoreCase(userName) &&
@@ -186,6 +201,10 @@ public class Server extends Thread {
 			return m_dbms.setBlockUserContact(client.getUserName(), contactUserName, blocked);
 		}
 		return 2;
+	}
+	
+	public Vector<ClientData> getUserContacts(String userName) {
+		return m_dbms.getUserContacts(userName, m_clients);
 	}
 	
 	public int executeUpdate(String query) {

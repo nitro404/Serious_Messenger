@@ -1,8 +1,10 @@
 package server;
 
+import java.util.Vector;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import shared.*;
 import logger.*;
 
 public class UserDBMS {
@@ -222,14 +224,74 @@ public class UserDBMS {
 	
 	/*
 	// GET USER INFO
-	"SELECT * FROM User WHERE UserName = '" + userName + "';"
+	"SELECT * FROM User WHERE UserName = '" + userName + "'"
 
 	// GET USER PROFILE
-	"SELECT * FROM UserProfile WHERE UserName = '" + userName + "';"
-
-	// GET CONTACTS
-	"SELECT * FROM UserContact WHERE UserName = '" + userName + "';"
+	"SELECT * FROM UserProfile WHERE UserName = '" + userName + "'"
 	*/
+	
+	public Vector<ClientData> getUserContacts(String userName, Vector<Client> clients) {
+		try {
+			// get user's contacts
+			SQLResult result = new SQLResult(stmt.executeQuery(
+				"SELECT * FROM " + userContactTableName + " " +
+				"WHERE UserName = '" + userName + "'"
+			));
+			
+			Vector<ClientData> contacts = new Vector<ClientData>();
+			for(int i=0;i<result.getRowCount();i++) {
+				
+				String contactUserName = result.getElement(i, 1);
+				
+				// check to see if the current contact has the user blocked
+				boolean contactHasUserBlocked = false;
+				SQLResult result2 = new SQLResult(stmt.executeQuery(
+					"SELECT * FROM " + userContactTableName + " " +
+					"WHERE UserName = '" + contactUserName + "' " +
+						"AND Contact = '" + userName + "'"
+				));
+				
+				// get the blocked value from the query
+				if(result2.getRowCount() != 0) {
+					try { contactHasUserBlocked = Integer.parseInt(result2.getElement(0, 3)) != 0; }
+					catch(NumberFormatException e) { }
+				}
+				
+				if(!contactHasUserBlocked) {
+					// check to see if the user has the current contact blocked
+					boolean contactBlocked = false;
+					try { contactBlocked = Integer.parseInt(result.getElement(i, 3)) != 0; }
+					catch(NumberFormatException e) { }
+					
+					//String contactGroup = result.getElement(i, 2);
+					
+					// check to see if the current contact is online
+					byte contactStatus = StatusType.Offline;
+					Client client = null;
+					for(int j=0;j<clients.size();j++) {
+						String clientUserName = clients.elementAt(j).getUserName();
+						if(clientUserName != null && clientUserName.equalsIgnoreCase(contactUserName)) {
+							client = clients.elementAt(j);
+							contactStatus = StatusType.Online;
+							break;
+						}
+					}
+					
+					// store the current contact's information
+					contacts.add(new ClientData(contactUserName, null, null, contactStatus, Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR, contactBlocked, client.getIPAddress(), client.getPort()));
+				}
+				
+			}
+			
+			m_logger.addInfo("Collected contact list for user " + userName);
+			
+			return contacts;
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error collecting contacts for user " + userName + ": " + e.getMessage());
+		}
+		return null;
+	}
 	
 	public boolean createUser(String userName, String password) {
 		try {
