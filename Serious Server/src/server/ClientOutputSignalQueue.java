@@ -70,6 +70,9 @@ public class ClientOutputSignalQueue extends Thread {
 					m_client.disconnect();
 					m_logger.addInfo("Client #" + m_client.getClientNumber() + " disconnected");
 				}
+				else if(s.getSignalType() == SignalType.ContactList) {
+					s.writeTo(m_out);
+				}
 				else {
 					m_logger.addWarning("Unexpected output signal of type: " + s.getSignalType());
 				}

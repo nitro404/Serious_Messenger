@@ -29,6 +29,8 @@ public class UserCreatedSignal extends Signal {
 	}
 	
 	public static UserCreatedSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		UserCreatedSignal s2 = new UserCreatedSignal();
 		
 		s2.m_created = byteStream.nextBoolean();
@@ -41,6 +43,7 @@ public class UserCreatedSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addBoolean(m_created);
 		byteStream.addLong(checksum());

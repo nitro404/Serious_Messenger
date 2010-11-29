@@ -29,6 +29,8 @@ public class PasswordChangedSignal extends Signal {
 	}
 	
 	public static PasswordChangedSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		PasswordChangedSignal s2 = new PasswordChangedSignal();
 		
 		s2.m_passwordChanged = byteStream.nextBoolean();
@@ -41,6 +43,7 @@ public class PasswordChangedSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addBoolean(m_passwordChanged);
 		byteStream.addLong(checksum());

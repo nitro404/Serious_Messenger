@@ -29,6 +29,8 @@ public class ChangePersonalMessageSignal extends Signal {
 	}
 	
 	public static ChangePersonalMessageSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ChangePersonalMessageSignal s2 = new ChangePersonalMessageSignal();
 		
 		s2.m_personalMessage = byteStream.nextString(Globals.MAX_PERSONAL_MESSAGE_LENGTH);
@@ -41,6 +43,7 @@ public class ChangePersonalMessageSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_personalMessage, Globals.MAX_PERSONAL_MESSAGE_LENGTH);
 		byteStream.addLong(checksum());

@@ -1,5 +1,7 @@
 package signal;
 
+import java.io.DataInputStream;
+
 import shared.*;
 
 public class MessageSignal extends Signal {
@@ -49,14 +51,16 @@ public class MessageSignal extends Signal {
 		return checksum;
 	}
 	
-	public static MessageSignal readFrom(ByteStream byteStream) {
+	public static MessageSignal readFrom(ByteStream byteStream, DataInputStream in) {
+		if(byteStream == null || in == null) { return null; }
+		
 		MessageSignal s2 = new MessageSignal();
 		
 		s2.m_messageID = byteStream.nextLong();
 		s2.m_acknowledge = byteStream.nextBoolean();
 		s2.m_messageLength = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
-		s2.m_message = byteStream.nextString(s2.m_messageLength);
+		s2.m_message = ByteStream.readFrom(in, (s2.m_messageLength * Character.SIZE)).nextString(s2.m_messageLength);
 		
 		if(checksum != s2.checksum()) { return null; }
 		
@@ -65,6 +69,7 @@ public class MessageSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addLong(m_messageID);
 		byteStream.addBoolean(m_acknowledge);

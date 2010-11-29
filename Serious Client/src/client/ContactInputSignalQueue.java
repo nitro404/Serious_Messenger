@@ -2,7 +2,6 @@ package client;
 
 import java.io.DataInputStream;
 import java.util.ArrayDeque;
-import javax.swing.*;
 import shared.*;
 import signal.*;
 
@@ -55,10 +54,7 @@ public class ContactInputSignalQueue extends Thread {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.Message) {
-//			ByteStream bs = ByteStream.readFrom(m_in, LoginAuthenticated.LENGTH);
-//			bs.readFrom(m_in, )
-//			s2 = LoginAuthenticated.readFrom();
-			// need to have read more stuff and append or w/e on bytestream for this to work
+			s2 = MessageSignal.readFrom(ByteStream.readFrom(m_in, MessageSignal.LENGTH), m_in);
 		}
 		else if(s.getSignalType() == SignalType.AcknowledgeMessage) {
 			s2 = AcknowledgeMessageSignal.readFrom(ByteStream.readFrom(m_in, AcknowledgeMessageSignal.LENGTH));

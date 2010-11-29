@@ -29,6 +29,8 @@ public class LogoutSignal extends Signal {
 	}
 	
 	public static LogoutSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		LogoutSignal s2 = new LogoutSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -41,6 +43,7 @@ public class LogoutSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addLong(checksum());

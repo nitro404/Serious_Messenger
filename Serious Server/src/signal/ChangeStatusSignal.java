@@ -29,6 +29,8 @@ public class ChangeStatusSignal extends Signal {
 	}
 	
 	public static ChangeStatusSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ChangeStatusSignal s2 = new ChangeStatusSignal();
 		
 		s2.m_status = byteStream.nextByte();
@@ -41,6 +43,7 @@ public class ChangeStatusSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addByte(m_status);
 		byteStream.addLong(checksum());

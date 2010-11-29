@@ -37,12 +37,14 @@ public class Signal {
 	
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		byteStream.addInteger(m_signalType);
 		byteStream.addLong(ByteStream.getChecksum(m_signalType));
 	}
 	
 	public void writeTo(DataOutputStream out) {
 		if(out == null) { return; }
+		
 		ByteStream bs = new ByteStream();
 		writeTo(bs);
 		bs.writeTo(out);

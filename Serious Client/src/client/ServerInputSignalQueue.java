@@ -1,7 +1,7 @@
 package client;
 
-import java.io.DataInputStream;
-import java.util.ArrayDeque;
+import java.io.*;
+import java.util.*;
 import javax.swing.*;
 import shared.*;
 import signal.*;
@@ -76,6 +76,9 @@ public class ServerInputSignalQueue extends Thread {
 		}
 		else if(s.getSignalType() == SignalType.UserCreated) {
 			s2 = UserCreatedSignal.readFrom(ByteStream.readFrom(m_in, UserCreatedSignal.LENGTH));
+		}
+		else if(s.getSignalType() == SignalType.ContactList) {
+			s2 = ContactListSignal.readFrom(ByteStream.readFrom(m_in, ContactListSignal.LENGTH), m_in);
 		}
 		else {
 			return;
@@ -161,6 +164,13 @@ public class ServerInputSignalQueue extends Thread {
 					}
 					
 					m_client.disconnect();
+				}
+				else if(s.getSignalType() == SignalType.ContactList) {
+					ContactListSignal s2 = (ContactListSignal) s;
+					
+					Vector<ClientData> contacts = s2.getContacts();
+					
+					// update client's contact list
 				}
 			}
 			

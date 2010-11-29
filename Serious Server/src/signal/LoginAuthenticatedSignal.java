@@ -29,6 +29,8 @@ public class LoginAuthenticatedSignal extends Signal {
 	}
 	
 	public static LoginAuthenticatedSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		LoginAuthenticatedSignal s2 = new LoginAuthenticatedSignal();
 		
 		s2.m_authenticated = byteStream.nextBoolean();
@@ -41,6 +43,7 @@ public class LoginAuthenticatedSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addBoolean(m_authenticated);
 		byteStream.addLong(checksum());

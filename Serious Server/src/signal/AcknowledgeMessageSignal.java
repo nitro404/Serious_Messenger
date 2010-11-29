@@ -37,6 +37,8 @@ public class AcknowledgeMessageSignal extends Signal {
 	}
 	
 	public static AcknowledgeMessageSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		AcknowledgeMessageSignal s2 = new AcknowledgeMessageSignal();
 		
 		s2.m_messageID = byteStream.nextLong();
@@ -50,6 +52,7 @@ public class AcknowledgeMessageSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addLong(m_messageID);
 		byteStream.addBoolean(m_received);

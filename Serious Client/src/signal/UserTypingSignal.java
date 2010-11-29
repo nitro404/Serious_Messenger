@@ -29,6 +29,8 @@ public class UserTypingSignal extends Signal {
 	}
 	
 	public static UserTypingSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		UserTypingSignal s2 = new UserTypingSignal();
 		
 		s2.m_typing = byteStream.nextBoolean();
@@ -41,6 +43,7 @@ public class UserTypingSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addBoolean(m_typing);
 		byteStream.addLong(checksum());

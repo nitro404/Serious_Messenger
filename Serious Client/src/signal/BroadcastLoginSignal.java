@@ -96,6 +96,8 @@ public class BroadcastLoginSignal extends Signal {
 	}
 	
 	public static BroadcastLoginSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		BroadcastLoginSignal s2 = new BroadcastLoginSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -119,6 +121,7 @@ public class BroadcastLoginSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addStringFixedLength(m_nickName, Globals.MAX_NICKNAME_LENGTH);

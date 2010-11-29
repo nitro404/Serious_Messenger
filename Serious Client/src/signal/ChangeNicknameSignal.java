@@ -29,6 +29,8 @@ public class ChangeNicknameSignal extends Signal {
 	}
 	
 	public static ChangeNicknameSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ChangeNicknameSignal s2 = new ChangeNicknameSignal();
 		
 		s2.m_nickName = byteStream.nextString(Globals.MAX_NICKNAME_LENGTH);
@@ -41,6 +43,7 @@ public class ChangeNicknameSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_nickName, Globals.MAX_NICKNAME_LENGTH);
 		byteStream.addLong(checksum());

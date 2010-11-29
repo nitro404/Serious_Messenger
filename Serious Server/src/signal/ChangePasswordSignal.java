@@ -44,6 +44,8 @@ public class ChangePasswordSignal extends Signal {
 	}
 	
 	public static ChangePasswordSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ChangePasswordSignal s2 = new ChangePasswordSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -58,6 +60,7 @@ public class ChangePasswordSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addStringFixedLength(m_oldPassword, Globals.MAX_PASSWORD_LENGTH);

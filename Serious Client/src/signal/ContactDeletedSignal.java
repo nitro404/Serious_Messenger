@@ -37,6 +37,8 @@ public class ContactDeletedSignal extends Signal {
 	}
 	
 	public static ContactDeletedSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ContactDeletedSignal s2 = new ContactDeletedSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -50,6 +52,7 @@ public class ContactDeletedSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addBoolean(m_deleted);

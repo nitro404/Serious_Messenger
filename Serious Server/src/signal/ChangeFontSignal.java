@@ -91,6 +91,8 @@ public class ChangeFontSignal extends Signal {
 	}
 	
 	public static ChangeFontSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ChangeFontSignal s2 = new ChangeFontSignal();
 		
 		s2.m_fontFace = byteStream.nextString(Globals.MAX_FONTFACE_LENGTH);
@@ -113,6 +115,7 @@ public class ChangeFontSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_fontFace, Globals.MAX_FONTFACE_LENGTH);
 		byteStream.addInteger(m_size);

@@ -5,6 +5,7 @@ import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import shared.*;
+import signal.*;
 import logger.*;
 
 public class UserDBMS {

@@ -37,6 +37,8 @@ public class LoginRequestSignal extends Signal {
 	}
 	
 	public static LoginRequestSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		LoginRequestSignal s2 = new LoginRequestSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -50,6 +52,7 @@ public class LoginRequestSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addStringFixedLength(m_password, Globals.MAX_PASSWORD_LENGTH);

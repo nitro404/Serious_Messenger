@@ -131,7 +131,7 @@ public class ClientInputSignalQueue extends Thread {
 					
 					m_server.broadcastUserLogin(s2, contacts);
 					
-					// TODO: send contact info to client
+					sendSignal(new ContactListSignal(contacts));
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePasswordSignal s2 = (ChangePasswordSignal) s;

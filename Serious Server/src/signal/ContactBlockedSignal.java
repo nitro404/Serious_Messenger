@@ -45,6 +45,8 @@ public class ContactBlockedSignal extends Signal {
 	}
 	
 	public static ContactBlockedSignal readFrom(ByteStream byteStream) {
+		if(byteStream == null) { return null; }
+		
 		ContactBlockedSignal s2 = new ContactBlockedSignal();
 		
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
@@ -59,6 +61,7 @@ public class ContactBlockedSignal extends Signal {
 
 	public void writeTo(ByteStream byteStream) {
 		if(byteStream == null) { return; }
+		
 		super.writeTo(byteStream);
 		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addBoolean(m_blocked);
