@@ -35,7 +35,7 @@ public class TableUpdateThread extends Thread {
 				m_dbms.updateTable(UserDBMS.userGroupTableName, userGroupTable);
 			}
 			
-			try { sleep(5000); }
+			try { sleep(2500); }
 			catch (InterruptedException e) { }
 		}
 	}

@@ -22,7 +22,7 @@ public class BroadcastLoginSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private BroadcastLoginSignal() {
-		super(SignalType.LoginRequest);
+		super(SignalType.BroadcastLogin);
 	}
 	
 	public BroadcastLoginSignal(String userName, String nickName, String personalMessage, byte status) {
@@ -30,7 +30,7 @@ public class BroadcastLoginSignal extends Signal {
 	}
 	
 	public BroadcastLoginSignal(String userName, String nickName, String personalMessage, byte status, InetAddress ipAddress, int port) {
-		super(SignalType.LoginRequest);
+		super(SignalType.BroadcastLogin);
 		m_userName = userName;
 		m_nickName = nickName;
 		m_personalMessage = personalMessage;
@@ -108,13 +108,12 @@ public class BroadcastLoginSignal extends Signal {
 		for(int i=0;i<4;i++) {
 			s2.m_ipAddressData[i] = byteStream.nextByte();
 		}
+		try { s2.m_ipAddress = InetAddress.getByAddress(s2.m_ipAddressData); }
+		catch(UnknownHostException e) { s2.m_ipAddress = null; }
 		s2.m_port = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
 		
 		if(checksum != s2.checksum()) { return null; }
-		
-		try { s2.m_ipAddress = InetAddress.getByAddress(s2.m_ipAddressData); }
-		catch(UnknownHostException e) { s2.m_ipAddress = null; }
 		
 		return s2;
 	}

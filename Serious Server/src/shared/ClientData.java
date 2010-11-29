@@ -1,4 +1,4 @@
-package signal;
+package shared;
 
 import java.net.*;
 import java.awt.*;
@@ -17,8 +17,14 @@ public class ClientData {
 	protected int m_port;
 	
 	final public static int LENGTH = ((Globals.MAX_USERNAME_LENGTH * Character.SIZE) +
-									  (0) +
-									  Long.SIZE) / 8;
+									  (Globals.MAX_NICKNAME_LENGTH * Character.SIZE) +
+									  (Globals.MAX_PERSONAL_MESSAGE_LENGTH * Character.SIZE) +
+									  Byte.SIZE +
+									  (Globals.MAX_FONTFACE_LENGTH * Character.SIZE) +
+									  (Integer.SIZE * 3) +
+									  Byte.SIZE +
+									  (Byte.SIZE * 4) +
+									  Integer.SIZE) / 8;
 	
 	private ClientData() {
 		

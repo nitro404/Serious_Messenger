@@ -188,6 +188,7 @@ public class UserDBMS {
 					"WorkPhone		VARCHAR(10)," +
 					"Country		VARCHAR(32)		NOT NULL," +
 					"StateProv		VARCHAR(32)		NOT NULL," +
+					"City			VARCHAR(32)		NOT NULL," +
 					"ZipPostal		VARCHAR(6)		NOT NULL," +
 					"PRIMARY KEY(UserName)," +
 					"FOREIGN KEY(UserName) REFERENCES " + userDataTableName + "(UserName)" +
@@ -279,7 +280,7 @@ public class UserDBMS {
 					}
 					
 					// store the current contact's information
-					contacts.add(new ClientData(contactUserName, null, null, contactStatus, Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR, contactBlocked, client.getIPAddress(), client.getPort()));
+					contacts.add(new ClientData(contactUserName, "", "", contactStatus, Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR, contactBlocked, (client == null) ? null : client.getIPAddress(), (client == null) ? 0 : client.getPort()));
 				}
 				
 			}

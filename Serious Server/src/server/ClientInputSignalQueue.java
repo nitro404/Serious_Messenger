@@ -66,7 +66,7 @@ public class ClientInputSignalQueue extends Thread {
 			s2 = LogoutSignal.readFrom(ByteStream.readFrom(m_in, LogoutSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
-			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
+			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, BroadcastLoginSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.ChangePassword) {
 			s2 = ChangePasswordSignal.readFrom(ByteStream.readFrom(m_in, ChangePasswordSignal.LENGTH));

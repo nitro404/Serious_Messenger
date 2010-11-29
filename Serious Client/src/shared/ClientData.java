@@ -1,4 +1,4 @@
-package signal;
+package shared;
 
 import java.net.*;
 import java.awt.*;
@@ -17,8 +17,14 @@ public class ClientData {
 	protected int m_port;
 	
 	final public static int LENGTH = ((Globals.MAX_USERNAME_LENGTH * Character.SIZE) +
-									  (0) +
-									  Long.SIZE) / 8;
+									  (Globals.MAX_NICKNAME_LENGTH * Character.SIZE) +
+									  (Globals.MAX_PERSONAL_MESSAGE_LENGTH * Character.SIZE) +
+									  Byte.SIZE +
+									  (Globals.MAX_FONTFACE_LENGTH * Character.SIZE) +
+									  (Integer.SIZE * 3) +
+									  Byte.SIZE +
+									  (Byte.SIZE * 4) +
+									  Integer.SIZE) / 8;
 	
 	private ClientData() {
 		
@@ -102,11 +108,11 @@ public class ClientData {
 		c.m_nickName = byteStream.nextString(Globals.MAX_NICKNAME_LENGTH);
 		c.m_personalMessage = byteStream.nextString(Globals.MAX_PERSONAL_MESSAGE_LENGTH);
 		c.m_status = byteStream.nextByte();
+		c.m_font = new Font(byteStream.nextString(Globals.MAX_FONTFACE_LENGTH), Font.PLAIN, 12);
 		int[] colourData = new int[3];
 		for(int i=0;i<3;i++) {
 			colourData[i] = byteStream.nextInteger();
 		}
-		c.m_font = new Font(byteStream.nextString(Globals.MAX_FONTFACE_LENGTH), Font.PLAIN, 12);
 		c.m_textColour = new Color(colourData[0], colourData[1], colourData[2]);
 		c.m_blocked = byteStream.nextBoolean();
 		byte[] ipData = new byte[4];
