@@ -223,14 +223,6 @@ public class UserDBMS {
 		}
 	}
 	
-	/*
-	// GET USER INFO
-	"SELECT * FROM User WHERE UserName = '" + userName + "'"
-
-	// GET USER PROFILE
-	"SELECT * FROM UserProfile WHERE UserName = '" + userName + "'"
-	*/
-	
 	public Vector<UserNetworkData> getUserContacts(String userName, Vector<Client> clients) {
 		try {
 			// get user's contacts
@@ -518,6 +510,36 @@ public class UserDBMS {
 		catch(SQLException e) {
 			m_logger.addError("Error deleting contact " + contactUserName + " for user " + userName + ": " + e.getMessage());
 		}
+		return false;
+	}
+	
+	public boolean userHasContactBlocked(String userName, String contactUserName) {
+		try {
+			SQLResult result = new SQLResult(stmt.executeQuery(
+				"SELECT * FROM " + userContactTableName + " " +
+				"WHERE UserName = '" + userName + "' " +
+					"AND Contact = '" + contactUserName + "'"
+			));
+			
+			int columnIndex = -1;
+			for(int i=0;i<result.getColumnCount();i++) {
+				if(result.getHeader(i).equalsIgnoreCase("Blocked")) {
+					columnIndex = i;
+					break;
+				}
+			}
+			
+			if(columnIndex == -1) { return false; }
+			
+			if(result.getRowCount() == 0) { return false; }
+			
+			boolean blocked = false;
+			try { blocked = Integer.parseInt(result.getElement(0, columnIndex)) == 1; }
+			catch(NumberFormatException e) { return false; }
+			
+			return blocked;
+		}
+		catch(SQLException e) { }
 		return false;
 	}
 	

@@ -42,6 +42,9 @@ public class ContactOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Pong) {
 					s.writeTo(m_out);
 				}
+				else if(s.getSignalType() == SignalType.BroadcastLogin) {
+					s.writeTo(m_out);
+				}
 				else if(s.getSignalType() == SignalType.Message) {
 					s.writeTo(m_out);
 				}

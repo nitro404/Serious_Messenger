@@ -56,12 +56,15 @@ public class Server extends Thread {
 				m_logger.addError("Unable to connect to client #" + m_clientCounter);
 			}
 			
-			// if a connection was establish to the client, store the client object
+			// if a connection was established to the client, store the client object
 			if(newClient != null) {
 				newClient.initialize(this, m_logger);
 				m_clients.add(newClient);
 				m_logger.addInfo("Established connection to client #" + newClient.getClientNumber() + " at " + newClient.getIPAddressString());
 			}
+			
+			try { sleep(Globals.CONNECTION_LISTEN_INTERVAL); }
+			catch (InterruptedException e) { }
 		}
 	}
 	
@@ -159,6 +162,7 @@ public class Server extends Thread {
 			String clientUserName = m_clients.elementAt(i).getUserName();
 			for(int j=0;j<contacts.size();j++) {
 				if(clientUserName != null && clientUserName.equalsIgnoreCase(contacts.elementAt(j).getUserName())) {
+					s.getData().setBlocked(userHasContactBlocked(contacts.elementAt(j).getUserName(), s.getData().getUserName()));
 					m_clients.elementAt(i).sendSignal(s);
 					break;
 				}
@@ -192,6 +196,12 @@ public class Server extends Thread {
 			return m_dbms.deleteUserContact(client.getUserName(), contactUserName);
 		}
 		return false;
+	}
+	
+	public boolean userHasContactBlocked(String userName, String contactUserName) {
+		if(userName == null || contactUserName == null) { return false; }
+		
+		return m_dbms.userHasContactBlocked(userName, contactUserName);
 	}
 	
 	public int blockUserContact(Client client, String contactUserName, boolean blocked) {

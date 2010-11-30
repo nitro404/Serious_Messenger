@@ -10,14 +10,16 @@ public class ContactInputSignalQueue extends Thread {
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
 	private ContactOutputSignalQueue m_outSignalQueue;
+	private Contact m_contact;
 	private Client m_client;
 	
 	public ContactInputSignalQueue(){
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client client, DataInputStream in, ContactOutputSignalQueue out) {
+	public void initialize(Client client, Contact contact, DataInputStream in, ContactOutputSignalQueue out) {
 		m_client = client;
+		m_contact = contact;
 		m_in = in;
 		m_outSignalQueue = out;
 		if(getState() == Thread.State.NEW) { start(); }
@@ -52,6 +54,9 @@ public class ContactInputSignalQueue extends Thread {
 		}
 		else if(s.getSignalType() == SignalType.Pong) {
 			s2 = s;
+		}
+		else if(s.getSignalType() == SignalType.BroadcastLogin) {
+			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.Message) {
 			s2 = MessageSignal.readFrom(ByteStream.readFrom(m_in, MessageSignal.LENGTH), m_in);
@@ -93,6 +98,43 @@ public class ContactInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.Pong) {
 					m_client.pong();
+				}
+				else if(s.getSignalType() == SignalType.BroadcastLogin) {
+					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
+					
+					Contact c = m_client.getContact(s2.getData().getUserName());
+					if(c != null && c != m_contact) {
+						// don't allow multiple connections to the same user
+						if(c.isConnected()) {
+							m_contact.disconnect();
+							m_client.removeContact(m_contact);
+						}
+						// the user is now online, update contact data appropriately
+						else {
+							// don't allow connections to blocked contacts
+							if(c.isBlocked()) {
+								m_contact.disconnect();
+								m_client.removeContact(m_contact);
+							}
+							// if the contact is not blocked, update 
+							else {
+								m_contact.setUserName(c.getUserName());
+								m_contact.setBlocked(false);
+								m_client.removeContact(c);
+							}
+						}
+					}
+					// a new contact is attempting to contact the client
+					else {
+						UserNetworkData data = s2.getData();
+						m_contact.setUserName(data.getUserName());
+						m_contact.setNickName(data.getNickName());
+						m_contact.setPersonalMessage(data.getPersonalMessage());
+						m_contact.setStatus(data.getStatus());
+						m_contact.setFont(data.getFont());
+						m_contact.setIPAddress(m_contact.getConnection().getInetAddress());
+						m_contact.setPort(data.getPort());
+					}
 				}
 				else if(s.getSignalType() == SignalType.Message) {
 					MessageSignal s2 = (MessageSignal) s;

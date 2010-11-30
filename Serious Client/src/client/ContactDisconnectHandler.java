@@ -33,9 +33,6 @@ public class ContactDisconnectHandler extends Thread {
 				
 				if(!c.isConnected()) {
 					c.disconnect();
-					
-					m_contacts.remove(i);
-					i--;
 				}
 			}
 			

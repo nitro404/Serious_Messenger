@@ -157,6 +157,33 @@ public class User extends UserData {
 		return (index < 0 || index >= m_contacts.size()) ? Globals.DEFAULT_TEXT_COLOUR : m_contacts.elementAt(index).getFont().getColour();
 	}
 	
+	public void updateContact(UserNetworkData data) {
+		if(data == null) { return; }
+		
+		int contactIndex = this.getContactIndex(data.getUserName());
+		if(contactIndex >= 0) {
+			m_contacts.elementAt(contactIndex).setUserName(data.getUserName());
+			m_contacts.elementAt(contactIndex).setNickName(data.getNickName());
+			m_contacts.elementAt(contactIndex).setPersonalMessage(data.getPersonalMessage());
+			m_contacts.elementAt(contactIndex).setStatus(data.getStatus());
+			m_contacts.elementAt(contactIndex).setFont(data.getFont());
+			m_contacts.elementAt(contactIndex).setBlocked(data.isBlocked());
+			m_contacts.elementAt(contactIndex).setIPAddress(data.getIPAddress());
+			m_contacts.elementAt(contactIndex).setPort(data.getPort());
+		}
+		else {
+			m_contacts.add(new Contact(data));
+		}
+	}
+	
+	public void updateContacts(Vector<UserNetworkData> data) {
+		if(data == null) { return; }
+		
+		for(int i=0;i<data.size();i++) {
+			updateContact(data.elementAt(i));
+		}
+	}
+	
 	public void setContactNickName(String userName, String nickName) {
 		Contact c = getContact(userName);
 		if(c != null) { c.setNickName(nickName); }

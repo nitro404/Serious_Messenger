@@ -23,6 +23,7 @@ public class Globals {
 	final public static int DEFAULT_PORT = 25500;
 	final public static String DEFAULT_HOST = "localhost";
 	final public static long QUEUE_INTERVAL = 50;
+	final public static long CONNECTION_LISTEN_INTERVAL = 75;
 	final public static long TIMEOUT_INTERVAL = 100;
 	final public static long PING_INTERVAL = 5000;
 	final public static long CONNECTION_TIMEOUT = 5000;

@@ -18,6 +18,10 @@ public class Contact extends UserNetworkData {
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
+	public Contact() {
+		super(null, null, null, StatusType.Offline, null, false, null, 0);
+	}
+	
 	public Contact(String userName, String nickName, String personalMessage, byte status, FontStyle font, boolean blocked, String ipAddress, int port) {
 		super(userName, nickName, personalMessage, status, font, blocked, parseIPAddress(ipAddress), port);
 	}
@@ -26,11 +30,17 @@ public class Contact extends UserNetworkData {
 		super(userName, nickName, personalMessage, status, font, blocked, ipAddress, port);
 	}
 	
-	public void intitialize(Client client) {
+	public Contact(UserNetworkData data) {
+		super(data.getUserName(), data.getNickName(), data.getPersonalMessage(), data.getStatus(), data.getFont(), data.isBlocked(), data.getIPAddress(), data.getPort());
+	}
+	
+	public void intitialize(Client client, Socket connection) {
+		if(client == null || connection == null) { return; }
+		
 		m_connected = true;
 		
 		try {
-			m_connection = new Socket(m_ipAddress, m_port);
+			m_connection = connection;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
 			
@@ -41,7 +51,7 @@ public class Contact extends UserNetworkData {
 			
 			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
 				m_inSignalQueue = new ContactInputSignalQueue();
-				m_inSignalQueue.initialize(client, m_in, m_outSignalQueue);
+				m_inSignalQueue.initialize(client, this, m_in, m_outSignalQueue);
 			}
 			
 			if(m_contactThread == null || m_contactThread.isTerminated()) {
@@ -52,6 +62,10 @@ public class Contact extends UserNetworkData {
 		catch(IOException e) {
 			m_connected = false;
 		}
+	}
+	
+	public Socket getConnection() {
+		return m_connection;
 	}
 	
 	public boolean isConnected() {

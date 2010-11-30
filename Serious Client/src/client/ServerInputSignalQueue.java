@@ -60,7 +60,7 @@ public class ServerInputSignalQueue extends Thread {
 			s2 = LoginAuthenticatedSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
-			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, LoginAuthenticatedSignal.LENGTH));
+			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, BroadcastLoginSignal.LENGTH));
 		}
 		else if(s.getSignalType() == SignalType.PasswordChanged) {
 			s2 = PasswordChangedSignal.readFrom(ByteStream.readFrom(m_in, PasswordChangedSignal.LENGTH));
@@ -113,7 +113,7 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
-					UserNetworkData data = s2.getData();
+					m_client.updateContact(s2.getData());
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
@@ -166,10 +166,7 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.ContactList) {
 					ContactListSignal s2 = (ContactListSignal) s;
-					
-					Vector<UserNetworkData> contacts = s2.getContacts();
-					
-					// update client's contact list
+					m_client.updateContacts(s2.getContacts());
 				}
 			}
 			

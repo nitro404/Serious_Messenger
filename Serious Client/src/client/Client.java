@@ -18,18 +18,21 @@ public class Client extends User {
 	private ClientThread m_clientThread = null;
 	private MessageBoxSystem m_messageBoxSystem = null;
 	
+	private ContactConnectionListener m_connectionListener = null;
 	private ServerDisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
 	public Client() {
 		super();
+		m_connectionListener = new ContactConnectionListener();
 		m_messageBoxSystem = new MessageBoxSystem();
 	}
 	
 	public void initialize() {
 		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
 		super.initialize();
+		m_connectionListener.initialize(this);
 	}
 
 	public Socket getConnection() { return m_connection; }
