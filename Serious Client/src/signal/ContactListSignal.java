@@ -6,31 +6,31 @@ import shared.*;
 
 public class ContactListSignal extends Signal {
 	
-	private Vector<ClientData> m_contacts;
+	private Vector<UserNetworkData> m_contacts;
 	
 	final public static int LENGTH = (Integer.SIZE +
 									  Long.SIZE) / 8;
 	
 	private ContactListSignal() {
 		super(SignalType.ContactList);
-		m_contacts = new Vector<ClientData>();
+		m_contacts = new Vector<UserNetworkData>();
 	}
 	
-	public ContactListSignal(Vector<ClientData> contacts) {
+	public ContactListSignal(Vector<UserNetworkData> contacts) {
 		super(SignalType.ContactList);
-		m_contacts = (contacts == null) ? new Vector<ClientData>() : contacts;
+		m_contacts = (contacts == null) ? new Vector<UserNetworkData>() : contacts;
 	}
 	
 	public int numberOfContacts() {
 		return m_contacts.size();
 	}
 	
-	public ClientData getContact(int index) {
+	public UserNetworkData getContact(int index) {
 		if(index < 0 || index >= m_contacts.size()) { return null; }
 		return m_contacts.elementAt(index);
 	}
 	
-	public Vector<ClientData> getContacts() {
+	public Vector<UserNetworkData> getContacts() {
 		return m_contacts;
 	}
 	
@@ -52,9 +52,9 @@ public class ContactListSignal extends Signal {
 		long checksum = byteStream.nextLong();
 		
 		for(int i=0;i<numberOfContacts;i++) {
-			ClientData c = ClientData.readFrom(ByteStream.readFrom(in, ClientData.LENGTH));
-			if(c != null) {
-				s2.m_contacts.add(c);
+			UserNetworkData d = UserNetworkData.readFrom(ByteStream.readFrom(in, UserNetworkData.LENGTH));
+			if(d != null) {
+				s2.m_contacts.add(d);
 			}
 		}
 		

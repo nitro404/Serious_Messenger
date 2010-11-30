@@ -5,7 +5,6 @@ import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import shared.*;
-import signal.*;
 import logger.*;
 
 public class UserDBMS {
@@ -232,7 +231,7 @@ public class UserDBMS {
 	"SELECT * FROM UserProfile WHERE UserName = '" + userName + "'"
 	*/
 	
-	public Vector<ClientData> getUserContacts(String userName, Vector<Client> clients) {
+	public Vector<UserNetworkData> getUserContacts(String userName, Vector<Client> clients) {
 		try {
 			// get user's contacts
 			SQLResult result = new SQLResult(stmt.executeQuery(
@@ -240,7 +239,7 @@ public class UserDBMS {
 				"WHERE UserName = '" + userName + "'"
 			));
 			
-			Vector<ClientData> contacts = new Vector<ClientData>();
+			Vector<UserNetworkData> contacts = new Vector<UserNetworkData>();
 			for(int i=0;i<result.getRowCount();i++) {
 				
 				String contactUserName = result.getElement(i, 1);
@@ -280,7 +279,7 @@ public class UserDBMS {
 					}
 					
 					// store the current contact's information
-					contacts.add(new ClientData(contactUserName, "", "", contactStatus, Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR, contactBlocked, (client == null) ? null : client.getIPAddress(), (client == null) ? 0 : client.getPort()));
+					contacts.add(new UserNetworkData(contactUserName, "", "", contactStatus, Globals.DEFAULT_FONTSTYLE, contactBlocked, (client == null) ? null : client.getIPAddress(), (client == null) ? 0 : client.getPort()));
 				}
 				
 			}
@@ -610,8 +609,11 @@ public class UserDBMS {
 			String[] columnNames = new String[numberOfColumns];
 			for(int i=1;i<=numberOfColumns;i++) {
 				columnNames[i-1] = meta.getColumnName(i);
+				tableModel.addColumn(meta.getColumnName(i));
 			}
 			tableModel.setColumnIdentifiers(columnNames);
+			
+			table.setModel(tableModel);
 			
 			String[] rowData;
 			while(rs.next()) {
@@ -627,6 +629,7 @@ public class UserDBMS {
 		catch(SQLException e) {
 			m_logger.addError("Error updating table " + tableName + ": " + e.getMessage());
 		}
+		catch(Exception e) { }
 	}
 	
 }

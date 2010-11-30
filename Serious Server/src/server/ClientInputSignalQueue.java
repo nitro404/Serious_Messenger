@@ -127,7 +127,7 @@ public class ClientInputSignalQueue extends Thread {
 						s2.setPort(m_client.getPort());
 					}
 					
-					Vector<ClientData> contacts = m_server.getUserContacts(m_client.getUserName());
+					Vector<UserNetworkData> contacts = m_server.getUserContacts(m_client.getUserName());
 					
 					m_server.broadcastUserLogin(s2, contacts);
 					

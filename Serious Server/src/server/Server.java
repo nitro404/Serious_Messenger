@@ -152,7 +152,7 @@ public class Server extends Thread {
 		return authenticated;
 	}
 	
-	public void broadcastUserLogin(BroadcastLoginSignal s, Vector<ClientData> contacts) {
+	public void broadcastUserLogin(BroadcastLoginSignal s, Vector<UserNetworkData> contacts) {
 		if(s == null || contacts == null) { return; }
 		
 		for(int i=0;i<m_clients.size();i++) {
@@ -203,7 +203,7 @@ public class Server extends Thread {
 		return 2;
 	}
 	
-	public Vector<ClientData> getUserContacts(String userName) {
+	public Vector<UserNetworkData> getUserContacts(String userName) {
 		return m_dbms.getUserContacts(userName, m_clients);
 	}
 	

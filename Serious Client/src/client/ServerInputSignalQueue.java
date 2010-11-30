@@ -168,7 +168,7 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactList) {
 					ContactListSignal s2 = (ContactListSignal) s;
 					
-					Vector<ClientData> contacts = s2.getContacts();
+					Vector<UserNetworkData> contacts = s2.getContacts();
 					
 					// update client's contact list
 				}

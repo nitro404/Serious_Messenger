@@ -2,14 +2,10 @@ package client;
 
 import java.io.*;
 import java.net.*;
-import java.awt.*;
 import shared.*;
 import signal.*;
 
-public class Contact extends ContactData {
-	
-	protected InetAddress m_ipAddress;
-	protected int m_port;
+public class Contact extends UserNetworkData {
 	
 	private Socket m_connection;
 	private boolean m_connected = false;
@@ -22,21 +18,16 @@ public class Contact extends ContactData {
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
-	private Client m_client;
-	
-	public Contact(String userName, String nickName, String personalMessage, byte status, Font font, Color textColour, String ipAddress, int port) {
-		this(userName, nickName, personalMessage, status, font, textColour, parseIPAddress(ipAddress), port);
+	public Contact(String userName, String nickName, String personalMessage, byte status, FontStyle font, boolean blocked, String ipAddress, int port) {
+		super(userName, nickName, personalMessage, status, font, blocked, parseIPAddress(ipAddress), port);
 	}
 	
-	public Contact(String userName, String nickName, String personalMessage, byte status, Font font, Color textColour, InetAddress ipAddress, int port) {
-		super(userName, nickName, personalMessage, status, font, textColour);
-		setIPAddress(ipAddress);
-		setPort(port);
+	public Contact(String userName, String nickName, String personalMessage, byte status, FontStyle font, boolean blocked, InetAddress ipAddress, int port) {
+		super(userName, nickName, personalMessage, status, font, blocked, ipAddress, port);
 	}
 	
 	public void intitialize(Client client) {
 		m_connected = true;
-		m_client = client;
 		
 		try {
 			m_connection = new Socket(m_ipAddress, m_port);
@@ -61,23 +52,6 @@ public class Contact extends ContactData {
 		catch(IOException e) {
 			m_connected = false;
 		}
-	}
-	
-	public InetAddress getIPAddress() { return m_ipAddress; }
-	
-	public int getPort() { return m_port; }
-	
-	public void setIPAddress(String ipAddress) { setIPAddress(parseIPAddress(ipAddress)); }
-	
-	public void setIPAddress(InetAddress ipAddress) { if(ipAddress != null) { m_ipAddress = ipAddress; } }
-	
-	public void setPort(int port) { if(port >= 0 && port <= 65535) { m_port = port; } }
-	
-	public static InetAddress parseIPAddress(String ipAddress) {
-		InetAddress ip = null;
-		try { ip = InetAddress.getByName(ipAddress); }
-		catch (UnknownHostException e) { }
-		return ip;
 	}
 	
 	public boolean isConnected() {

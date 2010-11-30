@@ -52,7 +52,10 @@ public class ClientOutputSignalQueue extends Thread {
 						m_client.disconnect();
 						m_logger.addInfo("Client #" + m_client.getClientNumber() + " disconnected: login rejected");
 					}
-				} 
+				}
+				else if(s.getSignalType() == SignalType.BroadcastLogin) {
+					s.writeTo(m_out);
+				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					s.writeTo(m_out);
 				} 

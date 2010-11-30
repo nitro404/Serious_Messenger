@@ -1,7 +1,7 @@
 package client;
 
-import java.awt.*;
 import java.util.Calendar;
+import shared.*;
 
 import shared.Globals;
 
@@ -11,27 +11,25 @@ public class Message {
 	private String m_userName;
 	private String m_nickName;
 	private String m_text;
-	private Font m_font;
-	private Color m_textColour;
+	private FontStyle m_font;
 	private Calendar m_timeStamp;
 	
 	private static long m_idCounter = 0;
 	
 	public Message(Contact contact, long id, String text) {
-		this(id, contact.getUserName(), contact.getNickName(), text, contact.getFont(), contact.getTextColour());
+		this(id, contact.getUserName(), contact.getNickName(), text, contact.getFont());
 	}
 	
 	public Message(User user, String text) {
-		this(m_idCounter++, user.getUserName(), user.getNickName(), text, user.getFont(), user.getTextColour());
+		this(m_idCounter++, user.getUserName(), user.getNickName(), text, user.getFont());
 	}
 	
-	private Message(long id, String userName, String nickName, String text, Font font, Color textColour) {
+	private Message(long id, String userName, String nickName, String text, FontStyle font) {
 		m_id = id;
 		m_userName = (userName == null) ? "" : userName;
 		m_nickName = (nickName == null) ? "" : nickName;
 		m_text = (text == null) ? "" : text;
-		m_font = (font == null) ? Globals.DEFAULT_FONT : font;
-		m_textColour = (font == null) ? Globals.DEFAULT_TEXT_COLOUR : textColour;
+		m_font = (font == null) ? Globals.DEFAULT_FONTSTYLE : font;
 		m_timeStamp = Calendar.getInstance();
 	}
 	
@@ -43,9 +41,7 @@ public class Message {
 	
 	public String getText() { return m_text; }
 	
-	public Font getFont() { return m_font; }
-	
-	public Color getTextColour() { return m_textColour; }
+	public FontStyle getFont() { return m_font; }
 	
 	public Calendar getTimeStamp() { return m_timeStamp; }
 	

@@ -4,7 +4,7 @@ import java.util.Vector;
 import java.awt.*;
 import shared.*;
 
-public class User extends ContactData {
+public class User extends UserData {
 	 
 	protected String m_password;
 	
@@ -139,22 +139,22 @@ public class User extends ContactData {
 		return (index < 0 || index >= m_contacts.size()) ? StatusType.Offline : m_contacts.elementAt(index).getStatus();
 	}
 	
-	public Font getContactFont(String userName) {
+	public FontStyle getContactFont(String userName) {
 		Contact c = getContact(userName);
-		return (c == null) ? Globals.DEFAULT_FONT : c.getFont();
+		return (c == null) ? Globals.DEFAULT_FONTSTYLE : c.getFont();
 	}
 	
-	public Font getContactFont(int index) {
-		return (index < 0 || index >= m_contacts.size()) ? Globals.DEFAULT_FONT : m_contacts.elementAt(index).getFont();
+	public FontStyle getContactFont(int index) {
+		return (index < 0 || index >= m_contacts.size()) ? Globals.DEFAULT_FONTSTYLE : m_contacts.elementAt(index).getFont();
 	}
 	
 	public Color getContactTextColour(String userName) {
 		Contact c = getContact(userName);
-		return (c == null) ? Globals.DEFAULT_TEXT_COLOUR : c.getTextColour();
+		return (c == null) ? Globals.DEFAULT_TEXT_COLOUR : c.getFont().getColour();
 	}
 	
 	public Color getContactTextColour(int index) {
-		return (index < 0 || index >= m_contacts.size()) ? Globals.DEFAULT_TEXT_COLOUR : m_contacts.elementAt(index).getTextColour();
+		return (index < 0 || index >= m_contacts.size()) ? Globals.DEFAULT_TEXT_COLOUR : m_contacts.elementAt(index).getFont().getColour();
 	}
 	
 	public void setContactNickName(String userName, String nickName) {
@@ -190,12 +190,12 @@ public class User extends ContactData {
 		}
 	}
 	
-	public void setContactFont(String userName, Font font) {
+	public void setContactFont(String userName, FontStyle font) {
 		Contact c = getContact(userName);
 		if(c != null) { c.setFont(font); }
 	}
 	
-	public void setContactFont(int index, Font font) {
+	public void setContactFont(int index, FontStyle font) {
 		if(index < 0 || index >= m_contacts.size()) {
 			m_contacts.elementAt(index).setFont(font);
 		}
@@ -203,12 +203,12 @@ public class User extends ContactData {
 	
 	public void setContactTextColour(String userName, Color textColour) {
 		Contact c = getContact(userName);
-		if(c != null) { c.setTextColour(textColour); }
+		if(c != null) { c.getFont().setColour(textColour); }
 	}
 	
 	public void setContactTextColour(int index, Color textColour) {
 		if(index < 0 || index >= m_contacts.size()) {
-			m_contacts.elementAt(index).setTextColour(textColour);
+			m_contacts.elementAt(index).getFont().setColour(textColour);
 		}
 	}
 	
