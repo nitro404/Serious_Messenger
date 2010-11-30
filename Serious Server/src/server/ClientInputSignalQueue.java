@@ -122,9 +122,9 @@ public class ClientInputSignalQueue extends Thread {
 					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
 					
 					if(m_client.getUserName() != null) {
-						s2.setUserName(m_client.getUserName());
-						s2.setIPAddress(m_client.getIPAddress());
-						s2.setPort(m_client.getPort());
+						s2.getData().setUserName(m_client.getUserName());
+						s2.getData().setIPAddress(m_client.getIPAddress());
+						s2.getData().setPort(m_client.getPort());
 					}
 					
 					Vector<UserNetworkData> contacts = m_server.getUserContacts(m_client.getUserName());

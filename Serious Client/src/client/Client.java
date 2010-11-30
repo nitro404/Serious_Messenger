@@ -123,7 +123,7 @@ public class Client extends User {
 	public void authenticated() {
 		setState(ClientState.Online);
 		
-		m_outSignalQueue.addSignal(new BroadcastLoginSignal(m_userName, m_nickName, m_personalMessage, m_status));
+		m_outSignalQueue.addSignal(new BroadcastLoginSignal(this));
 	}
 	
 	public void changePassword(String oldPassword, String newPassword) {

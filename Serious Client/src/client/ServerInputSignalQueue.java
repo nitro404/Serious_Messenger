@@ -113,8 +113,7 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
-//					Contact c = new Contact(s2.getUserName(), s2.getNickName(), s2.getPersonalMessage(), s2.getStatus(), Globals.DEFAULT_FONT, Globals.DEFAULT_TEXT_COLOUR);
-					// add to collection
+					UserNetworkData data = s2.getData();
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
