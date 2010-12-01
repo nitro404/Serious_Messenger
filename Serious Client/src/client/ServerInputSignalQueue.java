@@ -13,13 +13,15 @@ public class ServerInputSignalQueue extends Thread {
 	private ServerOutputSignalQueue m_outSignalQueue;
 	private Client m_client;
 	private MessageBoxSystem m_messageBoxSystem;
+	private ClientWindow m_clientWindow;
 	
 	public ServerInputSignalQueue(){
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client client, DataInputStream in, ServerOutputSignalQueue out, MessageBoxSystem messageBoxSystem) {
+	public void initialize(Client client, ClientWindow clientWindow, DataInputStream in, ServerOutputSignalQueue out, MessageBoxSystem messageBoxSystem) {
 		m_client = client;
+		m_clientWindow = clientWindow;
 		m_in = in;
 		m_outSignalQueue = out;
 		m_messageBoxSystem = messageBoxSystem;
@@ -104,6 +106,7 @@ public class ServerInputSignalQueue extends Thread {
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(s2.getAuthenticated()) {
 						m_client.authenticated();
+						m_client.setPort(s2.getPort());
 						m_messageBoxSystem.show(null, "Successfully logged in!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
@@ -132,6 +135,7 @@ public class ServerInputSignalQueue extends Thread {
 					else {
 						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getUserName(), "Unable to Add Contact", JOptionPane.WARNING_MESSAGE);
 					}
+					m_clientWindow.resetContactPanels();
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
 					ContactDeletedSignal s2 = (ContactDeletedSignal) s;
@@ -141,6 +145,7 @@ public class ServerInputSignalQueue extends Thread {
 					else {
 						m_messageBoxSystem.show(null, "Unable to delete contact " + s2.getUserName(), "Unable to Delete Contact", JOptionPane.WARNING_MESSAGE);
 					}
+					m_clientWindow.resetContactPanels();
 				}
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
 					ContactBlockedSignal s2 = (ContactBlockedSignal) s;
@@ -167,6 +172,7 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactList) {
 					ContactListSignal s2 = (ContactListSignal) s;
 					m_client.updateContacts(s2.getContacts());
+					m_clientWindow.resetContactPanels();
 				}
 			}
 			

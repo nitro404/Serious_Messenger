@@ -1,22 +1,21 @@
 package client;
 
+import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import shared.*;
 
 public class ClientWindow extends JFrame implements ActionListener {
 	
 	private Client m_client;
 	
 	private JButton announceButton;
-	private JLabel contactDisplayPicIconLabel;
 	private JPanel contactListPanel;
 	private JScrollPane contactListScrollPane;
-	private JTextField contactNickNameTextField;
-	private JPanel contactPanel;
-	private JTextField contactPersonalMessageTextField;
-	private JTextField contactStatusTextField;
 	private JLabel displayPicIconLabel;
+	
+	private Vector<ContactPanel> contactPanels;
 	
 	private JTabbedPane groupsTabbedPane;
 	private JTextField nickNameTextField;
@@ -50,13 +49,16 @@ public class ClientWindow extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     
     public ClientWindow() {
-    	m_client = new Client();
+    	m_client = new Client(this);
     	
     	initMenu();
         initComponents();
+        initLayouts();
         
         setTitle("Serious Messenger");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(508, 492);
+        setResizable(false);
     }
     
     public void initialize() {
@@ -110,36 +112,52 @@ public class ClientWindow extends JFrame implements ActionListener {
 
         menuBar.add(fileMenu);
         menuBar.add(contactsMenu);
-        //menuBar.add(settingsMenu);
+//        menuBar.add(settingsMenu);
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
     }
     
     private void initComponents() {
+    	contactPanels = new Vector<ContactPanel>();
+    	
         userInfoPanel = new JPanel();
         nickNameTextField = new JTextField();
         displayPicIconLabel = new JLabel();
         personalMessageTextField = new JTextField();
         statusComboBox = new JComboBox();
         utilityPanel = new JPanel();
-        announceButton = new JButton();
-        searchTextField = new JTextField();
-        searchLabel = new JLabel();
+        announceButton = new JButton("Announce");
+        announceButton.addActionListener(this);
+        searchTextField = new JTextField("Type here to search through the contact list...");
+        searchLabel = new JLabel("Search:");
         groupsTabbedPane = new JTabbedPane();
         contactListScrollPane = new JScrollPane();
         contactListPanel = new JPanel();
-        contactPanel = new JPanel();
-        contactDisplayPicIconLabel = new JLabel();
-        contactNickNameTextField = new JTextField();
-        contactPersonalMessageTextField = new JTextField();
-        contactStatusTextField = new JTextField();
-
         personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
 
-        statusComboBox.setModel(new DefaultComboBoxModel(new String[] { "Online", "Busy", "Away", "Idle", "Offline" }));
+        displayPicIconLabel.setIcon(new ImageIcon("img/serious_logo.png")); 
+        
+        statusComboBox.setModel(new DefaultComboBoxModel(StatusType.statusTypes));
         statusComboBox.setToolTipText("Use this drop down box to select your status");
+        statusComboBox.addActionListener(this);
 
+        searchTextField.setFont(new Font("Tahoma", 2, 11));
+        searchTextField.setToolTipText("Type here to search through the contact list...");
+        
+        groupsTabbedPane.setToolTipText("Group: All Contacts");
+        groupsTabbedPane.setFont(new Font("Tahoma", 1, 11));
+        groupsTabbedPane.addTab("All Contacts", contactListScrollPane);
+
+        contactListPanel.setToolTipText("Group: All Contacts");
+        contactListPanel.setPreferredSize(new Dimension(450, 268));
+        contactListScrollPane.setToolTipText("Contact List");
+        contactListScrollPane.setViewportView(contactListPanel);
+        contactListScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        contactListScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    }
+    
+    public void initLayouts() {
         GroupLayout userInfoPanelLayout = new GroupLayout(userInfoPanel);
         userInfoPanel.setLayout(userInfoPanelLayout);
         userInfoPanelLayout.setHorizontalGroup(
@@ -150,12 +168,13 @@ public class ClientWindow extends JFrame implements ActionListener {
                 .addGap(18, 18, 18)
                 .addGroup(userInfoPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                     .addGroup(userInfoPanelLayout.createSequentialGroup()
-                        .addComponent(nickNameTextField, GroupLayout.PREFERRED_SIZE, 248, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nickNameTextField, GroupLayout.PREFERRED_SIZE, 290, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(statusComboBox, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
                     .addComponent(personalMessageTextField))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
+        
         userInfoPanelLayout.setVerticalGroup(
             userInfoPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(userInfoPanelLayout.createSequentialGroup()
@@ -171,14 +190,6 @@ public class ClientWindow extends JFrame implements ActionListener {
                 .addContainerGap())
         );
 
-        announceButton.setText("Announce");
-
-        searchTextField.setFont(new Font("Tahoma", 2, 11));
-        searchTextField.setText("Type here to search through the contact list...");
-        searchTextField.setToolTipText("Type here to search through the contact list...");
-
-        searchLabel.setText("Search:");
-
         GroupLayout utilityPanelLayout = new GroupLayout(utilityPanel);
         utilityPanel.setLayout(utilityPanelLayout);
         utilityPanelLayout.setHorizontalGroup(
@@ -187,7 +198,7 @@ public class ClientWindow extends JFrame implements ActionListener {
                 .addContainerGap()
                 .addComponent(searchLabel)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 304, GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchTextField, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(announceButton)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -203,55 +214,7 @@ public class ClientWindow extends JFrame implements ActionListener {
                 .addContainerGap())
         );
 
-        groupsTabbedPane.setToolTipText("Group: All Contacts");
-        groupsTabbedPane.setFont(new Font("Tahoma", 1, 11));
-
-        contactListScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        contactListScrollPane.setToolTipText("Contact List");
-        contactListScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        contactListPanel.setToolTipText("Group: All Contacts");
-        contactListPanel.setPreferredSize(new Dimension(450, 268));
-
-        contactNickNameTextField.setEditable(false);
-
-        contactPersonalMessageTextField.setEditable(false);
-        contactPersonalMessageTextField.setFont(new Font("Tahoma", 2, 11));
-
-        contactStatusTextField.setEditable(false);
-
-        GroupLayout contactPanelLayout = new GroupLayout(contactPanel);
-        contactPanel.setLayout(contactPanelLayout);
-        contactPanelLayout.setHorizontalGroup(
-            contactPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(contactPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(contactDisplayPicIconLabel)
-                .addGap(18, 18, 18)
-                .addGroup(contactPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(contactPanelLayout.createSequentialGroup()
-                        .addComponent(contactNickNameTextField, GroupLayout.PREFERRED_SIZE, 237, GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(contactStatusTextField, GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
-                    .addComponent(contactPersonalMessageTextField, GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        contactPanelLayout.setVerticalGroup(
-            contactPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(contactPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(contactPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addComponent(contactDisplayPicIconLabel)
-                    .addGroup(contactPanelLayout.createSequentialGroup()
-                        .addGroup(contactPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(contactNickNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(contactStatusTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(contactPersonalMessageTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-
-        GroupLayout contactListPanelLayout = new GroupLayout(contactListPanel);
+        /*GroupLayout contactListPanelLayout = new GroupLayout(contactListPanel);
         contactListPanel.setLayout(contactListPanelLayout);
         contactListPanelLayout.setHorizontalGroup(
             contactListPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -265,11 +228,7 @@ public class ClientWindow extends JFrame implements ActionListener {
             .addGroup(contactListPanelLayout.createSequentialGroup()
                 .addComponent(contactPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(195, Short.MAX_VALUE))
-        );
-
-        contactListScrollPane.setViewportView(contactListPanel);
-
-        groupsTabbedPane.addTab("All Contacts", contactListScrollPane);
+        );*/
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -305,7 +264,9 @@ public class ClientWindow extends JFrame implements ActionListener {
 	    	}
 	    	
 	    	String userName = JOptionPane.showInputDialog(null, "Username:", "Username", JOptionPane.QUESTION_MESSAGE);
+	    	if(userName == null) { return; }
 	    	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
+	    	if(password == null) { return; }
 	    	
 	    	m_client.initialize();
 	    	m_client.login(userName, password);
@@ -338,7 +299,9 @@ public class ClientWindow extends JFrame implements ActionListener {
 	    	}
 	    	
 			String oldPassword = JOptionPane.showInputDialog(null, "Old Password:", "Old Password", JOptionPane.QUESTION_MESSAGE);
+			if(oldPassword == null) { return; }
 	    	String newPassword = JOptionPane.showInputDialog(null, "New Password:", "New Password", JOptionPane.QUESTION_MESSAGE);
+	    	if(newPassword == null) { return; }
 	    	String confirmNewPassword = JOptionPane.showInputDialog(null, "Confirm New Password:", "Confirm New Password", JOptionPane.QUESTION_MESSAGE);
 	    	
 	    	if(oldPassword == null || newPassword == null || confirmNewPassword == null) {
@@ -399,6 +362,33 @@ public class ClientWindow extends JFrame implements ActionListener {
 		else if(e.getSource() == helpAboutMenuItem) {
 			JOptionPane.showMessageDialog(null, "Serious Messenger.\n\nSerious about delivering messages.", "About Serious Messenger", JOptionPane.INFORMATION_MESSAGE);
 		}
+		else if(e.getSource() == statusComboBox) {
+			Object selectedItem = statusComboBox.getSelectedItem();
+			if(selectedItem != null) {
+				m_client.setStatus(StatusType.getStatus(selectedItem.toString()));
+			}
+		}
+		else if(e.getSource() == announceButton) {
+			m_client.announce(JOptionPane.showInputDialog(null, "Announcement Message:", "Announce", JOptionPane.QUESTION_MESSAGE));
+		}
+    }
+    
+    public void resetContactPanels() {
+    	contactListPanel.setLayout(null);
+    	contactPanels = new Vector<ContactPanel>();
+    	ContactPanel panel = null;
+    	for(int i=0;i<m_client.numberOfContacts();i++) {
+    		panel = new ContactPanel(m_client.getContact(i));
+    		contactPanels.add(panel);
+    		panel.setLocation(0, i * panel.getHeight());
+    		contactListPanel.add(panel);
+    	}
+    }
+    
+    public void update() {
+    	for(int i=0;i<contactPanels.size();i++) {
+    		contactPanels.elementAt(i).update();
+    	}
     }
     
 }

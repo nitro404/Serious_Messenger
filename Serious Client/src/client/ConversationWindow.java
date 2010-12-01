@@ -31,6 +31,8 @@ public class ConversationWindow extends JFrame {
 	
     public ConversationWindow() {
         initComponents();
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Conversation");
     }
     
     private void initComponents() {
@@ -53,8 +55,8 @@ public class ConversationWindow extends JFrame {
         contactMenu = new JMenu();
         helpMenu = new JMenu();
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
+        displayPicIconLabel.setIcon(new ImageIcon("img/serious_logo.png")); 
+        
         statusTextField.setEditable(false);
 
         nickNameTextField.setEditable(false);
@@ -72,10 +74,10 @@ public class ConversationWindow extends JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(userInfoPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(GroupLayout.Alignment.TRAILING, userInfoPanelLayout.createSequentialGroup()
-                        .addComponent(nickNameTextField, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(nickNameTextField, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(statusTextField, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(personalMessageTextField, GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
+                    .addComponent(personalMessageTextField, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
                 .addContainerGap())
         );
         userInfoPanelLayout.setVerticalGroup(
@@ -109,7 +111,7 @@ public class ConversationWindow extends JFrame {
             inputPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(inputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(userInputTextField, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                .addComponent(userInputTextField, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(inputPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(announceButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

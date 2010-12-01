@@ -2,6 +2,7 @@ package client;
 
 import java.io.*;
 import java.net.*;
+import javax.swing.*;
 import shared.*;
 
 public class ContactConnectionListener extends Thread {
@@ -15,6 +16,14 @@ public class ContactConnectionListener extends Thread {
 	
 	public void initialize(Client client) {
 		m_client = client;
+		if(client == null) { return; }
+		try {
+			m_connection = new ServerSocket(m_client.getPort());
+		}
+		catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Unable to initialize contact listener on port " + m_client.getPort() + ": " + e.getMessage(), "Error Initializing Server", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	

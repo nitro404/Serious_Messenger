@@ -105,7 +105,7 @@ public class ClientInputSignalQueue extends Thread {
 					LoginRequestSignal s2 = (LoginRequestSignal) s;
 					
 					boolean authenticated = m_server.userLogin(m_client, s2.getUserName(), s2.getPassword());
-					sendSignal(new LoginAuthenticatedSignal(authenticated));
+					sendSignal(new LoginAuthenticatedSignal(authenticated, m_client.getPort()));
 					
 					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
 				}	

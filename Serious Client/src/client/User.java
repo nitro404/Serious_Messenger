@@ -34,6 +34,8 @@ public class User extends UserData {
 	
 	public void setPassword(String password) { m_password = password; } 
 	
+	public int numberOfContacts() { return m_contacts.size(); }
+	
 	public int getContactIndex(String userName) {
 		if(userName == null || userName.length() == 0) { return -1; }
 		for(int i=0;i<m_contacts.size();i++) {

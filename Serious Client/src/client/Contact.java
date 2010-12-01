@@ -112,6 +112,10 @@ public class Contact extends UserNetworkData {
 		m_connection = null;
 	}
 	
+	public void sendSignal(Signal s) {
+		m_outSignalQueue.addSignal(s);
+	}
+	
 	public DataInputStream getInputStream() { return m_in; }
 	
 	public DataOutputStream getOutputStream() { return m_out; }

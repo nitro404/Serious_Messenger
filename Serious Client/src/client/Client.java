@@ -18,13 +18,17 @@ public class Client extends User {
 	private ClientThread m_clientThread = null;
 	private MessageBoxSystem m_messageBoxSystem = null;
 	
+	private int m_port;
 	private ContactConnectionListener m_connectionListener = null;
 	private ServerDisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
-	public Client() {
+	private ClientWindow m_clientWindow;
+	
+	public Client(ClientWindow clientWindow) {
 		super();
+		m_clientWindow = clientWindow;
 		m_connectionListener = new ContactConnectionListener();
 		m_messageBoxSystem = new MessageBoxSystem();
 	}
@@ -34,7 +38,11 @@ public class Client extends User {
 		super.initialize();
 		m_connectionListener.initialize(this);
 	}
-
+	
+	public int getPort() { return m_port; }
+	
+	public void setPort(int port) { if(port >= 0 && port <= 65535) { m_port = port; } }
+	
 	public Socket getConnection() { return m_connection; }
 	
 	public boolean isConnected() {
@@ -69,7 +77,7 @@ public class Client extends User {
 			
 			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
 				m_inSignalQueue = new ServerInputSignalQueue();
-				m_inSignalQueue.initialize(this, m_in, m_outSignalQueue, m_messageBoxSystem);
+				m_inSignalQueue.initialize(this, m_clientWindow, m_in, m_outSignalQueue, m_messageBoxSystem);
 			}
 			
 			if(m_clientThread == null || m_clientThread.isTerminated()) {
@@ -157,6 +165,24 @@ public class Client extends User {
 		if(contactUserName == null) { return; }
 		
 		m_outSignalQueue.addSignal(new BlockContactSignal(contactUserName, false));
+	}
+	
+	public void updateStatus(byte status) {
+		if(!StatusType.isValid(status)) { return; }
+		
+		setStatus(status);
+		
+		// TODO: broadcast updated status to contacts [via server?]
+	}
+	
+	public void announce(String message) {
+		if(message == null) { return; }
+		
+		for(int i=0;i<m_contacts.size();i++) {
+			if(m_contacts.elementAt(i).isConnected()) {
+				m_contacts.elementAt(i).sendSignal(new MessageSignal(message));
+			}
+		}
 	}
 	
 	public boolean ping() {

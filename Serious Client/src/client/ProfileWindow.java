@@ -3,6 +3,7 @@ package client;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import shared.*;
 
 public class ProfileWindow extends JFrame {
 	
@@ -56,46 +57,28 @@ public class ProfileWindow extends JFrame {
     
     public ProfileWindow() {
         initComponents();
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("User Profile");
     }
     
     private void initComponents() {
         userInfoPanel = new JPanel();
         nickNameTextField = new JTextField();
-        displayPicIconLabel = new JLabel();
-        personalMessageTextField = new JTextField();
         statusComboBox = new JComboBox();
         informationPanel = new JPanel();
-        firstNameLabel = new JLabel();
         lastNameTextField = new JTextField();
-        userNameLabel = new JLabel();
         userNameTextField = new JTextField();
-        emailLabel = new JLabel();
-        middleNameLabel = new JLabel();
-        lastNameLabel = new JLabel();
         firstNameTextField = new JTextField();
-        genderLabel = new JLabel();
         emailTextField = new JTextField();
         birthdateTextField = new JTextField();
         middleNameTextField = new JTextField();
         genderTextField = new JTextField();
-        birthdateLabel = new JLabel();
-        informationHeaderLabel = new JLabel();
         phonePanel = new JPanel();
-        homeLabel = new JLabel();
         mobileTextField = new JTextField();
         workTextField = new JTextField();
-        mobileLabel = new JLabel();
-        phoneHeaderLabel = new JLabel();
-        workLabel = new JLabel();
         homeTextField = new JTextField();
-        addressPanel = new JPanel();
-        zipPostalLabel = new JLabel();
-        stateProvLabel = new JLabel();
-        addressHeaderLabel = new JLabel();
-        countryLabel = new JLabel();
         countryTextField = new JTextField();
         stateProvTextField = new JTextField();
-        cityLabel = new JLabel();
         cityTextField = new JTextField();
         zipPostalTextField = new JTextField();
         jSeparator3 = new JSeparator();
@@ -104,12 +87,38 @@ public class ProfileWindow extends JFrame {
         MenuBar = new JMenuBar();
         fileMenu = new JMenu();
         helpMenu = new JMenu();
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        addressPanel = new JPanel();
+        personalMessageTextField = new JTextField();
+        
+        informationHeaderLabel = new JLabel("Information");
+        informationHeaderLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        userNameLabel = new JLabel("Username:");
+        firstNameLabel = new JLabel("First Name:");
+        middleNameLabel = new JLabel("Middle Name:");
+        lastNameLabel = new JLabel("Last Name:");
+        genderLabel = new JLabel("Gender:");
+        birthdateLabel = new JLabel("Birthdate:");
+        emailLabel = new JLabel("Email:");
+        
+        phoneHeaderLabel = new JLabel("Phone");
+        phoneHeaderLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        homeLabel = new JLabel("Home:");
+        mobileLabel = new JLabel("Mobile:");
+        workLabel = new JLabel("Work:");
+        
+        addressHeaderLabel = new JLabel("Address");
+        addressHeaderLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        countryLabel = new JLabel("Country:");
+        stateProvLabel = new JLabel("State/Province:");
+        cityLabel = new JLabel("City:");
+        zipPostalLabel = new JLabel("Zip/Postal Code:");
+        
+        displayPicIconLabel = new JLabel();
+        displayPicIconLabel.setIcon(new ImageIcon("img/serious_logo.png"));
 
         personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
 
-        statusComboBox.setModel(new DefaultComboBoxModel(new String[] { "Online", "Busy", "Away", "Idle", "Offline" }));
+        statusComboBox.setModel(new DefaultComboBoxModel(StatusType.statusTypes));        
 
         GroupLayout userInfoPanelLayout = new GroupLayout(userInfoPanel);
         userInfoPanel.setLayout(userInfoPanelLayout);
@@ -141,23 +150,6 @@ public class ProfileWindow extends JFrame {
                         .addComponent(personalMessageTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-
-        firstNameLabel.setText("First Name:");
-
-        userNameLabel.setText("Username:");
-
-        emailLabel.setText("Email:");
-
-        middleNameLabel.setText("Middle Name:");
-
-        lastNameLabel.setText("Last Name:");
-
-        genderLabel.setText("Gender:");
-
-        birthdateLabel.setText("Birthdate:");
-
-        informationHeaderLabel.setFont(new Font("Tahoma", 1, 11));
-        informationHeaderLabel.setText("Information");
 
         GroupLayout informationPanelLayout = new GroupLayout(informationPanel);
         informationPanel.setLayout(informationPanelLayout);
@@ -232,15 +224,6 @@ public class ProfileWindow extends JFrame {
 
         informationPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] {birthdateTextField, emailTextField, firstNameTextField, genderTextField, lastNameTextField, middleNameTextField, userNameTextField});
 
-        homeLabel.setText("Home:");
-
-        mobileLabel.setText("Mobile:");
-
-        phoneHeaderLabel.setFont(new Font("Tahoma", 1, 11));
-        phoneHeaderLabel.setText("Phone");
-
-        workLabel.setText("Work:");
-
         GroupLayout phonePanelLayout = new GroupLayout(phonePanel);
         phonePanel.setLayout(phonePanelLayout);
         phonePanelLayout.setHorizontalGroup(
@@ -280,17 +263,6 @@ public class ProfileWindow extends JFrame {
                     .addComponent(workLabel))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
-
-        zipPostalLabel.setText("Zip/Postal Code:");
-
-        stateProvLabel.setText("State/Province:");
-
-        addressHeaderLabel.setFont(new Font("Tahoma", 1, 11));
-        addressHeaderLabel.setText("Address");
-
-        countryLabel.setText("Country:");
-
-        cityLabel.setText("City:");
 
         GroupLayout addressPanelLayout = new GroupLayout(addressPanel);
         addressPanel.setLayout(addressPanelLayout);
@@ -372,13 +344,14 @@ public class ProfileWindow extends JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(phonePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jSeparator2, GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
+                    .addComponent(jSeparator2, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                     .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(addressPanel, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))
-                    .addComponent(jSeparator3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
+                    .addComponent(jSeparator3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
                 .addContainerGap())
         );
+        
         layout.setVerticalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -397,7 +370,7 @@ public class ProfileWindow extends JFrame {
                 .addComponent(addressPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
-
+        
         pack();
     }
     
