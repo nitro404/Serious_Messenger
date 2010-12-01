@@ -106,7 +106,6 @@ public class ServerInputSignalQueue extends Thread {
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(s2.getAuthenticated()) {
 						m_client.authenticated();
-						m_client.setPort(s2.getPort());
 						m_messageBoxSystem.show(null, "Successfully logged in!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
@@ -117,6 +116,7 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					BroadcastLoginSignal s2 = (BroadcastLoginSignal) s;
 					m_client.updateContact(s2.getData());
+					m_clientWindow.resetContactPanels();
 				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					PasswordChangedSignal s2 = (PasswordChangedSignal) s;
@@ -130,16 +130,18 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactAdded) {
 					ContactAddedSignal s2 = (ContactAddedSignal) s;
 					if(s2.getAdded()) {
-						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " added successfully!", "Contact Added", JOptionPane.INFORMATION_MESSAGE);
+						m_client.addContact(new Contact(s2.getData()));
+						m_messageBoxSystem.show(null, "Contact " + s2.getData().getUserName() + " added successfully!", "Contact Added", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getUserName(), "Unable to Add Contact", JOptionPane.WARNING_MESSAGE);
+						m_messageBoxSystem.show(null, "Unable to add contact " + s2.getData().getUserName(), "Unable to Add Contact", JOptionPane.WARNING_MESSAGE);
 					}
 					m_clientWindow.resetContactPanels();
 				}
 				else if(s.getSignalType() == SignalType.ContactDeleted) {
 					ContactDeletedSignal s2 = (ContactDeletedSignal) s;
 					if(s2.getDeleted()) {
+						m_client.removeContact(s2.getUserName());
 						m_messageBoxSystem.show(null, "Contact " + s2.getUserName() + " deleted successfully!", "Contact Deleted", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {

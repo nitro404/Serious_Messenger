@@ -73,6 +73,8 @@ public class Contact extends UserNetworkData {
 	}
 	
 	public boolean ping() {
+		if(m_connection == null || m_outSignalQueue == null) { return false; }
+		
 		if(!m_awaitingResponse && m_timeElapsed >= Globals.PING_INTERVAL) {
 			m_timeElapsed = 0;
 			m_awaitingResponse = true;

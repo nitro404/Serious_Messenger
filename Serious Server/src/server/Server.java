@@ -28,6 +28,8 @@ public class Server extends Thread {
 	public void initialize(int port, ServerWindow serverWindow) {
 		if(port < 0 || port > 65355) { port = Globals.DEFAULT_PORT; }
 		
+		m_logger.initialize(serverWindow);
+		
 		try {
 			m_connection = new ServerSocket(port);
 		}
@@ -37,7 +39,8 @@ public class Server extends Thread {
 			System.exit(1);
 		}
 		
-		m_logger.initialize(serverWindow);
+		m_logger.addInfo("Successfully started server on port: " + port);
+		
 		m_dbms.initialize(m_logger);
 		m_dbms.connect();
 		m_disconnectHandler.initialize(m_clients, m_logger);
@@ -180,13 +183,26 @@ public class Server extends Thread {
 		return false;
 	}
 	
-	public boolean addUserContact(Client client, String contactUserName) {
-		if(client == null || contactUserName == null) { return false; }
+	public UserNetworkData addUserContact(Client client, String contactUserName) {
+		if(client == null || contactUserName == null) { return null; }
 		
 		if(client.getUserName() != null) {
-			return m_dbms.addUserContact(client.getUserName(), contactUserName);
+			UserNetworkData data = m_dbms.addUserContact(client.getUserName(), contactUserName);
+			
+			if(data != null) {
+				for(int i=0;i<m_clients.size();i++) {
+					Client c = m_clients.elementAt(i);
+					if(c.getUserName() != null && c.getUserName().equalsIgnoreCase(data.getUserName())) {
+						data.setStatus(StatusType.Online);
+						data.setIPAddress(c.getIPAddress());
+						data.setPort(c.getPort());
+					}
+				}
+			}
+			
+			return data;
 		}
-		return false;
+		return null;
 	}
 	
 	public boolean deleteUserContact(Client client, String contactUserName) {

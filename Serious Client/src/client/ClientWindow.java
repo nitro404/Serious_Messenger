@@ -36,12 +36,14 @@ public class ClientWindow extends JFrame implements ActionListener {
 	private JMenuItem fileExitMenuItem;
 	
 	private JMenu contactsMenu;
+	private JMenuItem contactsStartConversationMenuItem;
 	private JMenuItem contactsAddContactMenuItem;
     private JMenuItem contactsDeleteContactMenuItem;
     private JMenuItem contactsBlockContactMenuItem;
     private JMenuItem contactsUnblockContactMenuItem;
     
 	private JMenu settingsMenu;
+	private JMenuItem settingsProfileMenuItem;
 	
 	private JMenu helpMenu;
 	private JMenuItem helpAboutMenuItem;
@@ -62,6 +64,11 @@ public class ClientWindow extends JFrame implements ActionListener {
     }
     
     public void initialize() {
+    	initialize(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
+    }
+    
+    public void initialize(String hostName, int port) {
+    	m_client.initialize(hostName, port);
     	setVisible(true);
     }
     
@@ -76,12 +83,14 @@ public class ClientWindow extends JFrame implements ActionListener {
         fileExitMenuItem = new JMenuItem("Exit");
         
         contactsMenu = new JMenu("Contacts");
+        contactsStartConversationMenuItem = new JMenuItem("Start Conversation");
         contactsAddContactMenuItem = new JMenuItem("Add Contact");
         contactsDeleteContactMenuItem = new JMenuItem("Delete Contact");
         contactsBlockContactMenuItem = new JMenuItem("Block Contact");
         contactsUnblockContactMenuItem = new JMenuItem("Unblock Contact");
         
         settingsMenu = new JMenu("Settings");
+        settingsProfileMenuItem = new JMenuItem("View/Edit Profile");
         
         helpMenu = new JMenu("Help");
         helpAboutMenuItem = new JMenuItem("About");
@@ -91,10 +100,12 @@ public class ClientWindow extends JFrame implements ActionListener {
         fileCreateAccountMenuItem.addActionListener(this);
         fileChangePasswordMenuItem.addActionListener(this);
         fileExitMenuItem.addActionListener(this);
+        contactsStartConversationMenuItem.addActionListener(this);
         contactsAddContactMenuItem.addActionListener(this);
         contactsDeleteContactMenuItem.addActionListener(this);
         contactsBlockContactMenuItem.addActionListener(this);
         contactsUnblockContactMenuItem.addActionListener(this);
+        settingsProfileMenuItem.addActionListener(this);
         helpAboutMenuItem.addActionListener(this);
         
         fileMenu.add(fileSignInMenuItem);
@@ -103,16 +114,19 @@ public class ClientWindow extends JFrame implements ActionListener {
         fileMenu.add(fileChangePasswordMenuItem);
         fileMenu.add(fileExitMenuItem);
         
+        contactsMenu.add(contactsStartConversationMenuItem);
         contactsMenu.add(contactsAddContactMenuItem);
         contactsMenu.add(contactsDeleteContactMenuItem);
         contactsMenu.add(contactsBlockContactMenuItem);
         contactsMenu.add(contactsUnblockContactMenuItem);
         
+        settingsMenu.add(settingsProfileMenuItem);
+        
         helpMenu.add(helpAboutMenuItem);
 
         menuBar.add(fileMenu);
         menuBar.add(contactsMenu);
-//        menuBar.add(settingsMenu);
+        menuBar.add(settingsMenu);
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -132,8 +146,6 @@ public class ClientWindow extends JFrame implements ActionListener {
         searchTextField = new JTextField("Type here to search through the contact list...");
         searchLabel = new JLabel("Search:");
         groupsTabbedPane = new JTabbedPane();
-        contactListScrollPane = new JScrollPane();
-        contactListPanel = new JPanel();
         personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
 
         displayPicIconLabel.setIcon(new ImageIcon("img/serious_logo.png")); 
@@ -144,17 +156,19 @@ public class ClientWindow extends JFrame implements ActionListener {
 
         searchTextField.setFont(new Font("Tahoma", 2, 11));
         searchTextField.setToolTipText("Type here to search through the contact list...");
-        
-        groupsTabbedPane.setToolTipText("Group: All Contacts");
-        groupsTabbedPane.setFont(new Font("Tahoma", 1, 11));
-        groupsTabbedPane.addTab("All Contacts", contactListScrollPane);
 
+    	contactListPanel = new JPanel();
+    	contactListScrollPane = new JScrollPane();
         contactListPanel.setToolTipText("Group: All Contacts");
         contactListPanel.setPreferredSize(new Dimension(450, 268));
         contactListScrollPane.setToolTipText("Contact List");
         contactListScrollPane.setViewportView(contactListPanel);
         contactListScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         contactListScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        groupsTabbedPane.setToolTipText("Group: All Contacts");
+        groupsTabbedPane.setFont(new Font("Tahoma", 1, 11));
+        groupsTabbedPane.addTab("All Contacts", contactListScrollPane);
     }
     
     public void initLayouts() {
@@ -214,22 +228,18 @@ public class ClientWindow extends JFrame implements ActionListener {
                 .addContainerGap())
         );
 
-        /*GroupLayout contactListPanelLayout = new GroupLayout(contactListPanel);
+        GroupLayout contactListPanelLayout = new GroupLayout(contactListPanel);
         contactListPanel.setLayout(contactListPanelLayout);
         contactListPanelLayout.setHorizontalGroup(
             contactListPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(contactListPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(contactPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         contactListPanelLayout.setVerticalGroup(
             contactListPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(contactListPanelLayout.createSequentialGroup()
-                .addComponent(contactPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(195, Short.MAX_VALUE))
-        );*/
-
+            .addGroup(contactListPanelLayout.createSequentialGroup())
+        );
+        
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -268,7 +278,7 @@ public class ClientWindow extends JFrame implements ActionListener {
 	    	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
 	    	if(password == null) { return; }
 	    	
-	    	m_client.initialize();
+	    	m_client.connect();
 	    	m_client.login(userName, password);
 		}
 		else if(e.getSource() == fileSignOutMenuItem) {
@@ -288,7 +298,7 @@ public class ClientWindow extends JFrame implements ActionListener {
 	    	String userName = JOptionPane.showInputDialog(null, "Username:", "Username", JOptionPane.QUESTION_MESSAGE);
 	    	String password = JOptionPane.showInputDialog(null, "Password:", "Password", JOptionPane.QUESTION_MESSAGE);
 	    	
-	    	m_client.initialize();
+	    	m_client.connect();
 	    	
 	    	m_client.createAccount(userName, password);
 		}
@@ -318,6 +328,36 @@ public class ClientWindow extends JFrame implements ActionListener {
 		 }
 		else if(e.getSource() == fileExitMenuItem) {
 			System.exit(0);
+		}
+		else if(e.getSource() == contactsStartConversationMenuItem) {
+			if(m_client.getClientState() < ClientState.Online) {
+	    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+	    		return;
+	    	}
+	    	
+			Contact contact = null;
+			String contactUserName = JOptionPane.showInputDialog(null, "Who would you like to start a conversation with?", "Start Conversation with User", JOptionPane.QUESTION_MESSAGE);
+			
+			if(contactUserName == null) { return; }
+			for(int i=0;i<m_client.numberOfContacts();i++) {
+				if(contactUserName.equalsIgnoreCase(m_client.getContact(i).getUserName())) {
+					contact = m_client.getContact(i);
+					break;
+				}
+			}
+			
+			if(contact == null) {
+				JOptionPane.showMessageDialog(null, "Unable to find contact on your contact list.", "Invalid Contact", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			if(contact.getStatus() == StatusType.Offline) {
+				JOptionPane.showMessageDialog(null, "Contact is not online.", "Contact Offline", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			ConversationWindow conversationWindow = new ConversationWindow(m_client, contact);
+			conversationWindow.setVisible(true);
 		}
 		else if(e.getSource() == contactsAddContactMenuItem) {
 			if(m_client.getClientState() < ClientState.Online) {
@@ -359,6 +399,15 @@ public class ClientWindow extends JFrame implements ActionListener {
 			
 			m_client.unblockContact(contactUserName);
 		}
+		else if(e.getSource() == settingsProfileMenuItem) {
+			if(m_client.getClientState() < ClientState.Online) {
+	    		JOptionPane.showMessageDialog(null, "Please log in first.", "Not Logged In", JOptionPane.WARNING_MESSAGE);
+	    		return;
+	    	}
+			
+			ProfileWindow profileWindow = new ProfileWindow(m_client);
+			profileWindow.setVisible(true);
+		}
 		else if(e.getSource() == helpAboutMenuItem) {
 			JOptionPane.showMessageDialog(null, "Serious Messenger.\n\nSerious about delivering messages.", "About Serious Messenger", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -374,21 +423,37 @@ public class ClientWindow extends JFrame implements ActionListener {
     }
     
     public void resetContactPanels() {
-    	contactListPanel.setLayout(null);
+    	contactListPanel = new JPanel();
+        contactListPanel.setToolTipText("Group: All Contacts");
+        contactListPanel.setPreferredSize(new Dimension(450, 268));
+        
     	contactPanels = new Vector<ContactPanel>();
     	ContactPanel panel = null;
     	for(int i=0;i<m_client.numberOfContacts();i++) {
     		panel = new ContactPanel(m_client.getContact(i));
     		contactPanels.add(panel);
-    		panel.setLocation(0, i * panel.getHeight());
     		contactListPanel.add(panel);
     	}
+    	
+    	contactListScrollPane.setViewportView(contactListPanel);
+    	contactListScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+    	
+    	contactListPanel.setLayout(new FlowLayout());
+    	
+    	if(contactPanels.size() > 0) {
+    		contactListPanel.setPreferredSize(new Dimension(440, 80 * contactPanels.size()));
+    	}
+        
+        update();
     }
     
     public void update() {
     	for(int i=0;i<contactPanels.size();i++) {
     		contactPanels.elementAt(i).update();
     	}
+    	nickNameTextField.setText(UserPanel.getNickName(m_client.getUserName()));
+    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_client.getUserName()));
+    	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
     }
     
 }

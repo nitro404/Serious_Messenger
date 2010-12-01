@@ -145,11 +145,18 @@ public class ClientInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.AddContact) {
 					AddContactSignal s2 = (AddContactSignal) s;
 					
-					boolean contactAdded = m_server.addUserContact(m_client, s2.getUserName());
+					UserNetworkData contactData = m_server.addUserContact(m_client, s2.getUserName());
 					
-					sendSignal(new ContactAddedSignal(s2.getUserName(), contactAdded));
+					boolean added = contactData != null;
 					
-					m_logger.addCommand(s2.getUserName(), "Added Contact: " + s2.getUserName() + " (" + ((contactAdded) ? "Succeeded" : "Failed") + ")");
+					UserNetworkData newData = contactData; 
+					if(newData == null) {
+						newData = new UserNetworkData(s2.getUserName(), null, null, StatusType.Offline, Globals.DEFAULT_FONTSTYLE);
+					}
+					
+					sendSignal(new ContactAddedSignal(newData, added));
+					
+					m_logger.addCommand(s2.getUserName(), "Added Contact: " + s2.getUserName() + " (" + ((added) ? "Succeeded" : "Failed") + ")");
 				}
 				else if(s.getSignalType() == SignalType.DeleteContact) {
 					DeleteContactSignal s2 = (DeleteContactSignal) s;

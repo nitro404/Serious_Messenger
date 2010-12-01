@@ -18,6 +18,7 @@ public class Globals {
 	final public static Color DEFAULT_TEXT_COLOUR = new Color(0, 0, 0);
 	final public static Font DEFAULT_FONT = new Font(DEFAULT_FONT_FACE, Font.PLAIN, DEFAULT_FONT_SIZE);
 	final public static FontStyle DEFAULT_FONTSTYLE = new FontStyle(DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE, false, false, DEFAULT_TEXT_COLOUR);
+	final public static String DEFAULT_DISPLAY_PICTURE = "img/serious_logo.png";
 	
 	// networking constants
 	final public static int DEFAULT_PORT = 25500;

@@ -10,13 +10,15 @@ public class ServerOutputSignalQueue extends Thread {
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
 	private Client m_client;
+	private ClientWindow m_clientWindow;
 	
 	public ServerOutputSignalQueue(){
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 	
-	public void initialize(Client client, DataOutputStream out) {
+	public void initialize(Client client, ClientWindow clientWindow, DataOutputStream out) {
 		m_client = client;
+		m_clientWindow = clientWindow;
 		m_out = out;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
@@ -48,6 +50,9 @@ public class ServerOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Logout) {
 					s.writeTo(m_out);
 					m_client.disconnect();
+					m_client.setUserName(null);
+					m_client.clearContacts();
+					m_clientWindow.resetContactPanels();
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					s.writeTo(m_out);

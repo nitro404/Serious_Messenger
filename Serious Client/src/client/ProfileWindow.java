@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.*;
 import shared.*;
 
-public class ProfileWindow extends JFrame {
+public class ProfileWindow extends JFrame implements ActionListener {
+	
+	private Client m_client;
 	
 	private JMenuBar MenuBar;
     private JLabel addressHeaderLabel;
@@ -56,9 +58,65 @@ public class ProfileWindow extends JFrame {
     private static final long serialVersionUID = 1L;
     
     public ProfileWindow() {
+    	this(null);
+    }
+    
+    public ProfileWindow(Client client) {
+    	m_client = client;
+    	
         initComponents();
+        initContent();
+        
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("User Profile");
+        setSize(432, 700);
+        setResizable(false);
+    }
+    
+    public void initContent() {
+    	if(m_client == null) { return; }
+    	
+    	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
+    	nickNameTextField.setText(UserPanel.getNickName(m_client.getUserName()));
+    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_client.getUserName()));
+    	statusComboBox.setSelectedItem(StatusType.getStatus(m_client.getStatus()));
+    	
+    	if(m_client.getUserName().equalsIgnoreCase("nitro404")) {
+    		userNameTextField.setText(m_client.getUserName());
+    		firstNameTextField.setText("Kevin");
+    		middleNameTextField.setText("Andrew");
+    		lastNameTextField.setText("Scroggins");
+    		genderTextField.setText("Male");
+    		birthdateTextField.setText("June 18, 1987");
+    		emailTextField.setText("nitro404@hotmail.com");
+    		
+    		homeTextField.setText("(613) 823-4547");
+    		mobileTextField.setText("(613) 324-2284");
+    		workTextField.setText("");
+    		
+    		countryTextField.setText("Canada");
+    		stateProvTextField.setText("Ontario");
+    		cityTextField.setText("Nepean");
+    		zipPostalTextField.setText("K2J 4K9");
+    	}
+    	else if(m_client.getUserName().equalsIgnoreCase("dan")) {
+        	userNameTextField.setText(m_client.getUserName());
+    		firstNameTextField.setText("Daniel");
+    		middleNameTextField.setText("Lavoie");
+    		lastNameTextField.setText("McNerney");
+    		genderTextField.setText("Male");
+    		birthdateTextField.setText("August 17, 1988");
+    		emailTextField.setText("danlm@rogers.com");
+    		
+    		homeTextField.setText("(613) 555-5555");
+    		mobileTextField.setText("");
+    		workTextField.setText("");
+    		
+    		countryTextField.setText("Canada");
+    		stateProvTextField.setText("Ontario");
+    		cityTextField.setText("Nepean");
+    		zipPostalTextField.setText("K1S 3J1");
+    	}
     }
     
     private void initComponents() {
@@ -68,6 +126,7 @@ public class ProfileWindow extends JFrame {
         informationPanel = new JPanel();
         lastNameTextField = new JTextField();
         userNameTextField = new JTextField();
+        userNameTextField.setEditable(false);
         firstNameTextField = new JTextField();
         emailTextField = new JTextField();
         birthdateTextField = new JTextField();
@@ -89,10 +148,10 @@ public class ProfileWindow extends JFrame {
         helpMenu = new JMenu();
         addressPanel = new JPanel();
         personalMessageTextField = new JTextField();
+        userNameLabel = new JLabel("Username:");
         
         informationHeaderLabel = new JLabel("Information");
         informationHeaderLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
-        userNameLabel = new JLabel("Username:");
         firstNameLabel = new JLabel("First Name:");
         middleNameLabel = new JLabel("Middle Name:");
         lastNameLabel = new JLabel("Last Name:");
@@ -118,7 +177,8 @@ public class ProfileWindow extends JFrame {
 
         personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
 
-        statusComboBox.setModel(new DefaultComboBoxModel(StatusType.statusTypes));        
+        statusComboBox.setModel(new DefaultComboBoxModel(StatusType.statusTypes));
+        statusComboBox.addActionListener(this);
 
         GroupLayout userInfoPanelLayout = new GroupLayout(userInfoPanel);
         userInfoPanel.setLayout(userInfoPanelLayout);
@@ -372,6 +432,12 @@ public class ProfileWindow extends JFrame {
         );
         
         pack();
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+    	if(e.getSource() == statusComboBox) {
+    		
+    	}
     }
     
 }

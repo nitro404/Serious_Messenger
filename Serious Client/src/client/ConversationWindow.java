@@ -1,12 +1,17 @@
 package client;
 
 import javax.swing.*;
+
+import shared.StatusType;
+
 import java.awt.*;
 import java.awt.event.*;
 
-public class ConversationWindow extends JFrame {
+public class ConversationWindow extends JFrame implements ActionListener {
 	
 	private Conversation m_conversation;
+	private Client m_client;
+	private Contact m_contact;
 	
     private JMenuBar menuBar;
     private JButton announceButton;
@@ -29,10 +34,30 @@ public class ConversationWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
-    public ConversationWindow() {
+	public ConversationWindow() {
+		this(null, null);
+	}
+	
+    public ConversationWindow(Client client, Contact contact) {
+    	m_client = client;
+    	m_contact = contact;
+    	
         initComponents();
+        setContent();
+        
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Conversation");
+        setSize(434, 528);
+        setResizable(false);
+    }
+    
+    public void setContent() {
+    	if(m_contact == null) { return; }
+    	
+    	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_contact.getUserName()));
+    	nickNameTextField.setText(UserPanel.getNickName(m_contact.getUserName()));
+    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_contact.getUserName()));
+    	statusTextField.setText(StatusType.getStatus(m_contact.getStatus()));
     }
     
     private void initComponents() {
@@ -63,6 +88,10 @@ public class ConversationWindow extends JFrame {
 
         personalMessageTextField.setEditable(false);
         personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
+        
+        sendButton.addActionListener(this);
+        clearButton.addActionListener(this);
+        announceButton.addActionListener(this);
 
         GroupLayout userInfoPanelLayout = new GroupLayout(userInfoPanel);
         userInfoPanel.setLayout(userInfoPanelLayout);
@@ -189,6 +218,19 @@ public class ConversationWindow extends JFrame {
         );
 
         pack();
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+    	if(e.getSource() == sendButton) {
+    		conversationOutputTextPane.setText(conversationOutputTextPane.getText() + (conversationOutputTextPane.getText().length() == 0 ? "" : "\n") + m_client.getUserName() + ": " + userInputTextField.getText());
+    		userInputTextField.setText("");
+    	}
+    	else if(e.getSource() == clearButton) {
+    		userInputTextField.setText("");
+    	}
+    	else if(e.getSource() == announceButton) {
+    		JOptionPane.showMessageDialog(null, getWidth() + ", " + getHeight());
+    	}
     }
     
 }

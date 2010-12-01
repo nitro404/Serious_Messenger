@@ -461,14 +461,14 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public boolean addUserContact(String userName, String contactUserName) {
+	public UserNetworkData addUserContact(String userName, String contactUserName) {
 		try {
 			// verify that the contact exists
 			SQLResult contactResult = new SQLResult(stmt.executeQuery(
 				"SELECT * FROM " + userDataTableName + " " +
 				"WHERE UserName = '" + contactUserName + "'"
 			));
-			if(!(contactResult.getRowCount() == 1)) { return false; }
+			if(!(contactResult.getRowCount() == 1)) { return null; }
 			
 			// add the contact to the database
 			boolean contactAdded = stmt.executeUpdate(
@@ -484,12 +484,12 @@ public class UserDBMS {
 				m_logger.addInfo("User " + userName + " added contact " + contactUserName);
 			}
 			
-			return contactAdded;
+			return new UserNetworkData(contactUserName, null, null, StatusType.Offline, Globals.DEFAULT_FONTSTYLE);
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error adding contact " + contactUserName + " for user " + userName + ": " + e.getMessage());
 		}
-		return false;
+		return null;
 	}
 	
 	public boolean deleteUserContact(String userName, String contactUserName) {

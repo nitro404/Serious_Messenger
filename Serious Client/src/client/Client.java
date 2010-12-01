@@ -18,8 +18,8 @@ public class Client extends User {
 	private ClientThread m_clientThread = null;
 	private MessageBoxSystem m_messageBoxSystem = null;
 	
+	private String m_hostName;
 	private int m_port;
-	private ContactConnectionListener m_connectionListener = null;
 	private ServerDisconnectHandler m_disconnectHandler = null;
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
@@ -29,19 +29,21 @@ public class Client extends User {
 	public Client(ClientWindow clientWindow) {
 		super();
 		m_clientWindow = clientWindow;
-		m_connectionListener = new ContactConnectionListener();
 		m_messageBoxSystem = new MessageBoxSystem();
 	}
 	
 	public void initialize() {
-		connect(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
-		super.initialize();
-		m_connectionListener.initialize(this);
+		initialize(Globals.DEFAULT_HOST, Globals.DEFAULT_PORT);
 	}
 	
-	public int getPort() { return m_port; }
-	
-	public void setPort(int port) { if(port >= 0 && port <= 65535) { m_port = port; } }
+	public void initialize(String hostName, int port) {
+		if(hostName == null) { m_hostName = Globals.DEFAULT_HOST; }
+		else { m_hostName = hostName; }
+		if(port < 0 || port > 65355) { m_port = Globals.DEFAULT_PORT; }
+		else { m_port = port; }
+		
+		super.initialize();
+	}
 	
 	public Socket getConnection() { return m_connection; }
 	
@@ -55,7 +57,7 @@ public class Client extends User {
 	
 	public int getClientState() { return m_state; }
 	
-	public void connect(String host, int port) {
+	public void connect() {
 		if(m_state != ClientState.Disconnected) { return; }
 		
 		setState(ClientState.Connected);
@@ -66,13 +68,13 @@ public class Client extends User {
 		m_messageBoxSystem.initialize();
 		
 		try {
-			m_connection = new Socket(host, port);
+			m_connection = new Socket(m_hostName, m_port);
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
 			
 			if(m_outSignalQueue == null || m_outSignalQueue.isTerminated()) {
 				m_outSignalQueue = new ServerOutputSignalQueue();
-				m_outSignalQueue.initialize(this, m_out);
+				m_outSignalQueue.initialize(this, m_clientWindow, m_out);
 			}
 			
 			if(m_inSignalQueue == null || m_inSignalQueue.isTerminated()) {
@@ -92,7 +94,7 @@ public class Client extends User {
 		}
 		catch(IOException e) {
 			disconnect();
-			m_messageBoxSystem.show(null, "Unable to connect to Serious Server at " + host + ":" + port + ": " + e.getMessage(), "Error Connecting to Server", JOptionPane.ERROR_MESSAGE);
+			m_messageBoxSystem.show(null, "Unable to connect to Serious Server at " + m_hostName + ":" + m_port + ": " + e.getMessage(), "Error Connecting to Server", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

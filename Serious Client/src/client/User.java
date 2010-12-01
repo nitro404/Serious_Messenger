@@ -241,6 +241,10 @@ public class User extends UserData {
 		}
 	}
 	
+	public void clearContacts() {
+		m_contacts.clear();
+	}
+	
 	public boolean equals(Object o) {
 		if(o == null || !(o instanceof User)) { return false; }
 		return ((User)o).m_userName.equalsIgnoreCase(m_userName);
