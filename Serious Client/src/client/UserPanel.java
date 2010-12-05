@@ -78,30 +78,6 @@ public class UserPanel extends JPanel implements ActionListener {
 	            .addContainerGap())
 	    );
 	}
-
-	public static String getNickName(String userName) {
-		if(userName == null) { return ""; }
-		
-		if(userName.equalsIgnoreCase("nitro404")) { return "Teh E|ite |K|scrogg"; }
-		else if(userName.equalsIgnoreCase("corey")) { return "Corey"; }
-		else if(userName.equalsIgnoreCase("tristan")) { return "Tristan"; }
-		else if(userName.equalsIgnoreCase("dan")) { return "FURIOUS D"; }
-		else if(userName.equalsIgnoreCase("engineer")) { return "Engineer"; }
-		else if(userName.equalsIgnoreCase("brad")) { return "Yeldarbish"; }
-		return "";
-	}
-	
-	public static String getPersonalMessage(String userName) {
-		if(userName == null) { return ""; }
-		
-		if(userName.equalsIgnoreCase("nitro404")) { return "silly dust making my server overheat, how dare you!"; }
-		else if(userName.equalsIgnoreCase("corey")) { return "doing ui presentation"; }
-		else if(userName.equalsIgnoreCase("tristan")) { return "If per chance I am dreaming, please let me sleep."; }
-		else if(userName.equalsIgnoreCase("dan")) { return "skateboard trashed need ride asap"; }
-		else if(userName.equalsIgnoreCase("engineer")) { return "Sentry goin' up!"; }
-		else if(userName.equalsIgnoreCase("brad")) { return "Talkin' bout minecraft!"; }
-		return "";
-	}
 	
 	public static ImageIcon getDisplayPicture(String userName) {
 		

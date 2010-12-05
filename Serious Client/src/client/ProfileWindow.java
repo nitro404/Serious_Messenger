@@ -77,46 +77,26 @@ public class ProfileWindow extends JFrame implements ActionListener {
     	if(m_client == null) { return; }
     	
     	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
-    	nickNameTextField.setText(UserPanel.getNickName(m_client.getUserName()));
-    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_client.getUserName()));
+    	nickNameTextField.setText(m_client.getNickName());
+    	personalMessageTextField.setText(m_client.getPersonalMessage());
     	statusComboBox.setSelectedItem(StatusType.getStatus(m_client.getStatus()));
     	
-    	if(m_client.getUserName().equalsIgnoreCase("nitro404")) {
-    		userNameTextField.setText(m_client.getUserName());
-    		firstNameTextField.setText("Kevin");
-    		middleNameTextField.setText("Andrew");
-    		lastNameTextField.setText("Scroggins");
-    		genderTextField.setText("Male");
-    		birthdateTextField.setText("June 18, 1987");
-    		emailTextField.setText("nitro404@hotmail.com");
-    		
-    		homeTextField.setText("(613) 823-4547");
-    		mobileTextField.setText("(613) 324-2284");
-    		workTextField.setText("");
-    		
-    		countryTextField.setText("Canada");
-    		stateProvTextField.setText("Ontario");
-    		cityTextField.setText("Nepean");
-    		zipPostalTextField.setText("K2J 4K9");
-    	}
-    	else if(m_client.getUserName().equalsIgnoreCase("dan")) {
-        	userNameTextField.setText(m_client.getUserName());
-    		firstNameTextField.setText("Daniel");
-    		middleNameTextField.setText("Lavoie");
-    		lastNameTextField.setText("McNerney");
-    		genderTextField.setText("Male");
-    		birthdateTextField.setText("August 17, 1988");
-    		emailTextField.setText("danlm@rogers.com");
-    		
-    		homeTextField.setText("(613) 555-5555");
-    		mobileTextField.setText("");
-    		workTextField.setText("");
-    		
-    		countryTextField.setText("Canada");
-    		stateProvTextField.setText("Ontario");
-    		cityTextField.setText("Nepean");
-    		zipPostalTextField.setText("K1S 3J1");
-    	}
+		userNameTextField.setText(m_client.getUserName());
+		firstNameTextField.setText("");
+		middleNameTextField.setText("");
+		lastNameTextField.setText("");
+		genderTextField.setText("");
+		birthdateTextField.setText("");
+		emailTextField.setText("");
+		
+		homeTextField.setText("");
+		mobileTextField.setText("");
+		workTextField.setText("");
+		
+		countryTextField.setText("");
+		stateProvTextField.setText("");
+		cityTextField.setText("");
+		zipPostalTextField.setText("");
     }
     
     private void initComponents() {

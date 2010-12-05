@@ -55,8 +55,8 @@ public class ConversationWindow extends JFrame implements ActionListener {
     	if(m_contact == null) { return; }
     	
     	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_contact.getUserName()));
-    	nickNameTextField.setText(UserPanel.getNickName(m_contact.getUserName()));
-    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_contact.getUserName()));
+    	nickNameTextField.setText(m_contact.getNickName());
+    	personalMessageTextField.setText(m_contact.getPersonalMessage());
     	statusTextField.setText(StatusType.getStatus(m_contact.getStatus()));
     }
     
@@ -222,14 +222,13 @@ public class ConversationWindow extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
     	if(e.getSource() == sendButton) {
-    		conversationOutputTextPane.setText(conversationOutputTextPane.getText() + (conversationOutputTextPane.getText().length() == 0 ? "" : "\n") + m_client.getUserName() + ": " + userInputTextField.getText());
     		userInputTextField.setText("");
     	}
     	else if(e.getSource() == clearButton) {
     		userInputTextField.setText("");
     	}
     	else if(e.getSource() == announceButton) {
-    		JOptionPane.showMessageDialog(null, getWidth() + ", " + getHeight());
+    		
     	}
     }
     

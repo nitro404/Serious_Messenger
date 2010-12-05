@@ -451,8 +451,8 @@ public class ClientWindow extends JFrame implements ActionListener {
     	for(int i=0;i<contactPanels.size();i++) {
     		contactPanels.elementAt(i).update();
     	}
-    	nickNameTextField.setText(UserPanel.getNickName(m_client.getUserName()));
-    	personalMessageTextField.setText(UserPanel.getPersonalMessage(m_client.getUserName()));
+//    	nickNameTextField.setText();
+//    	personalMessageTextField.setText();
     	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
     }
     
