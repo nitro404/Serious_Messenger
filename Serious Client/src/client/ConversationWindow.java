@@ -1,17 +1,15 @@
 package client;
 
 import javax.swing.*;
-
-import shared.StatusType;
-
 import java.awt.*;
 import java.awt.event.*;
+import shared.*;
 
 public class ConversationWindow extends JFrame implements ActionListener {
 	
 	private Conversation m_conversation;
 	private Client m_client;
-	private Contact m_contact;
+	private UserNetworkData m_contact;
 	
     private JMenuBar menuBar;
     private JButton announceButton;
@@ -38,7 +36,7 @@ public class ConversationWindow extends JFrame implements ActionListener {
 		this(null, null);
 	}
 	
-    public ConversationWindow(Client client, Contact contact) {
+    public ConversationWindow(Client client, UserNetworkData contact) {
     	m_client = client;
     	m_contact = contact;
     	

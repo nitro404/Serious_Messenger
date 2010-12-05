@@ -130,7 +130,7 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ContactAdded) {
 					ContactAddedSignal s2 = (ContactAddedSignal) s;
 					if(s2.getAdded()) {
-						m_client.addContact(new Contact(s2.getData()));
+						m_client.addContact(new UserNetworkData(s2.getData()));
 						m_messageBoxSystem.show(null, "Contact " + s2.getData().getUserName() + " added successfully!", "Contact Added", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {

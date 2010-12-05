@@ -138,10 +138,13 @@ public class UserDBMS {
 		try {
 			stmt.executeUpdate(
 				"CREATE TABLE IF NOT EXISTS " + userDataTableName + " (" +
-					"UserName		VARCHAR(32)		NOT NULL," +
-					"Password		VARCHAR(32)		NOT NULL," +
-					"LastLogin		DATETIME		NOT NULL," +
-					"JoinDate		DATETIME		NOT NULL," +
+					"UserName			VARCHAR(32)		NOT NULL," +
+					"Password			VARCHAR(32)		NOT NULL," +
+					"NickName			VARCHAR(128)	NOT NULL," +
+					"PersonalMessage	VARCHAR(256)	NOT NULL," +
+					"Status				TINYINT			NOT NULL," +
+					"LastLogin			DATETIME		NOT NULL," +
+					"JoinDate			DATETIME		NOT NULL," +
 					"PRIMARY KEY(UserName)" +
 				")"
 			);
@@ -298,6 +301,9 @@ public class UserDBMS {
 				"INSERT INTO " + userDataTableName + " VALUES(" +
 					"'" + userName + "', " +
 					"'" + password + "', " +
+					"'" + userName + "', " +
+					"'', " +
+					"'" + StatusType.Offline + "', " +
 					"CURRENT_TIMESTAMP, " +
 					"CURRENT_TIMESTAMP" +
 				")"

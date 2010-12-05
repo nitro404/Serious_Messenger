@@ -41,8 +41,6 @@ public class Client extends User {
 		else { m_hostName = hostName; }
 		if(port < 0 || port > 65355) { m_port = Globals.DEFAULT_PORT; }
 		else { m_port = port; }
-		
-		super.initialize();
 	}
 	
 	public Socket getConnection() { return m_connection; }
@@ -181,8 +179,8 @@ public class Client extends User {
 		if(message == null) { return; }
 		
 		for(int i=0;i<m_contacts.size();i++) {
-			if(m_contacts.elementAt(i).isConnected()) {
-				m_contacts.elementAt(i).sendSignal(new MessageSignal(message));
+			if(m_contacts.elementAt(i).getStatus() != StatusType.Offline) {
+//				m_outSignalQueue.addSignal(new MessageSignal(m_contacts.elementAt(i).getUserName(), message));
 			}
 		}
 	}

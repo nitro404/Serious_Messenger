@@ -16,7 +16,7 @@ public class Message {
 	
 	private static long m_idCounter = 0;
 	
-	public Message(Contact contact, long id, String text) {
+	public Message(UserNetworkData contact, long id, String text) {
 		this(id, contact.getUserName(), contact.getNickName(), text, contact.getFont());
 	}
 	

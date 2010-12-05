@@ -1,16 +1,17 @@
 package client;
 
 import java.util.Vector;
+import shared.*;
 
 public class Conversation {
 	
 	private Vector<Message> m_messages;
 	private User m_user;
-	private Vector<Contact> m_participants;
+	private Vector<UserNetworkData> m_participants;
 	
-	public Conversation(User user, Contact contact) {
+	public Conversation(User user, UserNetworkData contact) {
 		m_messages = new Vector<Message>();
-		m_participants = new Vector<Contact>();
+		m_participants = new Vector<UserNetworkData>();
 		
 		m_user = user;
 		m_participants.add(contact);
@@ -35,7 +36,7 @@ public class Conversation {
 		return false;
 	}
 	
-	public Contact getParticipant(String userName) {
+	public UserNetworkData getParticipant(String userName) {
 		if(userName == null) { return null; }
 		for(int i=0;i<m_participants.size();i++) {
 			if(m_participants.elementAt(i).getUserName().equalsIgnoreCase(userName)) {
@@ -45,12 +46,12 @@ public class Conversation {
 		return null;
 	}
 	
-	public Contact getParticipant(int index) {
+	public UserNetworkData getParticipant(int index) {
 		if(index < 0 || index >= m_participants.size()) { return null; }
 		return m_participants.elementAt(index);
 	}
 	
-	public boolean addParticipant(Contact c) {
+	public boolean addParticipant(UserNetworkData c) {
 		if(c == null || m_participants.contains(c)) { return false; }
 		return m_participants.add(c);
 	}
@@ -66,7 +67,7 @@ public class Conversation {
 		return false;
 	}
 	
-	public boolean removeParticipant(Contact c) {
+	public boolean removeParticipant(UserNetworkData c) {
 		if(c == null || m_participants.contains(c)) { return false; }
 		return m_participants.remove(c);
 	}
@@ -92,7 +93,7 @@ public class Conversation {
 		return receiveMessage(getParticipant(userName), id, message);
 	}
 	
-	public boolean receiveMessage(Contact c, long id, String message) {
+	public boolean receiveMessage(UserNetworkData c, long id, String message) {
 		if(c == null || message == null) { return false; }
 		
 		Message m = new Message(c, id, message);

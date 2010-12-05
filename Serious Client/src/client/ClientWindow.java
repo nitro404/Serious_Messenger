@@ -335,7 +335,7 @@ public class ClientWindow extends JFrame implements ActionListener {
 	    		return;
 	    	}
 	    	
-			Contact contact = null;
+			UserNetworkData contact = null;
 			String contactUserName = JOptionPane.showInputDialog(null, "Who would you like to start a conversation with?", "Start Conversation with User", JOptionPane.QUESTION_MESSAGE);
 			
 			if(contactUserName == null) { return; }

@@ -7,7 +7,7 @@ import shared.*;
 
 public class ContactPanel extends JPanel {
 	
-	private Contact m_contact;
+	private UserNetworkData m_contact;
 	
 	private JTextField personalMessageTextField;
 	private JTextField nickNameTextField;
@@ -18,7 +18,7 @@ public class ContactPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public ContactPanel(Contact contact) {
+	public ContactPanel(UserNetworkData contact) {
 		m_contact = contact;
 		
 		initComponents();

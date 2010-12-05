@@ -8,26 +8,18 @@ public class User extends UserData {
 	 
 	protected String m_password;
 	
-	protected Vector<Contact> m_contacts;
-	
-	private ContactDisconnectHandler m_disconnectHandler;
+	protected Vector<UserNetworkData> m_contacts;
 	
 	public User() {
 		super(null, null, null, StatusType.Offline, null, null);
 		m_password = null;
-		m_contacts = new Vector<Contact>();
-		m_disconnectHandler = new ContactDisconnectHandler(); 
+		m_contacts = new Vector<UserNetworkData>(); 
 	}
 	
 	public User(String userName, String password, String nickName, String personalMessage, byte status, Font font, Color textColour) {
 		super(userName, nickName, personalMessage, status, font, textColour);
 		m_password = password;
-		m_contacts = new Vector<Contact>();
-		m_disconnectHandler = new ContactDisconnectHandler();
-	}
-	
-	public void initialize() {
-		m_disconnectHandler.initialize(m_contacts);
+		m_contacts = new Vector<UserNetworkData>();
 	}
 	
 	public String getPassword() { return m_password; }
@@ -46,7 +38,7 @@ public class User extends UserData {
 		return -1;
 	}
 	
-	public int getContactIndex(Contact c) {
+	public int getContactIndex(UserNetworkData c) {
 		if(c == null) { return -1; }
 		for(int i=0;i<m_contacts.size();i++) {
 			if(c.equals(m_contacts.elementAt(i))) {
@@ -66,12 +58,12 @@ public class User extends UserData {
 		return false;
 	}
 	
-	public boolean hasContact(Contact c) {
+	public boolean hasContact(UserNetworkData c) {
 		if(c == null) { return false; }
 		return m_contacts.contains(c);
 	}
 	
-	public Contact getContact(String userName) {
+	public UserNetworkData getContact(String userName) {
 		if(userName == null || userName.length() == 0) { return null; }
 		for(int i=0;i<m_contacts.size();i++) {
 			if(userName.equalsIgnoreCase(m_contacts.elementAt(i).getUserName())) {
@@ -81,18 +73,18 @@ public class User extends UserData {
 		return null;
 	}
 	
-	public Contact getContact(int index) {
+	public UserNetworkData getContact(int index) {
 		if(index < 0 || index >= m_contacts.size()) { return null; }
 		return m_contacts.elementAt(index);
 	}
 	
-	public boolean addContact(Contact c) {
+	public boolean addContact(UserNetworkData c) {
 		if(c == null || m_contacts.contains(c)) { return false; }
 		m_contacts.add(c);
 		return true;
 	}
 	
-	public boolean removeContact(Contact c) {
+	public boolean removeContact(UserNetworkData c) {
 		if(c == null) { return false; }
 		return m_contacts.remove(c);
 	}
@@ -115,7 +107,7 @@ public class User extends UserData {
 	}
 	
 	public String getContactNickName(String userName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		return (c == null) ? null : c.getNickName();
 	}
 	
@@ -124,7 +116,7 @@ public class User extends UserData {
 	}
 	
 	public String getContactPersonalMessage(String userName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		return (c == null) ? null : c.getPersonalMessage();
 	}
 	
@@ -133,7 +125,7 @@ public class User extends UserData {
 	}
 	
 	public int getContactStatus(String userName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		return (c == null) ? StatusType.Offline : c.getStatus();
 	}
 	
@@ -142,7 +134,7 @@ public class User extends UserData {
 	}
 	
 	public FontStyle getContactFont(String userName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		return (c == null) ? Globals.DEFAULT_FONTSTYLE : c.getFont();
 	}
 	
@@ -151,7 +143,7 @@ public class User extends UserData {
 	}
 	
 	public Color getContactTextColour(String userName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		return (c == null) ? Globals.DEFAULT_TEXT_COLOUR : c.getFont().getColour();
 	}
 	
@@ -174,7 +166,7 @@ public class User extends UserData {
 			m_contacts.elementAt(contactIndex).setPort(data.getPort());
 		}
 		else {
-			m_contacts.add(new Contact(data));
+			m_contacts.add(new UserNetworkData(data));
 		}
 	}
 	
@@ -187,7 +179,7 @@ public class User extends UserData {
 	}
 	
 	public void setContactNickName(String userName, String nickName) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		if(c != null) { c.setNickName(nickName); }
 	}
 	
@@ -198,7 +190,7 @@ public class User extends UserData {
 	}
 	
 	public void setContactPersonalMessage(String userName, String personalMessage) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		if(c != null) { c.setPersonalMessage(personalMessage); }
 	}
 	
@@ -209,7 +201,7 @@ public class User extends UserData {
 	}
 	
 	public void setContactStatus(String userName, byte status) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		if(c != null) { c.setStatus(status); }
 	}
 	
@@ -220,7 +212,7 @@ public class User extends UserData {
 	}
 	
 	public void setContactFont(String userName, FontStyle font) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		if(c != null) { c.setFont(font); }
 	}
 	
@@ -231,7 +223,7 @@ public class User extends UserData {
 	}
 	
 	public void setContactTextColour(String userName, Color textColour) {
-		Contact c = getContact(userName);
+		UserNetworkData c = getContact(userName);
 		if(c != null) { c.getFont().setColour(textColour); }
 	}
 	
