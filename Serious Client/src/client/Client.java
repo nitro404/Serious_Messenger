@@ -180,7 +180,7 @@ public class Client extends User {
 		
 		for(int i=0;i<m_contacts.size();i++) {
 			if(m_contacts.elementAt(i).getStatus() != StatusType.Offline) {
-//				m_outSignalQueue.addSignal(new MessageSignal(m_contacts.elementAt(i).getUserName(), message));
+				m_outSignalQueue.addSignal(new MessageSignal(message, m_userName, m_contacts.elementAt(i).getUserName()));
 			}
 		}
 	}

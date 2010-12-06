@@ -7,14 +7,15 @@ import shared.*;
 public class MessageSignal extends Signal {
 	
 	private long m_messageID;
-	private boolean m_acknowledge;
+	private String m_userName;
+	private String m_contactUserName;
 	private int m_messageLength = -1;
 	private String m_message; 
 	
 	private static long m_currentMessageID = 0;
 	
 	final public static int LENGTH = (Long.SIZE +
-									  Byte.SIZE +
+									  (Character.SIZE * Globals.MAX_USERNAME_LENGTH * 2) + 
 									  Integer.SIZE +
 									  Long.SIZE) / 8;
 	
@@ -22,16 +23,25 @@ public class MessageSignal extends Signal {
 		super(SignalType.Message);
 	}
 	
-	public MessageSignal(String message) {
+	public MessageSignal(String message, String userName, String contactUserName) {
 		super(SignalType.Message);
 		m_messageID = m_currentMessageID++;
-		m_acknowledge = true;
+		m_userName = userName;
+		m_contactUserName = contactUserName;
 		m_message = message;
 		m_messageLength = message.length();
 	}
 	
 	public long getMessageID() {
 		return m_messageID;
+	}
+	
+	public String getUserName() {
+		return m_userName;
+	}
+	
+	public String getContactUserName() {
+		return m_contactUserName;
 	}
 	
 	public int getMessageLength() {
@@ -45,7 +55,8 @@ public class MessageSignal extends Signal {
 	public long checksum() {
 		long checksum = 0;
 		checksum += ByteStream.getChecksum(m_messageID);
-		checksum += ByteStream.getChecksum(m_acknowledge);
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
+		checksum += ByteStream.getChecksum(m_contactUserName, Globals.MAX_USERNAME_LENGTH);
 		checksum += ByteStream.getChecksum(m_message.length());
 		checksum += ByteStream.getChecksum(m_message);
 		return checksum;
@@ -57,7 +68,8 @@ public class MessageSignal extends Signal {
 		MessageSignal s2 = new MessageSignal();
 		
 		s2.m_messageID = byteStream.nextLong();
-		s2.m_acknowledge = byteStream.nextBoolean();
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
+		s2.m_contactUserName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_messageLength = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
 		s2.m_message = ByteStream.readFrom(in, (s2.m_messageLength * Character.SIZE)).nextString(s2.m_messageLength);
@@ -72,7 +84,8 @@ public class MessageSignal extends Signal {
 		
 		super.writeTo(byteStream);
 		byteStream.addLong(m_messageID);
-		byteStream.addBoolean(m_acknowledge);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
+		byteStream.addStringFixedLength(m_contactUserName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addInteger(m_message.length());
 		byteStream.addLong(checksum());
 		byteStream.addString(m_message);
