@@ -9,7 +9,12 @@ public class Conversation {
 	private User m_user;
 	private Vector<UserNetworkData> m_participants;
 	
-	public Conversation(User user, UserNetworkData contact) {
+	private Client m_client;
+	private ConversationWindow m_conversationWindow;
+	
+	public Conversation(User user, UserNetworkData contact, Client client, ConversationWindow conversationWindow) {
+		m_client = client;
+		m_conversationWindow = conversationWindow;
 		m_messages = new Vector<Message>();
 		m_participants = new Vector<UserNetworkData>();
 		
@@ -79,27 +84,29 @@ public class Conversation {
 	}
 	
 	public boolean sendMessage(String message) {
-		Message m = new Message(m_user, message);
+		Message m = new Message(message, m_user);
 		m_messages.add(m);
 		
-		// TODO: Finish me
+		for(int i=0;i<m_participants.size();i++) {
+			m_client.sendMessage(message, m.getID(), m_client.getUserName(), m_participants.elementAt(i).getUserName());
+		}
 		
 		return true;
 	}
 	
-	public boolean receiveMessage(String userName, long id, String message) {
-		if(userName == null || message == null) { return false; }
-		// TODO: Finish me
-		return receiveMessage(getParticipant(userName), id, message);
+	public boolean receiveMessage(String message, long messageID, String contactUserName) {
+		if(contactUserName == null || message == null) { return false; }
+		
+		return receiveMessage(message, messageID, getParticipant(contactUserName));
 	}
 	
-	public boolean receiveMessage(UserNetworkData c, long id, String message) {
-		if(c == null || message == null) { return false; }
+	public boolean receiveMessage(String message, long messageID, UserNetworkData contact) {
+		if(contact == null || message == null) { return false; }
 		
-		Message m = new Message(c, id, message);
+		Message m = new Message(message, messageID, contact);
 		m_messages.add(m);
 		
-		// TODO: Finish me
+		m_conversationWindow.addMessage(m.getText(), m.getUserName());
 		
 		return true;
 	}

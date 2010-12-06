@@ -175,12 +175,26 @@ public class Client extends User {
 		// TODO: broadcast updated status to contacts [via server?]
 	}
 	
+	public void sendMessage(String message, long messageID, String userName, String contactUserName) {
+		m_outSignalQueue.addSignal(new MessageSignal(message, messageID, userName, contactUserName));
+	}
+	
+	public void receiveMessage(String message, long messageID, String contactUserName) {
+		for(int i=0;i<m_clientWindow.numberOfConversations();i++) {
+			if(m_clientWindow.getConversation(i).hasParticipant(contactUserName)) {
+				m_clientWindow.getConversation(i).receiveMessage(message, messageID, contactUserName);
+			}
+		}
+	}
+	
 	public void announce(String message) {
 		if(message == null) { return; }
 		
 		for(int i=0;i<m_contacts.size();i++) {
 			if(m_contacts.elementAt(i).getStatus() != StatusType.Offline) {
-				m_outSignalQueue.addSignal(new MessageSignal(message, m_userName, m_contacts.elementAt(i).getUserName()));
+				m_outSignalQueue.addSignal(new MessageSignal(message, Message.nextID(), m_userName, m_contacts.elementAt(i).getUserName()));
+				
+				// TODO: Add message to active conversation windows
 			}
 		}
 	}

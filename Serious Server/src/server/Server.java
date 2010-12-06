@@ -229,6 +229,18 @@ public class Server extends Thread {
 		return 2;
 	}
 	
+	public void forwardMessage(MessageSignal s) {
+		if(s == null) { return; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			if(m_clients.elementAt(i).getUserName().equalsIgnoreCase(s.getContactUserName())) {
+				// swap user name and contact user name when forwarding the message to change it's context
+				m_clients.elementAt(i).sendSignal(new MessageSignal(s.getMessage(), s.getMessageID(), s.getContactUserName(), s.getUserName()));
+				break;
+			}
+		}
+	}
+	
 	public Vector<UserNetworkData> getUserContacts(String userName) {
 		return m_dbms.getUserContacts(userName, m_clients);
 	}

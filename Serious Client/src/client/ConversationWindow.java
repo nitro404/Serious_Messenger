@@ -40,6 +40,8 @@ public class ConversationWindow extends JFrame implements ActionListener {
     	m_client = client;
     	m_contact = contact;
     	
+    	m_conversation = new Conversation(m_client, m_contact, m_client, this);
+    	
         initComponents();
         setContent();
         
@@ -47,6 +49,18 @@ public class ConversationWindow extends JFrame implements ActionListener {
         setTitle("Conversation");
         setSize(434, 528);
         setResizable(false);
+    }
+    
+    public Conversation getConversation() {
+    	return m_conversation;
+    }
+    
+    public void receiveMessage(String message, long messageID, String contactUserName) {
+    	m_conversation.receiveMessage(message, messageID, contactUserName);
+    }
+    
+    public void addMessage(String message, String contactName) {
+    	conversationOutputTextPane.setText((conversationOutputTextPane.getText().length() == 0 ? "" : conversationOutputTextPane.getText() + "\n") + contactName + ": " + message);
     }
     
     public void setContent() {
@@ -220,6 +234,8 @@ public class ConversationWindow extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
     	if(e.getSource() == sendButton) {
+    		m_conversation.sendMessage(userInputTextField.getText());
+    		addMessage(userInputTextField.getText(), m_client.getUserName());
     		userInputTextField.setText("");
     	}
     	else if(e.getSource() == clearButton) {

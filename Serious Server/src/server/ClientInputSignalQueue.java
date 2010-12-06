@@ -68,6 +68,9 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.BroadcastLogin) {
 			s2 = BroadcastLoginSignal.readFrom(ByteStream.readFrom(m_in, BroadcastLoginSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.Message) {
+			s2 = MessageSignal.readFrom(ByteStream.readFrom(m_in, MessageSignal.LENGTH), m_in);
+		}
 		else if(s.getSignalType() == SignalType.ChangePassword) {
 			s2 = ChangePasswordSignal.readFrom(ByteStream.readFrom(m_in, ChangePasswordSignal.LENGTH));
 		}
@@ -132,6 +135,12 @@ public class ClientInputSignalQueue extends Thread {
 					m_server.broadcastUserLogin(s2, contacts);
 					
 					sendSignal(new ContactListSignal(contacts));
+				}
+				else if(s.getSignalType() == SignalType.Message) {
+					MessageSignal s2 = (MessageSignal) s;
+					if(s2.getUserName().equalsIgnoreCase(m_client.getUserName())) {
+						m_server.forwardMessage(s2);
+					}
 				}
 				else if(s.getSignalType() == SignalType.ChangePassword) {
 					ChangePasswordSignal s2 = (ChangePasswordSignal) s;

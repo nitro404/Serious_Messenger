@@ -10,9 +10,7 @@ public class MessageSignal extends Signal {
 	private String m_userName;
 	private String m_contactUserName;
 	private int m_messageLength = -1;
-	private String m_message; 
-	
-	private static long m_currentMessageID = 0;
+	private String m_message;
 	
 	final public static int LENGTH = (Long.SIZE +
 									  (Character.SIZE * Globals.MAX_USERNAME_LENGTH * 2) + 
@@ -23,9 +21,9 @@ public class MessageSignal extends Signal {
 		super(SignalType.Message);
 	}
 	
-	public MessageSignal(String message, String userName, String contactUserName) {
+	public MessageSignal(String message, long messageID, String userName, String contactUserName) {
 		super(SignalType.Message);
-		m_messageID = m_currentMessageID++;
+		m_messageID = messageID;
 		m_userName = userName;
 		m_contactUserName = contactUserName;
 		m_message = message;

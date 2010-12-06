@@ -16,21 +16,25 @@ public class Message {
 	
 	private static long m_idCounter = 0;
 	
-	public Message(UserNetworkData contact, long id, String text) {
-		this(id, contact.getUserName(), contact.getNickName(), text, contact.getFont());
+	public Message(String text, long messageID, UserNetworkData contact) {
+		this(text, messageID, contact.getUserName(), contact.getNickName(), contact.getFont());
 	}
 	
-	public Message(User user, String text) {
-		this(m_idCounter++, user.getUserName(), user.getNickName(), text, user.getFont());
+	public Message(String text, User user) {
+		this(text, m_idCounter++, user.getUserName(), user.getNickName(), user.getFont());
 	}
 	
-	private Message(long id, String userName, String nickName, String text, FontStyle font) {
+	private Message(String text, long id, String userName, String nickName, FontStyle font) {
 		m_id = id;
 		m_userName = (userName == null) ? "" : userName;
 		m_nickName = (nickName == null) ? "" : nickName;
 		m_text = (text == null) ? "" : text;
 		m_font = (font == null) ? Globals.DEFAULT_FONTSTYLE : font;
 		m_timeStamp = Calendar.getInstance();
+	}
+	
+	public static long nextID() {
+		return m_idCounter++;
 	}
 	
 	public long getID() { return m_id; }

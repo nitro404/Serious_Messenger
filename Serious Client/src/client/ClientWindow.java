@@ -10,6 +10,8 @@ public class ClientWindow extends JFrame implements ActionListener {
 	
 	private Client m_client;
 	
+	private Vector<ConversationWindow> m_conversationWindows;
+	
 	private JButton announceButton;
 	private JPanel contactListPanel;
 	private JScrollPane contactListScrollPane;
@@ -52,6 +54,7 @@ public class ClientWindow extends JFrame implements ActionListener {
     
     public ClientWindow() {
     	m_client = new Client(this);
+    	m_conversationWindows = new Vector<ConversationWindow>();
     	
     	initMenu();
         initComponents();
@@ -70,6 +73,15 @@ public class ClientWindow extends JFrame implements ActionListener {
     public void initialize(String hostName, int port) {
     	m_client.initialize(hostName, port);
     	setVisible(true);
+    }
+    
+    public int numberOfConversations() {
+    	return m_conversationWindows.size();
+    }
+    
+    public Conversation getConversation(int index) {
+    	if(index < 0 || index >= m_conversationWindows.size()) { return null; }
+    	return m_conversationWindows.elementAt(index).getConversation();
     }
     
     private void initMenu() {
@@ -356,8 +368,20 @@ public class ClientWindow extends JFrame implements ActionListener {
 				return;
 			}
 			
-			ConversationWindow conversationWindow = new ConversationWindow(m_client, contact);
-			conversationWindow.setVisible(true);
+			boolean conversationExists = false;
+			for(int i=0;i<numberOfConversations();i++) {
+				if(getConversation(i).getParticipant(0).getUserName().equalsIgnoreCase(contact.getUserName())) {
+					m_conversationWindows.elementAt(i).setVisible(true);
+					conversationExists = true;
+					break;
+				}
+			}
+			
+			if(!conversationExists) {
+				ConversationWindow conversationWindow = new ConversationWindow(m_client, contact);
+				conversationWindow.setVisible(true);
+				m_conversationWindows.add(conversationWindow);
+			}
 		}
 		else if(e.getSource() == contactsAddContactMenuItem) {
 			if(m_client.getClientState() < ClientState.Online) {

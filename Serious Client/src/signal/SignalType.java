@@ -28,7 +28,7 @@ public class SignalType {
 	final public static int ContactList = 23;
 	
 	public static boolean isValid(int signalType) {
-		return signalType >= 1 && signalType <= 24;
+		return signalType >= 1 && signalType <= 23;
 	}
 	
 }

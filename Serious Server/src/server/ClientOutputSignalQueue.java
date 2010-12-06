@@ -56,6 +56,9 @@ public class ClientOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					s.writeTo(m_out);
 				}
+				else if(s.getSignalType() == SignalType.Message) {
+					s.writeTo(m_out);
+				}
 				else if(s.getSignalType() == SignalType.PasswordChanged) {
 					s.writeTo(m_out);
 				} 
