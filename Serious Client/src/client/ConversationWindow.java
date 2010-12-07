@@ -10,6 +10,7 @@ public class ConversationWindow extends JFrame implements ActionListener {
 	private Conversation m_conversation;
 	private Client m_client;
 	private UserNetworkData m_contact;
+	private ClientWindow m_clientWindow;
 	
     private JMenuBar menuBar;
     private JButton announceButton;
@@ -33,12 +34,13 @@ public class ConversationWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	public ConversationWindow() {
-		this(null, null);
+		this(null, null, null);
 	}
 	
-    public ConversationWindow(Client client, UserNetworkData contact) {
+    public ConversationWindow(Client client, UserNetworkData contact, ClientWindow clientWindow) {
     	m_client = client;
     	m_contact = contact;
+    	m_clientWindow = clientWindow;
     	
     	m_conversation = new Conversation(m_client, m_contact, m_client, this);
     	
@@ -242,7 +244,7 @@ public class ConversationWindow extends JFrame implements ActionListener {
     		userInputTextField.setText("");
     	}
     	else if(e.getSource() == announceButton) {
-    		
+    		m_clientWindow.announce();
     	}
     }
     

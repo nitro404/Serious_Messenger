@@ -70,7 +70,12 @@ public class MessageSignal extends Signal {
 		s2.m_contactUserName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_messageLength = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
-		s2.m_message = ByteStream.readFrom(in, (s2.m_messageLength * Character.SIZE)).nextString(s2.m_messageLength);
+		if(s2.m_messageLength > 0) {
+			s2.m_message = ByteStream.readFrom(in, (s2.m_messageLength * Character.SIZE)).nextString(s2.m_messageLength);
+		}
+		else { s2.m_message = ""; }
+		
+		if(s2.m_message == null) { s2.m_message = ""; }
 		
 		if(checksum != s2.checksum()) { return null; }
 		

@@ -368,20 +368,7 @@ public class ClientWindow extends JFrame implements ActionListener {
 				return;
 			}
 			
-			boolean conversationExists = false;
-			for(int i=0;i<numberOfConversations();i++) {
-				if(getConversation(i).getParticipant(0).getUserName().equalsIgnoreCase(contact.getUserName())) {
-					m_conversationWindows.elementAt(i).setVisible(true);
-					conversationExists = true;
-					break;
-				}
-			}
-			
-			if(!conversationExists) {
-				ConversationWindow conversationWindow = new ConversationWindow(m_client, contact);
-				conversationWindow.setVisible(true);
-				m_conversationWindows.add(conversationWindow);
-			}
+			startConversation(contact);
 		}
 		else if(e.getSource() == contactsAddContactMenuItem) {
 			if(m_client.getClientState() < ClientState.Online) {
@@ -442,8 +429,41 @@ public class ClientWindow extends JFrame implements ActionListener {
 			}
 		}
 		else if(e.getSource() == announceButton) {
-			m_client.announce(JOptionPane.showInputDialog(null, "Announcement Message:", "Announce", JOptionPane.QUESTION_MESSAGE));
+			announce();
 		}
+    }
+    
+    public void announce() {
+    	String message = JOptionPane.showInputDialog(null, "Announcement Message:", "Announce", JOptionPane.QUESTION_MESSAGE);
+		
+		for(int i=0;i<numberOfConversations();i++) {
+			m_conversationWindows.elementAt(i).addMessage(message, m_client.getUserName());
+		}
+		
+		m_client.announce(message);
+    }
+    
+    public ConversationWindow startConversation(String contactUserName) {
+    	return startConversation(m_client.getContact(contactUserName));
+    }
+    
+    public ConversationWindow startConversation(UserNetworkData contact) {
+    	if(contact == null) { return null; }
+    	
+    	if(contact.isBlocked()) { return null; }
+    	
+		for(int i=0;i<numberOfConversations();i++) {
+			if(getConversation(i).hasParticipant(contact.getUserName())) {
+				m_conversationWindows.elementAt(i).setVisible(true);
+				return m_conversationWindows.elementAt(i);
+			}
+		}
+		
+		ConversationWindow conversationWindow = new ConversationWindow(m_client, contact, this);
+		conversationWindow.setVisible(true);
+		m_conversationWindows.add(conversationWindow);
+		
+		return conversationWindow;
     }
     
     public void resetContactPanels() {

@@ -180,10 +180,10 @@ public class Client extends User {
 	}
 	
 	public void receiveMessage(String message, long messageID, String contactUserName) {
-		for(int i=0;i<m_clientWindow.numberOfConversations();i++) {
-			if(m_clientWindow.getConversation(i).hasParticipant(contactUserName)) {
-				m_clientWindow.getConversation(i).receiveMessage(message, messageID, contactUserName);
-			}
+		ConversationWindow conversationWindow = m_clientWindow.startConversation(contactUserName);
+		
+		if(conversationWindow != null) {
+			conversationWindow.receiveMessage(message, messageID, contactUserName);
 		}
 	}
 	
