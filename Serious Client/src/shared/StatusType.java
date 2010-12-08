@@ -2,7 +2,7 @@ package shared;
 
 public class StatusType {
 	
-	final public static String[] statusTypes = { "Online", "Busy", "Away", "Idle", "Offline" };
+	final public static String[] statusTypes = { "Online", "Busy", "Away", "Idle" };
 	
 	final public static byte Offline = 0;
 	final public static byte Online = 1;

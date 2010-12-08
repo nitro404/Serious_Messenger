@@ -227,6 +227,8 @@ public class UserDBMS {
 	}
 	
 	public Vector<UserNetworkData> getUserContacts(String userName, Vector<Client> clients) {
+		if(userName == null || clients == null) { return null; }
+		
 		try {
 			// get user's contacts
 			SQLResult result = new SQLResult(stmt.executeQuery(
@@ -262,19 +264,36 @@ public class UserDBMS {
 					//String contactGroup = result.getElement(i, 2);
 					
 					// check to see if the current contact is online
-					byte contactStatus = StatusType.Offline;
+//					byte contactStatus = StatusType.Offline;
 					Client client = null;
 					for(int j=0;j<clients.size();j++) {
 						String clientUserName = clients.elementAt(j).getUserName();
 						if(clientUserName != null && clientUserName.equalsIgnoreCase(contactUserName)) {
 							client = clients.elementAt(j);
-							contactStatus = StatusType.Online;
+//							contactStatus = client.getStatus();
 							break;
 						}
 					}
 					
+					// get user's nickname and personal message
+					SQLResult result3 = new SQLResult(stmt.executeQuery(
+						"SELECT * FROM " + userDataTableName + " " +
+						"WHERE UserName = '" + contactUserName + "'"
+					));
+					
+					String contactNickName = null;
+					String contactPersonalMessage = null;
+					byte contactStatus = StatusType.Offline;
+					
+					if(result3.getRowCount() != 0) {
+						contactNickName = result3.getElement(0, 2);
+						contactPersonalMessage = result3.getElement(0, 3);
+						try { contactStatus = Byte.parseByte(result3.getElement(0, 4)); }
+						catch(NumberFormatException e) { }
+					}
+					
 					// store the current contact's information
-					contacts.add(new UserNetworkData(contactUserName, "", "", contactStatus, Globals.DEFAULT_FONTSTYLE, contactBlocked, (client == null) ? null : client.getIPAddress(), (client == null) ? 0 : client.getPort()));
+					contacts.add(new UserNetworkData(contactUserName, contactNickName, contactPersonalMessage, contactStatus, Globals.DEFAULT_FONTSTYLE, contactBlocked, (client == null) ? null : client.getIPAddress(), (client == null) ? 0 : client.getPort()));
 				}
 				
 			}
@@ -290,6 +309,8 @@ public class UserDBMS {
 	}
 	
 	public boolean createUser(String userName, String password) {
+		if(userName == null || password == null) { return false; }
+		
 		try {
 			// verify that the user does not already exist
 			if(new SQLResult(stmt.executeQuery(
@@ -343,7 +364,10 @@ public class UserDBMS {
 		return userDeleted;
 	}
 
-	public void createUserProfile(String userName, String firstName, String middleName, String lastName, char gender, String birthDate, String email, String homePhone, String mobilePhone, String workPhone, String country, String stateProvince, String zipPostalCode) {
+	public boolean createUserProfile(String userName, String firstName, String middleName, String lastName, char gender, String birthDate, String email, String homePhone, String mobilePhone, String workPhone, String country, String stateProvince, String zipPostalCode) {
+		if(userName == null || firstName == null || middleName == null || lastName == null || birthDate == null || email == null || homePhone == null || mobilePhone == null || workPhone == null || country == null || stateProvince == null || zipPostalCode == null) { return false; }
+		if(gender != 'm' && gender != 'M' && gender != 'f' && gender != 'F') { return false; }
+		
 		try {
 			stmt.executeUpdate(
 				"INSERT INTO " + userProfileTableName + " VALUES(" +
@@ -364,13 +388,19 @@ public class UserDBMS {
 			);
 			
 			m_logger.addInfo("Created profile for user " + userName);
+			
+			return true;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error creating profile for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
-	public void updateUserProfile(String userName, String firstName, String middleName, String lastName, char gender, String birthDate, String email, String homePhone, String mobilePhone, String workPhone, String country, String stateProvince, String zipPostalCode) {
+	public boolean updateUserProfile(String userName, String firstName, String middleName, String lastName, char gender, String birthDate, String email, String homePhone, String mobilePhone, String workPhone, String country, String stateProvince, String zipPostalCode) {
+		if(userName == null || firstName == null || middleName == null || lastName == null || birthDate == null || email == null || homePhone == null || mobilePhone == null || workPhone == null || country == null || stateProvince == null || zipPostalCode == null) { return false; }
+		if(gender != 'm' && gender != 'M' && gender != 'f' && gender != 'F') { return false; }
+		
 		try {
 			stmt.executeUpdate(
 				"UPDATE " + userProfileTableName + " " +
@@ -390,13 +420,18 @@ public class UserDBMS {
 			);
 			
 			m_logger.addInfo("Updated profile for user " + userName);
+			
+			return true;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error updating profile for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
-	public void removeUserProfile(String userName) {
+	public boolean removeUserProfile(String userName) {
+		if(userName == null) { return false; }
+		
 		try {
 			stmt.executeUpdate(
 				"DELETE FROM " + userProfileTableName + " " +
@@ -404,13 +439,18 @@ public class UserDBMS {
 			);
 			
 			m_logger.addInfo("Removed profile for user " + userName);
+			
+			return true;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error removing profile for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 	
 	public boolean userLogin(String userName, String password) {
+		if(userName == null || password == null) { return false; }
+		
 		try {
 			boolean authenticated = stmt.executeUpdate(
 				"UPDATE " + userDataTableName + " " +
@@ -431,7 +471,9 @@ public class UserDBMS {
 		return false;
 	}
 	
-	public void userLogout(String userName) {
+	public boolean userLogout(String userName) {
+		if(userName == null) { return false; }
+		
 		try {
 			stmt.executeUpdate(
 				"UPDATE " + userDataTableName + " " +
@@ -440,13 +482,18 @@ public class UserDBMS {
 			);
 			
 			m_logger.addInfo("User " + userName + " logged out");
+			
+			return true;
 		}
 		catch(SQLException e) {
 			m_logger.addError("Error processing logout request for user " + userName + ": " + e.getMessage());
 		}
+		return false;
 	}
 
 	public boolean changeUserPassword(String userName, String oldPassword, String newPassword) {
+		if(userName == null || oldPassword == null || newPassword == null) { return false; }
+		
 		try {
 			boolean passwordChanged = stmt.executeUpdate(
 				"UPDATE " + userDataTableName + " " +
@@ -467,7 +514,117 @@ public class UserDBMS {
 		return false;
 	}
 	
+	public String getUserNickName(String userName) {
+		if(userName == null) { return null; }
+		
+		try {
+			SQLResult result = new SQLResult(stmt.executeQuery(
+				"SELECT NickName FROM " + userDataTableName + " " +
+				"WHERE UserName = '" + userName + "'"
+			));
+			
+			if(result.getRowCount() == 0) { return null; }
+			
+			m_logger.addInfo("Retrieved nickname for user " + userName);
+			
+			return result.getElement(0, 0);
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error retrieving nickname for user " + userName + ": " + e.getMessage());
+		}
+		return null;
+	}
+	
+	public String getUserPersonalMessage(String userName) {
+		if(userName == null) { return null; }
+		
+		try {
+			SQLResult result = new SQLResult(stmt.executeQuery(
+				"SELECT PersonalMessage FROM " + userDataTableName + " " +
+				"WHERE UserName = '" + userName + "'"
+			));
+			
+			if(result.getRowCount() == 0) { return null; }
+			
+			m_logger.addInfo("Retrieved personal message for user " + userName);
+			
+			return result.getElement(0, 0);
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error retrieving personal message for user " + userName + ": " + e.getMessage());
+		}
+		return null;
+	}
+	
+	public boolean updateUserNickName(String userName, String nickName) {
+		if(userName == null || nickName == null) { return false; }
+		
+		try {
+			boolean nickNameUpdated = stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
+					"SET NickName = '" + nickName + "' " +
+				"WHERE UserName = '" + userName + "'"
+			) != 0;
+			
+			if(nickNameUpdated) {
+				m_logger.addInfo("Updated nickname for user " + userName);
+			}
+			
+			return nickNameUpdated;
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error updating nickname for user " + userName + ": " + e.getMessage());
+		}
+		return false;
+	}
+	
+	public boolean updateUserPersonalMessage(String userName, String personalMessage) {
+		if(userName == null || personalMessage == null) { return false; }
+		
+		try {
+			boolean personalMessageUpdated = stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
+					"SET PersonalMessage = '" + personalMessage + "' " +
+				"WHERE UserName = '" + userName + "'"
+			) != 0;
+			
+			if(personalMessageUpdated) {
+				m_logger.addInfo("Updated personal message for user " + userName);
+			}
+			
+			return personalMessageUpdated;
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error updating personal message for user " + userName + ": " + e.getMessage());
+		}
+		return false;
+	}
+	
+	public boolean updateUserStatus(String userName, byte status) {
+		if(userName == null || !StatusType.isValid(status)) { return false; }
+		
+		try {
+			boolean statusUpdated = stmt.executeUpdate(
+				"UPDATE " + userDataTableName + " " +
+					"SET Status = '" + status + "' " +
+				"WHERE UserName = '" + userName + "'"
+			) != 0;
+			
+			if(statusUpdated) {
+				m_logger.addInfo("Updated status for user " + userName);
+			}
+			
+			return statusUpdated;
+		}
+		catch(SQLException e) {
+			m_logger.addError("Error updating status for user " + userName + ": " + e.getMessage());
+		}
+		return false;
+	}
+	
 	public UserNetworkData addUserContact(String userName, String contactUserName) {
+		if(userName == null || contactUserName == null) { return null; }
+		
 		try {
 			// verify that the contact exists
 			SQLResult contactResult = new SQLResult(stmt.executeQuery(
@@ -499,6 +656,8 @@ public class UserDBMS {
 	}
 	
 	public boolean deleteUserContact(String userName, String contactUserName) {
+		if(userName == null || contactUserName == null) { return false; }
+		
 		try {
 			// delete the contact from the database
 			boolean contactDeleted = stmt.executeUpdate(
@@ -520,6 +679,8 @@ public class UserDBMS {
 	}
 	
 	public boolean userHasContactBlocked(String userName, String contactUserName) {
+		if(userName == null || contactUserName == null) { return false; }
+		
 		try {
 			SQLResult result = new SQLResult(stmt.executeQuery(
 				"SELECT * FROM " + userContactTableName + " " +
@@ -550,6 +711,8 @@ public class UserDBMS {
 	}
 	
 	public int setBlockUserContact(String userName, String contactUserName, boolean blocked) {
+		if(userName == null || contactUserName == null) { return 2; }
+		
 		try {
 			stmt.executeUpdate(
 				"UPDATE " + userContactTableName + " " +
@@ -597,6 +760,8 @@ public class UserDBMS {
 	public int executeUpdate(String query) {
 		int updated = -1;
 		
+		if(query == null) { return updated; }
+		
 		try {
 			updated = stmt.executeUpdate(query);
 			
@@ -610,6 +775,8 @@ public class UserDBMS {
 	}
 	
 	public SQLResult executeQuery(String query) {
+		if(query == null) { return null; }
+		
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			

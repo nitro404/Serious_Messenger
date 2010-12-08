@@ -134,6 +134,8 @@ public class Client extends User {
 	public void authenticated() {
 		setState(ClientState.Online);
 		
+		setStatus(StatusType.Online);
+		
 		m_outSignalQueue.addSignal(new BroadcastLoginSignal(this));
 	}
 	
@@ -167,12 +169,58 @@ public class Client extends User {
 		m_outSignalQueue.addSignal(new BlockContactSignal(contactUserName, false));
 	}
 	
+	public void updateNickName(String nickName) {
+		if(nickName == null) { return; }
+		
+		setNickName(nickName);
+		
+		m_outSignalQueue.addSignal(new ChangeNicknameSignal(m_userName, m_nickName));
+	}
+	
+	public void updatePersonalMessage(String personalMessage) {
+		if(personalMessage == null) { return; }
+		
+		setPersonalMessage(personalMessage);
+		
+		m_outSignalQueue.addSignal(new ChangePersonalMessageSignal(m_userName, m_personalMessage));
+	}
+	
 	public void updateStatus(byte status) {
 		if(!StatusType.isValid(status)) { return; }
 		
 		setStatus(status);
 		
-		// TODO: broadcast updated status to contacts [via server?]
+		m_outSignalQueue.addSignal(new ChangeStatusSignal(m_userName, m_status));
+	}
+	
+	public void updateUserNickName(String userName, String nickName) {
+		if(nickName == null) { return; }
+		
+		UserNetworkData contact = getContact(userName);
+		
+		if(contact != null) {
+			contact.setNickName(nickName);
+		}
+	}
+	
+	public void updateUserPersonalMessage(String userName, String personalMessage) {
+		if(personalMessage == null) { return; }
+		
+		UserNetworkData contact = getContact(userName);
+		
+		if(contact != null) {
+			contact.setPersonalMessage(personalMessage);
+		}
+	}
+	
+	public void updateUserStatus(String userName, byte status) {
+		if(!StatusType.isValid(status)) { return; }
+		
+		UserNetworkData contact = getContact(userName);
+		
+		if(contact != null) {
+			contact.setStatus(status);
+		}
 	}
 	
 	public void sendMessage(String message, long messageID, String userName, String contactUserName) {
@@ -193,8 +241,6 @@ public class Client extends User {
 		for(int i=0;i<m_contacts.size();i++) {
 			if(m_contacts.elementAt(i).getStatus() != StatusType.Offline) {
 				m_outSignalQueue.addSignal(new MessageSignal(message, Message.nextID(), m_userName, m_contacts.elementAt(i).getUserName()));
-				
-				// TODO: Add message to active conversation windows
 			}
 		}
 	}

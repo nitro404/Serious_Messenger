@@ -39,6 +39,8 @@ public class UserNetworkData extends UserData {
 	
 	public InetAddress getIPAddress() { return m_ipAddress; }
 	
+	public String getIPAddressString() { return (m_ipAddress == null) ? "" : m_ipAddress.getHostAddress(); }
+	
 	public int getPort() { return m_port; }
 	
 	public void setBlocked(boolean blocked) { m_blocked = blocked; }

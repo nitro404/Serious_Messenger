@@ -79,6 +79,15 @@ public class ServerInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.ContactBlocked) {
 			s2 = ContactBlockedSignal.readFrom(ByteStream.readFrom(m_in, ContactBlockedSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.ChangeNickname) {
+			s2 = ChangeNicknameSignal.readFrom(ByteStream.readFrom(m_in, ChangeNicknameSignal.LENGTH));
+		}
+		else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+			s2 = ChangePersonalMessageSignal.readFrom(ByteStream.readFrom(m_in, ChangePersonalMessageSignal.LENGTH));
+		}
+		else if(s.getSignalType() == SignalType.ChangeStatus) {
+			s2 = ChangeStatusSignal.readFrom(ByteStream.readFrom(m_in, ChangeStatusSignal.LENGTH));
+		}
 		else if(s.getSignalType() == SignalType.UserCreated) {
 			s2 = UserCreatedSignal.readFrom(ByteStream.readFrom(m_in, UserCreatedSignal.LENGTH));
 		}
@@ -108,12 +117,14 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(s2.getAuthenticated()) {
+						m_client.setNickName(s2.getData().getNickName());
+						m_client.setPersonalMessage(s2.getData().getPersonalMessage());
 						m_client.authenticated();
 						m_messageBoxSystem.show(null, "Successfully logged in!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						m_client.disconnect();
 						m_messageBoxSystem.show(null, "Unable to log in.", "Login Failed", JOptionPane.WARNING_MESSAGE);
+						m_client.disconnect();
 					}
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
@@ -167,6 +178,21 @@ public class ServerInputSignalQueue extends Thread {
 					else {
 						m_messageBoxSystem.show(null, "Unable to block/unblock contact " + s2.getUserName(), "Unable to Block/Unblock", JOptionPane.WARNING_MESSAGE);
 					}
+				}
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
+					ChangeNicknameSignal s2 = (ChangeNicknameSignal) s;
+					m_client.updateUserNickName(s2.getUserName(), s2.getNickName());
+					m_clientWindow.update();
+				}
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+					ChangePersonalMessageSignal s2 = (ChangePersonalMessageSignal) s;
+					m_client.updateUserPersonalMessage(s2.getUserName(), s2.getPersonalMessage());
+					m_clientWindow.update();
+				}
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
+					ChangeStatusSignal s2 = (ChangeStatusSignal) s;
+					m_client.updateUserStatus(s2.getUserName(), s2.getStatus());
+					m_clientWindow.update();
 				}
 				else if(s.getSignalType() == SignalType.UserCreated) {
 					UserCreatedSignal s2 = (UserCreatedSignal) s;

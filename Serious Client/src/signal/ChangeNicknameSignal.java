@@ -4,18 +4,25 @@ import shared.*;
 
 public class ChangeNicknameSignal extends Signal {
 	
+	private String m_userName;
 	private String m_nickName;
 	
-	final public static int LENGTH = ((Character.SIZE * Globals.MAX_NICKNAME_LENGTH) +
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									  (Character.SIZE * Globals.MAX_NICKNAME_LENGTH) +
 									  Long.SIZE) / 8;
 	
 	private ChangeNicknameSignal() {
 		super(SignalType.ChangeNickname);
 	}
 	
-	public ChangeNicknameSignal(String nickName) {
+	public ChangeNicknameSignal(String userName, String nickName) {
 		super(SignalType.ChangeNickname);
+		m_userName = userName;
 		m_nickName = nickName;
+	}
+	
+	public String getUserName() {
+		return m_userName;
 	}
 	
 	public String getNickName() {
@@ -24,6 +31,7 @@ public class ChangeNicknameSignal extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
 		checksum += ByteStream.getChecksum(m_nickName, Globals.MAX_NICKNAME_LENGTH);
 		return checksum;
 	}
@@ -33,6 +41,7 @@ public class ChangeNicknameSignal extends Signal {
 		
 		ChangeNicknameSignal s2 = new ChangeNicknameSignal();
 		
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_nickName = byteStream.nextString(Globals.MAX_NICKNAME_LENGTH);
 		long checksum = byteStream.nextLong();
 		
@@ -45,6 +54,7 @@ public class ChangeNicknameSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addStringFixedLength(m_nickName, Globals.MAX_NICKNAME_LENGTH);
 		byteStream.addLong(checksum());
 	}

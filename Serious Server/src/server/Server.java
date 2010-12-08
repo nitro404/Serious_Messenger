@@ -152,6 +152,8 @@ public class Server extends Thread {
 			if(authenticated) {
 				client.setUserName(userName);
 				client.setPassword(password);
+				client.setNickName(m_dbms.getUserNickName(userName));
+				client.setPersonalMessage(m_dbms.getUserPersonalMessage(userName));
 			}
 		}
 		
@@ -160,6 +162,8 @@ public class Server extends Thread {
 	
 	public void broadcastUserLogin(BroadcastLoginSignal s, Vector<UserNetworkData> contacts) {
 		if(s == null || contacts == null) { return; }
+		
+		m_dbms.updateUserStatus(s.getData().getUserName(), s.getData().getStatus());
 		
 		for(int i=0;i<m_clients.size();i++) {
 			String clientUserName = m_clients.elementAt(i).getUserName();
@@ -239,6 +243,81 @@ public class Server extends Thread {
 				break;
 			}
 		}
+	}
+	
+	public boolean updateUserNickName(Client client, String nickName) {
+		if(client == null) { return false; }
+		
+		if(!m_dbms.updateUserNickName(client.getUserName(), nickName)) { return false; }
+		
+		client.setNickName(nickName);
+		
+		Vector<UserNetworkData> contacts = getUserContacts(client.getUserName());
+		
+		if(contacts == null) { return true; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			for(int j=0;j<contacts.size();j++) {
+				if(m_clients.elementAt(i).getUserName() != null && m_clients.elementAt(i).getUserName().equalsIgnoreCase(contacts.elementAt(j).getUserName())) {
+					m_clients.elementAt(i).sendSignal(new ChangeNicknameSignal(client.getUserName(), nickName));
+					
+					contacts.remove(j);
+					break;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean updateUserPersonalMessage(Client client, String personalMessage) {
+		if(client == null) { return false; }
+		
+		if(!m_dbms.updateUserPersonalMessage(client.getUserName(), personalMessage)) { return false; }
+		
+		client.setPersonalMessage(personalMessage);
+		
+		Vector<UserNetworkData> contacts = getUserContacts(client.getUserName());
+		
+		if(contacts == null) { return true; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			for(int j=0;j<contacts.size();j++) {
+				if(m_clients.elementAt(i).getUserName() != null && m_clients.elementAt(i).getUserName().equalsIgnoreCase(contacts.elementAt(j).getUserName())) {
+					m_clients.elementAt(i).sendSignal(new ChangePersonalMessageSignal(client.getUserName(), personalMessage));
+					
+					contacts.remove(j);
+					break;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean updateUserStatus(Client client, byte status) {
+		if(client == null) { return false; }
+		
+		if(!m_dbms.updateUserStatus(client.getUserName(), status)) { return false; }
+		
+		client.setStatus(status);
+		
+		Vector<UserNetworkData> contacts = getUserContacts(client.getUserName());
+		
+		if(contacts == null) { return true; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			for(int j=0;j<contacts.size();j++) {
+				if(m_clients.elementAt(i).getUserName() != null && m_clients.elementAt(i).getUserName().equalsIgnoreCase(contacts.elementAt(j).getUserName())) {
+					m_clients.elementAt(i).sendSignal(new ChangeStatusSignal(client.getUserName(), status));
+					
+					contacts.remove(j);
+					break;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	public Vector<UserNetworkData> getUserContacts(String userName) {

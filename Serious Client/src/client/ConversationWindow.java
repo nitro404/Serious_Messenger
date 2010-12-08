@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import shared.*;
 
-public class ConversationWindow extends JFrame implements ActionListener {
+public class ConversationWindow extends JFrame implements ActionListener, KeyListener {
 	
 	private Conversation m_conversation;
 	private Client m_client;
@@ -45,7 +45,7 @@ public class ConversationWindow extends JFrame implements ActionListener {
     	m_conversation = new Conversation(m_client, m_contact, m_client, this);
     	
         initComponents();
-        setContent();
+        update();
         
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Conversation");
@@ -65,7 +65,7 @@ public class ConversationWindow extends JFrame implements ActionListener {
     	conversationOutputTextPane.setText((conversationOutputTextPane.getText().length() == 0 ? "" : conversationOutputTextPane.getText() + "\n") + contactName + ": " + message);
     }
     
-    public void setContent() {
+    public void update() {
     	if(m_contact == null) { return; }
     	
     	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_contact.getUserName()));
@@ -106,6 +106,8 @@ public class ConversationWindow extends JFrame implements ActionListener {
         sendButton.addActionListener(this);
         clearButton.addActionListener(this);
         announceButton.addActionListener(this);
+        
+        userInputTextField.addKeyListener(this);
 
         GroupLayout userInfoPanelLayout = new GroupLayout(userInfoPanel);
         userInfoPanel.setLayout(userInfoPanelLayout);
@@ -234,11 +236,15 @@ public class ConversationWindow extends JFrame implements ActionListener {
         pack();
     }
     
+    public void sendMessage() {
+    	m_conversation.sendMessage(userInputTextField.getText());
+		addMessage(userInputTextField.getText(), m_client.getUserName());
+		userInputTextField.setText("");
+    }
+    
     public void actionPerformed(ActionEvent e) {
     	if(e.getSource() == sendButton) {
-    		m_conversation.sendMessage(userInputTextField.getText());
-    		addMessage(userInputTextField.getText(), m_client.getUserName());
-    		userInputTextField.setText("");
+    		sendMessage();
     	}
     	else if(e.getSource() == clearButton) {
     		userInputTextField.setText("");
@@ -247,5 +253,17 @@ public class ConversationWindow extends JFrame implements ActionListener {
     		m_clientWindow.announce();
     	}
     }
+    
+	public void keyPressed(KeyEvent e) { }
+	
+	public void keyReleased(KeyEvent e) {
+		if(e.getSource() == userInputTextField) {
+			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+				sendMessage();
+			}
+		}
+	}
+	
+	public void keyTyped(KeyEvent e) { }
     
 }

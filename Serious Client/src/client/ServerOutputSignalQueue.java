@@ -72,6 +72,15 @@ public class ServerOutputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.BlockContact) {
 					s.writeTo(m_out);
 				}
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
+					s.writeTo(m_out);
+				}
 				else if(s.getSignalType() == SignalType.CreateUser) {
 					s.writeTo(m_out);
 				}

@@ -62,7 +62,7 @@ public class ChangeFontSignal extends Signal {
 		
 		ChangeFontSignal s2 = new ChangeFontSignal();
 		
-		FontStyle.readFrom(byteStream);
+		s2.m_font = FontStyle.readFrom(byteStream);
 		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_contactUserName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		

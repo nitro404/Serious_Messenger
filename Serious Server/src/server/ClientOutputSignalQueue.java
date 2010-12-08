@@ -47,6 +47,7 @@ public class ClientOutputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.LoginAuthenticated) {
 					s.writeTo(m_out);
+					
 					LoginAuthenticatedSignal s2 = (LoginAuthenticatedSignal) s;
 					if(!s2.getAuthenticated()) {
 						m_client.disconnect();
@@ -69,6 +70,15 @@ public class ClientOutputSignalQueue extends Thread {
 					s.writeTo(m_out);
 				} 
 				else if(s.getSignalType() == SignalType.ContactBlocked) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+					s.writeTo(m_out);
+				}
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
 					s.writeTo(m_out);
 				}
 				else if(s.getSignalType() == SignalType.UserCreated) {

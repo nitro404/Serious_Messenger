@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import shared.*;
 
-public class ClientWindow extends JFrame implements ActionListener {
+public class ClientWindow extends JFrame implements ActionListener, KeyListener {
 	
 	private Client m_client;
 	
@@ -84,6 +84,11 @@ public class ClientWindow extends JFrame implements ActionListener {
     	return m_conversationWindows.elementAt(index).getConversation();
     }
     
+    public ConversationWindow getConversationWindow(int index) {
+    	if(index < 0 || index >= m_conversationWindows.size()) { return null; }
+    	return m_conversationWindows.elementAt(index);
+    }
+    
     private void initMenu() {
     	menuBar = new JMenuBar();
         
@@ -149,8 +154,11 @@ public class ClientWindow extends JFrame implements ActionListener {
     	
         userInfoPanel = new JPanel();
         nickNameTextField = new JTextField();
+        nickNameTextField.addKeyListener(this);
         displayPicIconLabel = new JLabel();
         personalMessageTextField = new JTextField();
+        personalMessageTextField.addKeyListener(this);
+        personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
         statusComboBox = new JComboBox();
         utilityPanel = new JPanel();
         announceButton = new JButton("Announce");
@@ -158,7 +166,6 @@ public class ClientWindow extends JFrame implements ActionListener {
         searchTextField = new JTextField("Type here to search through the contact list...");
         searchLabel = new JLabel("Search:");
         groupsTabbedPane = new JTabbedPane();
-        personalMessageTextField.setFont(new Font("Tahoma", 2, 11));
 
         displayPicIconLabel.setIcon(new ImageIcon("img/serious_logo.png")); 
         
@@ -425,13 +432,32 @@ public class ClientWindow extends JFrame implements ActionListener {
 		else if(e.getSource() == statusComboBox) {
 			Object selectedItem = statusComboBox.getSelectedItem();
 			if(selectedItem != null) {
-				m_client.setStatus(StatusType.getStatus(selectedItem.toString()));
+				m_client.updateStatus(StatusType.getStatus(selectedItem.toString()));
 			}
 		}
 		else if(e.getSource() == announceButton) {
 			announce();
 		}
     }
+    
+    public void keyPressed(KeyEvent e) { }
+	
+	public void keyReleased(KeyEvent e) {
+		if(e.getSource() == nickNameTextField) {
+			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+				if(nickNameTextField.getText().length() != 0) {
+					m_client.updateNickName(nickNameTextField.getText());
+				}
+			}
+		}
+		else if(e.getSource() == personalMessageTextField) {
+			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+				m_client.updatePersonalMessage(personalMessageTextField.getText());
+			}
+		}
+	}
+	
+	public void keyTyped(KeyEvent e) { }
     
     public void announce() {
     	String message = JOptionPane.showInputDialog(null, "Announcement Message:", "Announce", JOptionPane.QUESTION_MESSAGE);
@@ -492,12 +518,17 @@ public class ClientWindow extends JFrame implements ActionListener {
     }
     
     public void update() {
+    	nickNameTextField.setText(m_client.getNickName());
+    	personalMessageTextField.setText(m_client.getPersonalMessage());
+    	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
+    	
     	for(int i=0;i<contactPanels.size();i++) {
     		contactPanels.elementAt(i).update();
     	}
-//    	nickNameTextField.setText();
-//    	personalMessageTextField.setText();
-    	displayPicIconLabel.setIcon(UserPanel.getDisplayPicture(m_client.getUserName()));
+    	
+    	for(int i=0;i<m_conversationWindows.size();i++) {
+    		m_conversationWindows.elementAt(i).update();
+    	}
     }
     
 }

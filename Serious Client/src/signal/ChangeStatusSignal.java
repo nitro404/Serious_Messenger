@@ -4,18 +4,25 @@ import shared.*;
 
 public class ChangeStatusSignal extends Signal {
 	
+	private String m_userName;
 	private byte m_status;
 	
-	final public static int LENGTH = (Byte.SIZE +
+	final public static int LENGTH = ((Character.SIZE * Globals.MAX_USERNAME_LENGTH) +
+									  Byte.SIZE +
 									  Long.SIZE) / 8;
 	
 	private ChangeStatusSignal() {
 		super(SignalType.ChangeStatus);
 	}
 	
-	public ChangeStatusSignal(byte status) {
+	public ChangeStatusSignal(String userName, byte status) {
 		super(SignalType.ChangeStatus);
+		m_userName = userName;
 		m_status = status;
+	}
+	
+	public String getUserName() {
+		return m_userName;
 	}
 	
 	public byte getStatus() {
@@ -24,6 +31,7 @@ public class ChangeStatusSignal extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
+		checksum += ByteStream.getChecksum(m_userName, Globals.MAX_USERNAME_LENGTH);
 		checksum += ByteStream.getChecksum(m_status);
 		return checksum;
 	}
@@ -33,6 +41,7 @@ public class ChangeStatusSignal extends Signal {
 		
 		ChangeStatusSignal s2 = new ChangeStatusSignal();
 		
+		s2.m_userName = byteStream.nextString(Globals.MAX_USERNAME_LENGTH);
 		s2.m_status = byteStream.nextByte();
 		long checksum = byteStream.nextLong();
 		
@@ -45,6 +54,7 @@ public class ChangeStatusSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
+		byteStream.addStringFixedLength(m_userName, Globals.MAX_USERNAME_LENGTH);
 		byteStream.addByte(m_status);
 		byteStream.addLong(checksum());
 	}

@@ -83,6 +83,15 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.BlockContact) {
 			s2 = BlockContactSignal.readFrom(ByteStream.readFrom(m_in, BlockContactSignal.LENGTH));
 		}
+		else if(s.getSignalType() == SignalType.ChangeNickname) {
+			s2 = ChangeNicknameSignal.readFrom(ByteStream.readFrom(m_in, ChangeNicknameSignal.LENGTH));
+		}
+		else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+			s2 = ChangePersonalMessageSignal.readFrom(ByteStream.readFrom(m_in, ChangePersonalMessageSignal.LENGTH));
+		}
+		else if(s.getSignalType() == SignalType.ChangeStatus) {
+			s2 = ChangeStatusSignal.readFrom(ByteStream.readFrom(m_in, ChangeStatusSignal.LENGTH));
+		}
 		else if(s.getSignalType() == SignalType.CreateUser) {
 			s2 = CreateUserSignal.readFrom(ByteStream.readFrom(m_in, CreateUserSignal.LENGTH));
 		}
@@ -108,7 +117,7 @@ public class ClientInputSignalQueue extends Thread {
 					LoginRequestSignal s2 = (LoginRequestSignal) s;
 					
 					boolean authenticated = m_server.userLogin(m_client, s2.getUserName(), s2.getPassword());
-					sendSignal(new LoginAuthenticatedSignal(authenticated, m_client.getPort()));
+					sendSignal(new LoginAuthenticatedSignal(m_client.getUserName(), m_client.getNickName(), m_client.getPersonalMessage(), authenticated, m_client.getPort()));
 					
 					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
 				}	
@@ -138,7 +147,7 @@ public class ClientInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.Message) {
 					MessageSignal s2 = (MessageSignal) s;
-					if(s2.getUserName().equalsIgnoreCase(m_client.getUserName())) {
+					if(m_client.getUserName() != null && m_client.getUserName().equalsIgnoreCase(s2.getUserName())) {
 						m_server.forwardMessage(s2);
 					}
 				}
@@ -188,6 +197,24 @@ public class ClientInputSignalQueue extends Thread {
 					
 					if(succeeded) {
 						m_logger.addCommand(s2.getUserName(), (contactBlocked ? "Blocked" : "Unblocked") + " Contact: " + s2.getUserName());
+					}
+				}
+				else if(s.getSignalType() == SignalType.ChangeNickname) {
+					ChangeNicknameSignal s2 = (ChangeNicknameSignal) s;
+					if(m_client.getUserName() != null && m_client.getUserName().equalsIgnoreCase(s2.getUserName())) {
+						m_server.updateUserNickName(m_client, s2.getNickName());
+					}
+				}
+				else if(s.getSignalType() == SignalType.ChangePersonalMessage) {
+					ChangePersonalMessageSignal s2 = (ChangePersonalMessageSignal) s;
+					if(m_client.getUserName() != null && m_client.getUserName().equalsIgnoreCase(s2.getUserName())) {
+						m_server.updateUserPersonalMessage(m_client, s2.getPersonalMessage());
+					}
+				}
+				else if(s.getSignalType() == SignalType.ChangeStatus) {
+					ChangeStatusSignal s2 = (ChangeStatusSignal) s;
+					if(m_client.getUserName() != null && m_client.getUserName().equalsIgnoreCase(s2.getUserName())) {
+						m_server.updateUserStatus(m_client, s2.getStatus());
 					}
 				}
 				else if(s.getSignalType() == SignalType.CreateUser) {

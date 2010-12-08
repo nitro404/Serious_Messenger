@@ -53,7 +53,7 @@ public class MessageBoxSystem extends Thread {
 				}
 			}
 			
-			try { Thread.sleep(100); }
+			try { sleep(100); }
 			catch (InterruptedException e) { }
 		}
 	}

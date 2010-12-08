@@ -6,14 +6,10 @@ import shared.*;
 import signal.*;
 import logger.*;
 
-public class Client extends Thread {
+public class Client extends UserNetworkData {
 	
 	private int m_clientNumber;
-	private String m_userName;
 	private String m_password;
-	
-	private InetAddress m_ipAddress;
-	private int m_port;
 	
 	private Socket m_connection;
 	private boolean m_connected = false;
@@ -21,24 +17,26 @@ public class Client extends Thread {
 	private DataOutputStream m_out;
 	private ClientInputSignalQueue m_inSignalQueue;
 	private ClientOutputSignalQueue m_outSignalQueue;
+	private ClientThread m_clientThread = null;
 	
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
 	private Logger m_logger;
+	private Server m_server;
 	
 	public static int currentPort = 25502;
 	
 	public Client(Socket connection, int clientNumber) {
+		super(null, null, null, StatusType.Offline, Globals.DEFAULT_FONTSTYLE, false, connection.getInetAddress(), currentPort++);
 		m_clientNumber = clientNumber;
 		m_connection = connection;
-		m_ipAddress = connection.getInetAddress();
-		m_port = currentPort++;
 		m_inSignalQueue = new ClientInputSignalQueue();
 		m_outSignalQueue = new ClientOutputSignalQueue();
 	}
 	
 	public void initialize(Server server, Logger logger) {
+		m_server = server;
 		m_connected = true;
 		
 		try {
@@ -47,7 +45,11 @@ public class Client extends Thread {
 			m_in = new DataInputStream(m_connection.getInputStream());
 			m_inSignalQueue.initialize(server, this, m_in, m_outSignalQueue, m_logger);
 			m_outSignalQueue.initialize(this, m_out, m_logger);
-			if(getState() == Thread.State.NEW) { start(); }
+			
+			if(m_clientThread == null || m_clientThread.isTerminated()) {
+				m_clientThread = new ClientThread();
+				m_clientThread.initialize(this);
+			}
 		}
 		catch(IOException e) {
 			m_connected = false;
@@ -56,12 +58,6 @@ public class Client extends Thread {
 	}
 	
 	public Socket getConnection() { return m_connection; }
-	
-	public InetAddress getIPAddress() { return m_ipAddress; }
-	
-	public String getIPAddressString() { return m_ipAddress.getHostAddress(); }
-	
-	public int getPort() { return m_port; }
 	
 	public boolean isConnected() {
 		return m_connected && !timeout();
@@ -96,6 +92,8 @@ public class Client extends Thread {
 	}
 	
 	public void disconnect() {
+		if(m_server != null) { m_server.updateUserStatus(this, StatusType.Offline); }
+		
 		m_connected = false;
 		
 		try { if(m_out != null) { m_out.close(); } } catch(IOException e) { }
@@ -117,8 +115,6 @@ public class Client extends Thread {
 	
 	public int getClientNumber() { return m_clientNumber; }
 	
-	public String getUserName() { return m_userName; }
-	
 	public boolean checkUserName(String userName) {
 		return m_userName != null &&
 			   userName != null &&
@@ -131,17 +127,10 @@ public class Client extends Thread {
 			   m_password.equals(password);
 	}
 	
-	public void setUserName(String userName) { m_userName = userName; }
-	
 	public void setPassword(String password) { m_password = password; }
 	
-	public void run() {
-		while(isConnected()) {
-			m_inSignalQueue.readSignal();
-			
-			try { sleep(Globals.QUEUE_INTERVAL); }
-			catch (InterruptedException e) { }
-		}
+	public void readSignal() {
+		m_inSignalQueue.readSignal();
 	}
 	
 }
