@@ -61,7 +61,7 @@ public class LoginAuthenticatedSignal extends Signal {
 		s2.m_port = byteStream.nextInteger();
 		long checksum = byteStream.nextLong();
 		
-		if(checksum != s2.checksum()) { return null; }
+		//if(checksum != s2.checksum()) { return null; }
 		
 		return s2;
 	}

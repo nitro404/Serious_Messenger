@@ -51,8 +51,11 @@ public class ServerOutputSignalQueue extends Thread {
 					s.writeTo(m_out);
 					m_client.disconnect();
 					m_client.setUserName(null);
+					m_client.setNickName("");
+					m_client.setPersonalMessage("");
 					m_client.clearContacts();
 					m_clientWindow.resetContactPanels();
+					m_clientWindow.update();
 				}
 				else if(s.getSignalType() == SignalType.BroadcastLogin) {
 					s.writeTo(m_out);
