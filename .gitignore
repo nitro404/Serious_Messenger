@@ -1,0 +1,9 @@
+
+# /
+/*.db
+
+# /Serious Client/
+/Serious Client/bin
+
+# /Serious Server/
+/Serious Server/bin
